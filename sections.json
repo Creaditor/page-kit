@@ -1,0 +1,921 @@
+[
+  {
+    "id": "hero-split",
+    "name": "Hero — split with image",
+    "category": "hero",
+    "icon": [
+      {
+        "type": "text"
+      },
+      {
+        "type": "image"
+      }
+    ],
+    "tags": [
+      "hero",
+      "image",
+      "cta"
+    ],
+    "body": {
+      "id": "cdtr-7bd42e0f-dbc8-446f-8229-203d82bdc71f",
+      "type": "section",
+      "layer": "1",
+      "children": [
+        {
+          "id": "cdtr-64258151-2707-4889-aa7e-03c6a591fc43",
+          "type": "block",
+          "children": [
+            {
+              "id": "cdtr-8e00de06-5654-4316-964b-6c5b031413e5",
+              "type": "col",
+              "children": [
+                {
+                  "id": "cdtr-b9472e47-326a-4084-b176-649a343f69ca",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "52px",
+                                      "color": "text"
+                                    }
+                                  },
+                                  {
+                                    "type": "bold"
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "A headline that sells"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "cdtr-010d3ae2-be38-44fa-a9ff-2d2c40e269fe",
+                  "type": "spacer",
+                  "children": [],
+                  "props": {
+                    "height": 14,
+                    "size": "14px",
+                    "style": {},
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true
+                  }
+                },
+                {
+                  "id": "cdtr-9edea042-a5f2-4240-8918-fb1218cbc96c",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "16px",
+                                      "color": "text"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "One clear sentence about the value you deliver to your customers."
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "cdtr-ece1442b-d0ad-423a-a17c-8d0f7155db32",
+                  "type": "spacer",
+                  "children": [],
+                  "props": {
+                    "height": 24,
+                    "size": "24px",
+                    "style": {},
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true
+                  }
+                },
+                {
+                  "id": "cdtr-b47ca34d-55f3-4437-841f-2bb5cb871388",
+                  "type": "button",
+                  "children": [],
+                  "props": {
+                    "text": "Get started",
+                    "style": {
+                      "height": "auto",
+                      "width": "auto",
+                      "maxWidth": "100%",
+                      "minWidth": "30px",
+                      "background": "primary",
+                      "color": "#ffffff",
+                      "borderRadius": "8px",
+                      "fontFamily": "Assistant, Arial, Helvetica, sans-serif",
+                      "fontSize": "20px",
+                      "direction": "rtl",
+                      "paddingTop": "14px",
+                      "paddingBottom": "14px",
+                      "paddingLeft": "32px",
+                      "paddingRight": "32px"
+                    },
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true,
+                    "onClick": {
+                      "link": {
+                        "href": "#",
+                        "target": "_blank"
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "cdtr-250559e8-2017-40d1-9f0f-9563c007237b",
+                  "type": "button",
+                  "children": [],
+                  "props": {
+                    "text": "Learn more",
+                    "style": {
+                      "height": "auto",
+                      "width": "auto",
+                      "maxWidth": "100%",
+                      "minWidth": "30px",
+                      "background": "surface",
+                      "color": "#ffffff",
+                      "borderRadius": "8px",
+                      "fontFamily": "Assistant, Arial, Helvetica, sans-serif",
+                      "fontSize": "20px",
+                      "direction": "rtl",
+                      "paddingTop": "14px",
+                      "paddingBottom": "14px",
+                      "paddingLeft": "32px",
+                      "paddingRight": "32px"
+                    },
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true,
+                    "onClick": {
+                      "link": {
+                        "href": "#",
+                        "target": "_blank"
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {},
+                "lg": 6,
+                "justify": "flex-start"
+              }
+            },
+            {
+              "id": "cdtr-09fb7cfe-887c-4e1c-8d02-deaadae50519",
+              "type": "col",
+              "children": [
+                {
+                  "id": "cdtr-d389278c-52e5-4320-b22a-8f9c20d11dbb",
+                  "type": "image",
+                  "children": [],
+                  "props": {
+                    "src": "https://api.creaditor.com/images/placeholder?width=560&height=440",
+                    "alt": "",
+                    "width": 600,
+                    "height": 400,
+                    "style": {
+                      "width": "100%",
+                      "height": "auto",
+                      "maxWidth": "600px"
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {},
+                "lg": 6,
+                "justify": "flex-start"
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "padding": "64px 24px"
+            }
+          }
+        }
+      ],
+      "props": {
+        "opacity": 1,
+        "classList": [],
+        "style": {
+          "minHeight": "70vh",
+          "background": "transparent",
+          "width": "100%"
+        }
+      }
+    }
+  },
+  {
+    "id": "features-3",
+    "name": "Features — 3 icon cards",
+    "category": "features",
+    "icon": [
+      {
+        "type": "icon"
+      },
+      {
+        "type": "icon"
+      },
+      {
+        "type": "icon"
+      }
+    ],
+    "tags": [
+      "features",
+      "grid",
+      "icon"
+    ],
+    "body": {
+      "id": "cdtr-8950a808-02ab-4d89-9efb-f8ad559a0f47",
+      "type": "section",
+      "layer": "1",
+      "children": [
+        {
+          "id": "cdtr-0e55647c-bb6a-45ad-9854-6b6844b247b1",
+          "type": "block",
+          "children": [
+            {
+              "id": "cdtr-8b993e93-9ee4-473a-bcde-31d32ee002c9",
+              "type": "col",
+              "children": [
+                {
+                  "id": "cdtr-93346253-fbe9-4ff7-bcde-75e557f35f56",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "34px",
+                                      "color": "text"
+                                    }
+                                  },
+                                  {
+                                    "type": "bold"
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "Why choose us"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "cdtr-c5bdd974-1986-4926-851e-4dc24aad76fa",
+                  "type": "spacer",
+                  "children": [],
+                  "props": {
+                    "height": 8,
+                    "size": "8px",
+                    "style": {},
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true
+                  }
+                },
+                {
+                  "id": "cdtr-a9834c3d-aff6-4365-bf5d-2f80f393410a",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "16px",
+                                      "color": "text"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "Everything you need, nothing you don't."
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {},
+                "lg": 12,
+                "justify": "center"
+              }
+            },
+            {
+              "id": "cdtr-e3fc5dc4-acee-4a80-89ab-6472b7b400a8",
+              "type": "col",
+              "children": [
+                {
+                  "type": "icon",
+                  "props": {
+                    "alt": "icon",
+                    "style": {
+                      "width": "48px",
+                      "height": "48px",
+                      "maxWidth": "100%",
+                      "maxHeight": "100%",
+                      "display": "inline-block"
+                    },
+                    "src": "https://img.creaditor.ai/icons/serve/System/shield-check-fill.png?width=48&height=48&color=primary"
+                  },
+                  "id": "cdtr-483923c2-caac-4cb5-ae37-33e018ebf34c"
+                },
+                {
+                  "id": "cdtr-cde81d85-15d1-482a-8664-1245d7cd4b72",
+                  "type": "spacer",
+                  "children": [],
+                  "props": {
+                    "height": 10,
+                    "size": "10px",
+                    "style": {},
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true
+                  }
+                },
+                {
+                  "id": "cdtr-8d8dfd84-67e4-42eb-a43e-056ffcb2ed8d",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "22px",
+                                      "color": "text"
+                                    }
+                                  },
+                                  {
+                                    "type": "bold"
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "Secure"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "cdtr-a42bd7c4-17b3-446e-9f94-81786d0c89f3",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "16px",
+                                      "color": "text"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "Enterprise-grade protection out of the box."
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {},
+                "lg": 4,
+                "justify": "center"
+              }
+            },
+            {
+              "id": "cdtr-b0fea571-a34d-4c55-a815-f4bf3b4748dd",
+              "type": "col",
+              "children": [
+                {
+                  "type": "icon",
+                  "props": {
+                    "alt": "icon",
+                    "style": {
+                      "width": "48px",
+                      "height": "48px",
+                      "maxWidth": "100%",
+                      "maxHeight": "100%",
+                      "display": "inline-block"
+                    },
+                    "src": "https://img.creaditor.ai/icons/serve/System/time-fill.png?width=48&height=48&color=primary"
+                  },
+                  "id": "cdtr-175f65fd-a18c-4ad8-8424-a04bb43fccaa"
+                },
+                {
+                  "id": "cdtr-d6faff8e-6a39-4192-89eb-f03a4d668a5f",
+                  "type": "spacer",
+                  "children": [],
+                  "props": {
+                    "height": 10,
+                    "size": "10px",
+                    "style": {},
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true
+                  }
+                },
+                {
+                  "id": "cdtr-68244aec-b943-4601-b1a8-d30ce3f3a56b",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "22px",
+                                      "color": "text"
+                                    }
+                                  },
+                                  {
+                                    "type": "bold"
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "Fast"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "cdtr-90cf6000-15e7-4395-adc1-f5e854bc48be",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "16px",
+                                      "color": "text"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "Live in minutes, not weeks."
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {},
+                "lg": 4,
+                "justify": "center"
+              }
+            },
+            {
+              "id": "cdtr-7a81a62f-37d8-4143-906b-56b9ac6edfaa",
+              "type": "col",
+              "children": [
+                {
+                  "type": "icon",
+                  "props": {
+                    "alt": "icon",
+                    "style": {
+                      "width": "48px",
+                      "height": "48px",
+                      "maxWidth": "100%",
+                      "maxHeight": "100%",
+                      "display": "inline-block"
+                    },
+                    "src": "https://img.creaditor.ai/icons/serve/System/star-fill.png?width=48&height=48&color=primary"
+                  },
+                  "id": "cdtr-9c2f1206-d9bc-4ee6-b03c-9f5e8e0004a2"
+                },
+                {
+                  "id": "cdtr-7e7d0088-33e7-447f-9ae5-7bd08f77c2fc",
+                  "type": "spacer",
+                  "children": [],
+                  "props": {
+                    "height": 10,
+                    "size": "10px",
+                    "style": {},
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true
+                  }
+                },
+                {
+                  "id": "cdtr-0a38877b-e820-4cee-8e1e-849ae4404557",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "22px",
+                                      "color": "text"
+                                    }
+                                  },
+                                  {
+                                    "type": "bold"
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "Loved"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "cdtr-2519b726-db67-434c-818f-b3f7a7ee4eb2",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "16px",
+                                      "color": "text"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "Trusted by thousands of happy customers."
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {},
+                "lg": 4,
+                "justify": "center"
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "padding": "64px 24px"
+            }
+          }
+        }
+      ],
+      "props": {
+        "opacity": 1,
+        "classList": [],
+        "style": {
+          "minHeight": "40vh",
+          "background": "transparent",
+          "width": "100%"
+        }
+      }
+    }
+  },
+  {
+    "id": "testimonial",
+    "name": "Testimonial — centered quote",
+    "category": "testimonial",
+    "icon": [
+      {
+        "type": "text"
+      }
+    ],
+    "tags": [
+      "testimonial",
+      "quote",
+      "social-proof"
+    ],
+    "body": {
+      "id": "cdtr-0f8cbc51-a128-44bf-a65a-bc16f6555512",
+      "type": "section",
+      "layer": "1",
+      "children": [
+        {
+          "id": "cdtr-768e4d09-55ca-4519-b9a7-ef0c03550fde",
+          "type": "block",
+          "children": [
+            {
+              "id": "cdtr-dc9f9a79-21cd-405d-9f2a-68f5a136df33",
+              "type": "col",
+              "children": [
+                {
+                  "id": "cdtr-62c673ea-0091-4118-8df6-7bb4388967b9",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "30px",
+                                      "color": "text"
+                                    }
+                                  },
+                                  {
+                                    "type": "bold"
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "\"This product completely changed how our team works. We shipped in days.\""
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "id": "cdtr-16e0bcce-0966-4eef-932d-b9acba81e2b0",
+                  "type": "spacer",
+                  "children": [],
+                  "props": {
+                    "height": 20,
+                    "size": "20px",
+                    "style": {},
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true
+                  }
+                },
+                {
+                  "id": "cdtr-91f04c3a-aa9f-4f57-91a2-6acfdfd09317",
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.4",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "Arial",
+                                      "fontSize": "16px",
+                                      "color": "accent"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "— Alex Rivera, CEO at Acme"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {},
+                "lg": 12,
+                "justify": "center"
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "width": "100%",
+              "maxWidth": "1200px",
+              "padding": "80px 24px"
+            }
+          }
+        }
+      ],
+      "props": {
+        "opacity": 1,
+        "classList": [],
+        "style": {
+          "minHeight": "40vh",
+          "background": "surface",
+          "width": "100%"
+        }
+      }
+    }
+  }
+]

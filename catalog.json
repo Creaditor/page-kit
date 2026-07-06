@@ -1,0 +1,531 @@
+{
+  "accordion": {
+    "body": {
+      "type": "accordion",
+      "props": {
+        "style": {
+          "width": "100%",
+          "maxWidth": "700px",
+          "margin": "0 auto",
+          "fontFamily": "Arial"
+        },
+        "items": [
+          {
+            "title": "Getting Started",
+            "content": "Add your content here for the first section of the accordion."
+          },
+          {
+            "title": "More Information",
+            "content": "You can expand this section for further details."
+          }
+        ]
+      }
+    },
+    "group": "elements"
+  },
+  "ai": {
+    "body": {
+      "type": "ai",
+      "props": {
+        "html": "",
+        "style": {
+          "display": "block",
+          "width": "100%",
+          "height": "100vh"
+        }
+      }
+    },
+    "group": "elements"
+  },
+  "anchor": {
+    "body": {
+      "type": "anchor",
+      "props": {}
+    },
+    "group": "element"
+  },
+  "autotype": {
+    "body": {
+      "type": "autotype",
+      "props": {
+        "style": {},
+        "speed": 50,
+        "sleepBetween": 1000,
+        "text": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Hello World"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "group": "elements"
+  },
+  "bar-chart": {
+    "body": {
+      "type": "bar-chart",
+      "props": {
+        "style": {},
+        "type": "barChart",
+        "width": 500,
+        "height": 300,
+        "data": [
+          {
+            "items": [
+              {
+                "key": "uv",
+                "value": 4000
+              },
+              {
+                "key": "pv",
+                "value": 2400
+              }
+            ],
+            "color": "black"
+          },
+          {
+            "items": [
+              {
+                "key": "uv",
+                "value": 3000
+              },
+              {
+                "key": "pv",
+                "value": 2400
+              }
+            ],
+            "color": "black"
+          }
+        ]
+      }
+    },
+    "group": "elements"
+  },
+  "card": {
+    "body": {
+      "type": "card",
+      "props": {},
+      "children": [
+        {
+          "type": "image",
+          "props": {
+            "alt": "image",
+            "width": "245px",
+            "height": "150px",
+            "style": {
+              "height": "auto",
+              "width": "245px",
+              "maxWidth": "100%",
+              "minWidth": "30px",
+              "objectFit": "fill"
+            },
+            "src": "https://api.creaditor.com/images/placeholder?width=245&height=150",
+            "isOpenWithModal": false,
+            "isFullWidthOnMobile": false,
+            "isRatioLock": true
+          }
+        }
+      ]
+    },
+    "group": "cols"
+  },
+  "count-up": {
+    "body": {
+      "type": "count-up",
+      "props": {
+        "style": {
+          "fontSize": "80px",
+          "fontFamily": "Arial"
+        },
+        "breakPoints": {
+          "sm": {
+            "style": {
+              "fontSize": "40px"
+            }
+          }
+        },
+        "startVal": 0,
+        "endVal": 100,
+        "duration": 2,
+        "prefix": "",
+        "suffix": "",
+        "separator": ""
+      }
+    },
+    "group": "elements"
+  },
+  "countdown": {
+    "body": {
+      "type": "countdown",
+      "props": {
+        "hasColons": true,
+        "hasLabels": true,
+        "date": "Wed Jul 08 2026 09:51:18 GMT-0600 (Mountain Daylight Time)",
+        "language": "he",
+        "style": {},
+        "classList": [],
+        "containerWidth": "300px",
+        "containerBg": "transparent",
+        "containerRadius": "0",
+        "colBg": "transparent",
+        "colBorderStyle": "none",
+        "colBorderSize": "0",
+        "colBorderColor": "none",
+        "colBorderPadding": "0",
+        "colBorderRadius": "100px",
+        "numberSize": "30px",
+        "numberColor": "black",
+        "numberFontFamily": "Arial",
+        "labelSize": "14px",
+        "labelColor": "black",
+        "labelfontFamily": "Arial"
+      }
+    },
+    "group": "elements"
+  },
+  "form": {
+    "body": {
+      "type": "form",
+      "props": {
+        "style": {},
+        "classList": [],
+        "items": [
+          {
+            "type": "input",
+            "id": "name",
+            "props": {
+              "type": "text",
+              "placeholder": "",
+              "label_field": {
+                "props": {
+                  "text": "Name",
+                  "style": {}
+                }
+              },
+              "isRequired": false,
+              "style": {
+                "width": "100%"
+              },
+              "paramName": "name"
+            }
+          },
+          {
+            "type": "input",
+            "id": "email",
+            "props": {
+              "type": "email",
+              "placeholder": "",
+              "label_field": {
+                "props": {
+                  "text": "Email",
+                  "style": {}
+                }
+              },
+              "isRequired": false,
+              "style": {
+                "width": "100%"
+              },
+              "paramName": "email"
+            }
+          },
+          {
+            "type": "textarea",
+            "id": "message",
+            "props": {
+              "label_field": {
+                "props": {
+                  "text": "Message",
+                  "style": {}
+                }
+              },
+              "isRequired": false,
+              "minRows": 5,
+              "style": {
+                "width": "100%"
+              },
+              "paramName": "message"
+            }
+          },
+          {
+            "type": "button",
+            "id": "submit",
+            "props": {
+              "text": "Submit",
+              "style": {
+                "minHeight": "40px",
+                "background": "#000",
+                "color": "#fff",
+                "fontSize": "16px",
+                "fontFamily": "Arial"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "group": "elements"
+  },
+  "giphy": {
+    "body": {
+      "type": "giphy",
+      "props": {
+        "alt": "GIF",
+        "style": {
+          "height": "auto",
+          "width": "200px",
+          "maxWidth": "100%"
+        },
+        "src": "https://media4.giphy.com/media/XyJPNKBskIDWR3Md8K/200.gif?cid=ae5937bem4wy4fmcncy5k1tua9oy296dycjflecot1qf8ove&ep=v1_gifs_search&rid=200.gif&ct=g"
+      }
+    },
+    "group": "elements"
+  },
+  "horizontal-timeline": {
+    "group": "elements",
+    "body": {
+      "type": "horizontal-timeline",
+      "props": {
+        "style": {
+          "fontFamily": "Arial"
+        },
+        "items": [
+          {
+            "label": "Version 1 Launch",
+            "date": "2023",
+            "description": "Released v1.0 with interactive features and onboarding."
+          },
+          {
+            "label": "Mobile Expansion",
+            "date": "2024",
+            "description": "Added mobile support and analytics dashboard."
+          },
+          {
+            "label": "Advanced Integrations",
+            "date": "2025",
+            "description": "Launched team features and AI suggestions."
+          }
+        ]
+      }
+    }
+  },
+  "html": {
+    "body": {
+      "type": "html",
+      "props": {
+        "code": {
+          "html": ""
+        }
+      }
+    },
+    "group": "elements"
+  },
+  "icon": {
+    "body": {
+      "type": "icon",
+      "props": {
+        "alt": "icon",
+        "style": {
+          "width": "24px",
+          "height": "24px",
+          "maxWidth": "100%",
+          "maxHeight": "100%",
+          "display": "inline-block"
+        },
+        "src": "https://img.creaditor.ai/icons/serve/Arrows/arrow-right-line.png?width=24&height=24&color=000000"
+      }
+    },
+    "group": "elements"
+  },
+  "iframe": {
+    "body": {
+      "type": "iframe",
+      "props": {
+        "src": "",
+        "style": {
+          "display": "block",
+          "margin": "auto",
+          "width": "400px",
+          "height": "300px"
+        }
+      }
+    },
+    "group": "elements"
+  },
+  "map": {
+    "body": {
+      "type": "map",
+      "props": {
+        "width": 200,
+        "height": 200,
+        "style": {
+          "height": "200px",
+          "width": "200px"
+        },
+        "address": "תל אביב"
+      }
+    },
+    "group": "elements"
+  },
+  "menu-widget": {
+    "body": {
+      "type": "menu-widget",
+      "props": {
+        "justify": "flex-start",
+        "style": {
+          "marginBottom": "0",
+          "width": "100%"
+        },
+        "items": [
+          {
+            "id": "cdtr-menu-item-1",
+            "text": "Home",
+            "selected": true,
+            "onClick": {},
+            "style": {
+              "fontSize": "16px",
+              "color": "#000000",
+              "backgroundColor": "#ffffff"
+            }
+          },
+          {
+            "id": "cdtr-menu-item-2",
+            "text": "About",
+            "selected": false,
+            "onClick": {},
+            "style": {
+              "fontSize": "16px",
+              "color": "#000000",
+              "backgroundColor": "#ffffff"
+            }
+          }
+        ]
+      }
+    },
+    "group": "elements"
+  },
+  "pie-chart": {
+    "body": {
+      "type": "pie-chart",
+      "props": {
+        "style": {},
+        "data": [
+          {
+            "title": "One",
+            "value": 20,
+            "color": "#E38627"
+          },
+          {
+            "title": "Two",
+            "value": 20,
+            "color": "#C13C37"
+          },
+          {
+            "title": "Three",
+            "value": 60,
+            "color": "#6A2135"
+          }
+        ]
+      }
+    },
+    "group": "elements"
+  },
+  "qr": {
+    "body": {
+      "type": "qr",
+      "props": {
+        "link": "https://example.com",
+        "size": 200,
+        "style": {
+          "width": "200px",
+          "height": "200px",
+          "display": "block"
+        }
+      }
+    },
+    "group": "elements"
+  },
+  "social": {
+    "body": {
+      "type": "social",
+      "props": {
+        "style": {
+          "gap": "10px"
+        },
+        "items": [
+          {
+            "id": "ID_PLACEHOLDER",
+            "fgColor": "",
+            "bgColor": "",
+            "style": {
+              "width": "30px",
+              "height": "30px"
+            },
+            "url": "https://youtube.com",
+            "src": "https://panel.sendmsg.co.il/templateContentImages/images/CreaditorGeneral/youtube.png"
+          },
+          {
+            "id": "ID_PLACEHOLDER",
+            "fgColor": "",
+            "bgColor": "",
+            "style": {
+              "width": "30px",
+              "height": "30px"
+            },
+            "src": "https://panel.sendmsg.co.il/templateContentImages/images/CreaditorGeneral/snapchat.png"
+          },
+          {
+            "id": "ID_PLACEHOLDER",
+            "fgColor": "",
+            "bgColor": "",
+            "style": {
+              "width": "30px",
+              "height": "30px"
+            },
+            "url": "https://whatsapp.com",
+            "src": "https://panel.sendmsg.co.il/templateContentImages/images/CreaditorGeneral/whatsapp.png"
+          }
+        ]
+      }
+    },
+    "group": "elements"
+  },
+  "svg": {
+    "body": {
+      "type": "svg",
+      "props": {
+        "content": "<path d=\"M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z\"/>",
+        "width": "40px",
+        "style": {
+          "fill": "#000000",
+          "width": "40px"
+        }
+      }
+    },
+    "group": "elements"
+  },
+  "video": {
+    "body": {
+      "type": "video",
+      "props": {
+        "height": "300px",
+        "width": "400px",
+        "playing": false,
+        "loop": false,
+        "light": false,
+        "controls": true,
+        "autoPlay": false,
+        "muted": false,
+        "url": "https://www.youtube.com/watch?v=04Or_U9OexU"
+      }
+    },
+    "group": "elements"
+  }
+}

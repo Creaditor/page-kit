@@ -89,7 +89,7 @@ declare namespace pageKit {
     buildElement(spec?: Record<string, unknown>, palette?: Palette): Tree;
     makeSection(opts?: Record<string, unknown>): SectionResult;
     spreadWidths(n: number): number[];
-    composeSection(pattern: string, args?: Record<string, unknown>, palette?: Palette, pageBg?: string): SectionResult;
+    composeSection(pattern: string, args?: Record<string, unknown>, palette?: Palette, pageBg?: string, lang?: string): SectionResult;
     /** Role-based landing/sales section (hero, problem, solution, pricing, leadform,
      *  about, testimonials, …) built from LLM-authored copy + the brand palette. */
     composeLandingSection(pattern: string, copy?: Record<string, unknown>, palette?: Palette): { section: Tree };

@@ -12,6 +12,7 @@
 // single-sourced too (see editor-api/src/app.js `edit:patch` subscriber).
 
 const builder = require('./builder');
+const { composeLandingSection } = require('./landingSections');
 const SECTION_TEMPLATES = require('./sections.json');
 
 // Every element type a page can contain: the tuned core content types plus the
@@ -37,6 +38,7 @@ const editPatch = (siteId, userId, transactions, transactionId) => ({
 
 module.exports = {
   ...builder,
+  composeLandingSection,
   SECTION_TEMPLATES,
   ELEMENT_TYPES,
   editPatch,

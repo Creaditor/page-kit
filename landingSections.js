@@ -25,7 +25,7 @@ const MUTED = '#6C6284';
 const BODY = '#40364F';
 const LINE = '#ECE5F4';
 const LIGHT = '#F7F5FC';
-const CONTENT_WIDTH = 1080; // px, page content width (bypasses editor max-width)
+const CONTENT_WIDTH = 1240; // px content width (width only; block max-width left to the editor)
 
 // ── element helpers ──────────────────────────────────────────────────────────
 // Brand font — page-kit's makeText defaults to Arial, which looks generic on a

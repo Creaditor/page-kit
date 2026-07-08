@@ -680,16 +680,12 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff', la
       const footerBg = resolvedBg || '#1a1a2e';
       const footerFg = readableTextOn(footerBg);
       const footerMuted = footerFg === '#ffffff' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)';
+      // Everything in one centered column: name → socials → copyright.
       const col0 = compact([
         args.business_name ? cHeading(args.business_name, '20px', footerFg) : null,
-        socials.length ? spacer(24) : null,
-        socials.length ? buildCatalogElement('social', {
-          props: {
-            style: { gap: '16px', justifyContent: 'center' },
-            items: socials.map((s) => ({ id: cid(), fgColor: '', bgColor: '', style: { width: '32px', height: '32px' }, url: s.url || '#', src: s.src || '' })),
-          },
-        }, palette) : null,
-        spacer(24),
+        socials.length ? spacer(20) : null,
+        ...socials.map((s) => makeImage(s.src || '', { alt: s.platform || '', width: 28, height: 28 })),
+        spacer(16),
         args.copyright ? cPara(args.copyright, footerMuted) : null,
       ]);
       return makeSection({ columns: [12], background: footerBg, align: 'center', minHeight: 'auto', padding: '48px 48px', colChildren: [col0] });

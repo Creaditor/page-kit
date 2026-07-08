@@ -376,19 +376,21 @@ const buildCatalogElement = (type, spec = {}, palette = {}) => {
 // `palette` supplies on-brand defaults so an element is on-brand even when the
 // caller omits explicit colors; an explicit spec.color/background always wins.
 const buildElement = (spec = {}, palette = {}) => {
+  const dir = spec.direction; // undefined falls through to factory defaults
+  const align = spec.align;
   switch (spec.type) {
     case 'heading':
       return makeText(spec.text, {
         fontSize: spec.fontSize || '34px',
         color: spec.color || palette.text || 'rgb(56, 56, 56)',
-        align: spec.align,
+        align, direction: dir,
         bold: true,
       });
     case 'text':
       return makeText(spec.text, {
         fontSize: spec.fontSize || '16px',
         color: spec.color || palette.text || 'rgb(56, 56, 56)',
-        align: spec.align,
+        align, direction: dir,
       });
     case 'list':
       // Bullet / icon list. Icon defaults to a brand-colored check; pass a name
@@ -396,13 +398,13 @@ const buildElement = (spec = {}, palette = {}) => {
       return makeList(spec.items, {
         fontSize: spec.fontSize || '20px',
         color: spec.color || palette.text || 'rgb(56, 56, 56)',
-        align: spec.align,
+        align, direction: dir,
         icon: spec.icon || 'check',
         iconColor: spec.iconColor || palette.primary || '#000000',
       });
     case 'button': {
       const background = spec.background || palette.primary || '#6c47ff';
-      return makeButton(spec.text, { href: spec.href, background, color: spec.color || readableTextOn(background) });
+      return makeButton(spec.text, { href: spec.href, background, color: spec.color || readableTextOn(background), direction: dir });
     }
     case 'image':
       return makeImage(spec.src, { alt: spec.alt, width: spec.width, height: spec.height });
@@ -428,9 +430,9 @@ const makeSection = (opts = {}) => {
   const {
     columns = [12],
     background = 'transparent',
-    padding = '64px 24px',
+    padding = '72px 48px',
     align = 'center',
-    maxWidth = '1200px',
+    maxWidth = '1100px',
     minHeight = '40vh',
     style = {},
     colChildren = [],
@@ -486,12 +488,14 @@ const isGradient = (v) => typeof v === 'string' && /gradient\s*\(/i.test(v);
 // section→block→cols→elements body (published as ONE atomic CREATE — app.js
 // recurses children, so no multi-call orchestration). Colors derive from the
 // palette; on a colored background, text/headings flip to a readable contrast.
-const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') => {
-  const el = (spec) => buildElement(spec, palette);
+const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff', lang = 'he') => {
+  const dir = lang === 'he' ? 'rtl' : 'ltr';
+  const textAlign = lang === 'he' ? 'right' : 'left';
+  const el = (spec) => buildElement({ ...spec, align: spec.align || textAlign, direction: dir }, palette);
   const heading = (text, fontSize, color) => el({ type: 'heading', text: text || '', fontSize, color });
   const para = (text, color) => el({ type: 'text', text: text || '', color });
-  const spacer = (height) => el({ type: 'spacer', height });
-  const button = (b, background) => (b && b.text ? el({ type: 'button', text: b.text, href: b.href, background }) : null);
+  const spacer = (height) => buildElement({ type: 'spacer', height }, palette);
+  const button = (b, background) => (b && b.text ? buildElement({ type: 'button', text: b.text, href: b.href, background, direction: dir }, palette) : null);
   const compact = (arr) => arr.filter(Boolean);
   const resolvedBg = args.background ? resolveColorToken(args.background, palette) : undefined;
   const onColored = resolvedBg && resolvedBg !== 'transparent';
@@ -499,16 +503,22 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') =>
   // page background (transparent sections show the page, usually light).
   // Gradients can't be parsed as a single color — assume dark/vibrant → white text.
   const fg = isGradient(resolvedBg) ? '#ffffff' : readableTextOn(onColored ? resolvedBg : pageBg);
-  const header = (h, sub) => compact([h ? heading(h, '34px', fg) : null, sub ? spacer(8) : null, sub ? para(sub, fg) : null, spacer(24)]);
+  const mutedFg = onColored || isGradient(resolvedBg) ? fg : (palette.text ? palette.text + 'cc' : '#4a5568');
+  const header = (h, sub) => compact([h ? heading(h, '40px', fg) : null, sub ? spacer(14) : null, sub ? para(sub, mutedFg) : null, spacer(40)]);
+  // Centered header for card-based sections (features, testimonials, how-it-works, pricing, stats).
+  const centeredHeading = (text, fontSize, color) => buildElement({ type: 'heading', text: text || '', fontSize, color, align: 'center', direction: dir }, palette);
+  const centeredPara = (text, color) => buildElement({ type: 'text', text: text || '', color, align: 'center', direction: dir }, palette);
+  const centeredHeader = (h, sub) => compact([h ? centeredHeading(h, '40px', fg) : null, sub ? spacer(12) : null, sub ? centeredPara(sub, mutedFg) : null, spacer(40)]);
 
   switch (pattern) {
     case 'hero': {
       const hasImg = !!args.image;
+      const heroSubFg = onColored || isGradient(resolvedBg) ? fg : mutedFg;
       const col0 = compact([
-        heading(args.heading || 'Your headline here', '52px', fg),
-        spacer(20),
-        args.subheading ? para(args.subheading, fg) : null,
-        args.cta ? spacer(32) : null,
+        heading(args.heading || 'Your headline here', '56px', fg),
+        spacer(24),
+        args.subheading ? para(args.subheading, heroSubFg) : null,
+        spacer(40),
         button(args.cta, palette.primary),
       ]);
       const colChildren = hasImg ? [col0, compact([el({ type: 'image', src: args.image })])] : [col0];
@@ -523,12 +533,12 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') =>
       const on = isGradient(bg) ? '#ffffff' : readableTextOn(bg);
       const col0 = compact([
         heading(args.heading || 'Ready to get started?', '40px', on),
-        args.subheading ? spacer(12) : null,
+        spacer(16),
         args.subheading ? para(args.subheading, on) : null,
-        args.cta ? spacer(28) : null,
+        spacer(36),
         button(args.cta, '#ffffff'), // white button pops on the gradient/colored band
       ]);
-      return makeSection({ columns: [12], background: bg, align: 'center', minHeight: '40vh', colChildren: [col0], style: { borderRadius: '24px', margin: '0 16px' } });
+      return makeSection({ columns: [12], background: bg, align: 'center', minHeight: '40vh', colChildren: [col0], style: { borderRadius: '24px' } });
     }
     case 'features': {
       const items = Array.isArray(args.items) ? args.items : [];
@@ -536,20 +546,24 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') =>
       const columns = [];
       const colChildren = [];
       const colStyles = [];
-      if (args.heading || args.subheading) { columns.push(12); colChildren.push(header(args.heading, args.subheading)); colStyles.push({}); }
+      if (args.heading || args.subheading) { columns.push(12); colChildren.push(centeredHeader(args.heading, args.subheading)); colStyles.push({}); }
       // Cards are ON by default — only skip with explicit card_style: false.
       const useCards = args.card_style !== false;
-      const cardStyle = useCards ? { background: '#ffffff', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', padding: '32px 24px', margin: '8px' } : {};
+      const cardStyle = useCards ? { background: '#ffffff', borderRadius: '20px', boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: '40px 28px 36px', margin: '8px' } : {};
       const itemFg = useCards ? readableTextOn('#ffffff') : fg;
+      const itemMuted = useCards ? '#6b7280' : mutedFg;
       const iconBg = (palette.primary || '#6c47ff') + '1a'; // 10% opacity brand tint for icon circle
+      // Default icons when none specified — gives every card a visual anchor.
+      const defaultIcons = ['star', 'shield', 'check-circle', 'settings', 'like', 'clock'];
       items.forEach((it, i) => {
+        const iconName = it.icon || defaultIcons[i % defaultIcons.length];
         columns.push(widths[i]);
         colChildren.push(compact([
-          it.icon ? el({ type: 'icon', props: { src: iconUrl(it.icon, palette.primary || '#000000').replace('width=24&height=24', 'width=48&height=48'), style: { width: '56px', height: '56px', padding: '4px', borderRadius: '50%', background: iconBg } } }) : null,
-          it.icon ? spacer(16) : null,
-          heading(it.title, '22px', itemFg),
-          spacer(8),
-          it.text ? para(it.text, itemFg) : null,
+          el({ type: 'icon', props: { src: iconUrl(iconName, palette.primary || '#000000').replace('width=24&height=24', 'width=48&height=48'), style: { width: '56px', height: '56px', padding: '4px', borderRadius: '50%', background: iconBg } } }),
+          spacer(24),
+          heading(it.title, '20px', itemFg),
+          spacer(12),
+          it.text ? para(it.text, itemMuted) : null,
         ]));
         colStyles.push(cardStyle);
       });
@@ -563,9 +577,9 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') =>
       const columns = [];
       const colChildren = [];
       const colStyles = [];
-      if (args.heading || args.subheading) { columns.push(12); colChildren.push(header(args.heading, args.subheading)); colStyles.push({}); }
-      const cardStyle = { background: '#ffffff', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', padding: '32px 24px', margin: '8px' };
-      const tierFg = readableTextOn('#ffffff');
+      if (args.heading || args.subheading) { columns.push(12); colChildren.push(centeredHeader(args.heading, args.subheading)); colStyles.push({}); }
+      const cardStyle = { background: '#ffffff', borderRadius: '20px', boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: '40px 28px 36px', margin: '8px' };
+      const tierFg = '#111827';
       tiers.forEach((t, i) => {
         columns.push(widths[i]);
         colChildren.push(compact([
@@ -588,9 +602,9 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') =>
         heading(args.heading || 'FAQ', '34px', fg),
         args.subheading ? para(args.subheading, fg) : null,
         spacer(16),
-        el({ type: 'accordion', props: { items } }),
+        buildCatalogElement('accordion', { props: { items } }, palette),
       ]);
-      return makeSection({ columns: [12], background: resolvedBg, align: 'center', colChildren: [col0] });
+      return makeSection({ columns: [12], background: resolvedBg, align: 'center', minHeight: 'auto', colChildren: [col0] });
     }
     case 'stats': {
       const items = Array.isArray(args.items) ? args.items : [];
@@ -598,7 +612,7 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') =>
       const columns = [];
       const colChildren = [];
       const colStyles = [];
-      if (args.heading) { columns.push(12); colChildren.push(compact([heading(args.heading, '34px', fg)])); colStyles.push({}); }
+      if (args.heading) { columns.push(12); colChildren.push(compact([centeredHeading(args.heading, '40px', fg)])); colStyles.push({}); }
       // On a colored/gradient band, use semi-transparent white cards; on light bg, use solid white cards.
       const onDark = onColored || isGradient(resolvedBg);
       const statCard = onDark
@@ -622,15 +636,17 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') =>
       const columns = [];
       const colChildren = [];
       const colStyles = [];
-      if (args.heading || args.subheading) { columns.push(12); colChildren.push(header(args.heading, args.subheading)); colStyles.push({}); }
-      const cardStyle = { background: '#ffffff', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', padding: '32px 24px', margin: '8px' };
-      const cardFg = readableTextOn('#ffffff');
+      if (args.heading || args.subheading) { columns.push(12); colChildren.push(centeredHeader(args.heading, args.subheading)); colStyles.push({}); }
+      const cardStyle = { background: '#ffffff', borderRadius: '20px', boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: '36px 28px', margin: '8px' };
       items.forEach((it, i) => {
         columns.push(widths[i]);
         colChildren.push(compact([
-          para(`\u201C${it.text}\u201D`, cardFg),
-          spacer(16),
-          heading(it.title, '16px', palette.primary || cardFg),
+          // Star rating
+          para('\u2B50\u2B50\u2B50\u2B50\u2B50', '#f59e0b'),
+          spacer(14),
+          para(`\u201C${it.text}\u201D`, '#374151'),
+          spacer(20),
+          heading(it.title, '15px', '#111827'),
         ]));
         colStyles.push(cardStyle);
       });
@@ -643,19 +659,18 @@ const composeSection = (pattern, args = {}, palette = {}, pageBg = '#ffffff') =>
       const columns = [];
       const colChildren = [];
       const colStyles = [];
-      if (args.heading || args.subheading) { columns.push(12); colChildren.push(header(args.heading, args.subheading)); colStyles.push({}); }
-      const stepCard = { background: '#ffffff', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', padding: '32px 24px', margin: '8px' };
-      const stepFg = readableTextOn('#ffffff');
+      if (args.heading || args.subheading) { columns.push(12); colChildren.push(centeredHeader(args.heading, args.subheading)); colStyles.push({}); }
+      const stepCard = { background: '#ffffff', borderRadius: '20px', boxShadow: '0 4px 24px rgba(0,0,0,0.07)', padding: '40px 28px 36px', margin: '8px' };
       const numBg = (palette.primary || '#6c47ff') + '1a';
       items.forEach((it, i) => {
         columns.push(widths[i]);
         colChildren.push(compact([
-          // Step number in a brand-tinted circle
-          el({ type: 'count-up', props: { endVal: i + 1, suffix: '', prefix: '', style: { fontSize: '36px', color: palette.primary || '#6c47ff', fontWeight: 'bold', width: '56px', height: '56px', lineHeight: '56px', textAlign: 'center', borderRadius: '50%', background: numBg } } }),
-          spacer(16),
-          heading(it.title, '22px', stepFg),
-          spacer(8),
-          it.text ? para(it.text, stepFg) : null,
+          // Step number as styled text in a brand-tinted circle
+          heading(String(i + 1), '28px', palette.primary || '#6c47ff'),
+          spacer(20),
+          heading(it.title, '20px', '#111827'),
+          spacer(12),
+          it.text ? para(it.text, '#6b7280') : null,
         ]));
         colStyles.push(stepCard);
       });

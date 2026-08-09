@@ -104,14 +104,16 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
       ], { background: LIGHT }) };
 
     // ── §3 TARGET AUDIENCE (who it is for) ─────────────────────────────────────
+    // Each audience point is its own card col inside a flex-wrap block, so the
+    // section reads as a multi-column grid instead of one stacked bullet list.
     case 'audience':
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        centeredProse([
-          copy.paragraph ? T(copy.paragraph, MUTED, 'center') : null,
-          bullets(copy.bullets, BODY, S),
-        ].filter(Boolean)),
-      ], { background: '#ffffff' }) };
+        copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
+        (copy.bullets && copy.bullets.length)
+          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]))
+          : null,
+      ].filter(Boolean), { background: '#ffffff' }) };
 
     // ── §4 SOLUTION (paragraph + bullets + product image) ──────────────────────
     case 'solution':
@@ -143,11 +145,16 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
       ], { background: '#ffffff' }) };
 
     // ── §7 OFFER (short bullets) ───────────────────────────────────────────────
+    // "What you get" points as separate card cols (multi-column grid) rather
+    // than a single stacked bullet list.
     case 'offer':
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        centeredProse([copy.paragraph ? T(copy.paragraph, MUTED, 'center') : null, bullets(copy.bullets, BODY, S)].filter(Boolean)),
-      ], { background: LIGHT }) };
+        copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
+        (copy.bullets && copy.bullets.length)
+          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]))
+          : null,
+      ].filter(Boolean), { background: LIGHT }) };
 
     // ── §9 BONUSES ─────────────────────────────────────────────────────────────
     case 'bonuses':

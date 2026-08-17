@@ -35,13 +35,24 @@ const heading = (text, fontSize, color, align) =>
   makeText(text || '', { fontSize, color, align, bold: true, fontFamily: FONT });
 const para = (text, color, align) =>
   makeText(text || '', { fontSize: '17px', color, align, fontFamily: FONT });
-const button = (text, background, color) => {
-  const b = makeButton(text || '', { background, color, borderRadius: '999px', fontSize: '18px' });
+// `href` is optional: makeButton defaults it to '#', which is what every
+// pattern except `articles` wants (a landing CTA scrolls or is wired later).
+// Passing it through is what lets each article card carry its own destination.
+const button = (text, background, color, href) => {
+  const b = makeButton(text || '', { href, background, color, borderRadius: '999px', fontSize: '18px' });
   b.props.style.fontFamily = FONT;
   return b;
 };
 const bullets = (items, color, iconColor) =>
   makeList(Array.isArray(items) ? items : [], { icon: 'check', iconColor, color, fontSize: '17px', fontFamily: FONT });
+// Thumbnail for a card inside a row, as opposed to `photo` which is a
+// full-width feature image. Shorter, and a smaller radius so it sits INSIDE
+// the card's 22px corners instead of fighting them.
+function cardPhoto(src) {
+  const img = makeImage(src, { alt: '', width: 640, height: 360 });
+  img.props.style = { ...img.props.style, width: '100%', height: '180px', borderRadius: '14px', objectFit: 'cover', marginBottom: '4px' };
+  return img;
+}
 function photo(src, w, h) {
   const img = makeImage(src, { alt: '', width: w, height: h });
   img.props.style = { ...img.props.style, width: '100%', height: `${h}px`, borderRadius: '20px', objectFit: 'cover', boxShadow: '0 24px 50px -26px rgba(0,0,0,0.28)' };
@@ -65,12 +76,12 @@ const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirectio
 // card style for multi-item rows
 //
 // `direction: rtl` is load-bearing, not decoration. These sections are
-// Hebrew-first (textAlign:'right' here, 'שם מלא' in leadform), but `textAlign`
-// only moves the TEXT. Without `direction` the flex row still lays out
-// left-to-right, so item 1 renders leftmost when a Hebrew reader expects it
-// rightmost, and any child narrower than the card (the buttons) is pinned to
-// the LTR start edge, i.e. the wrong side. Field report 260814: "the design is
-// ugly, we are in Hebrew and it's LTR".
+// Hebrew-first (textAlign:'right' here, 'שם מלא' in leadform, 'קראו עוד' in
+// articles), but `textAlign` only moves the TEXT. Without `direction` the flex
+// row still lays out left-to-right, so item 1 renders leftmost when a Hebrew
+// reader expects it rightmost, and any child narrower than the card (the
+// buttons) is pinned to the LTR start edge, i.e. the wrong side. Field report
+// 260814: "the design is ugly, we are in Hebrew and it's LTR".
 const card = (extra = {}) => ({
   display: 'flex', flexDirection: 'column', gap: '10px', background: '#ffffff', borderRadius: '22px',
   padding: '28px 26px', border: `1px solid ${LINE}`, boxShadow: '0 18px 40px -24px rgba(0,0,0,0.22)',
@@ -175,6 +186,41 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
           it.text ? T(it.text, BODY, 'right') : null,
         ].filter(Boolean))),
       ], { background: '#ffffff' }) };
+
+    // ── ARTICLES (linked cards: image + headline + excerpt + its OWN button) ───
+    // The only pattern where each ITEM carries its own destination. Every other
+    // landing pattern has at most one `cta` for the whole section, which is why
+    // "two articles from my blog, each linked" used to come back as a bullet
+    // list: `bonuses` was the closest fit and it holds title + text only.
+    //
+    // Mirrors the newsletter catalog's `article-cards`. Per-card image and url
+    // are both OPTIONAL and degrade independently -- a card with no image is
+    // still a linked card, and a card with no url is still a readable card.
+    // That matters because the source article often has one and not the other.
+    case 'articles': {
+      // One shared label across the row ("קראו עוד"), each card its own href.
+      // Same idiom as leadform's `copy.submit || 'שליחה'`.
+      const label = copy.cta || 'קראו עוד';
+      return { section: section([
+        hb(copy.eyebrow, copy.heading),
+        cardsRow((copy.items || []).map((it) => {
+          const cta = it.url ? button(label, GRAD, '#ffffff', it.url) : null;
+          if (cta) {
+            cta.props.style.fontSize = '16px';
+            // Cards in a row stretch to equal height (cardsRow sets
+            // alignItems:stretch), so pushing the button down keeps every
+            // button on the same line no matter how long each excerpt runs.
+            cta.props.style.marginTop = 'auto';
+          }
+          return [
+            it.image ? cardPhoto(it.image) : null,
+            H(it.title || '', '20px', INK, 'right'),
+            it.text ? T(it.text, BODY, 'right') : null,
+            cta,
+          ].filter(Boolean);
+        })),
+      ], { background: '#ffffff' }) };
+    }
 
     // ── §10 PRICING (offer card: options + special price + urgency) ────────────
     case 'pricing':

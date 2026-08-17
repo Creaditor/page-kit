@@ -63,12 +63,22 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
 const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', textAlign: 'center' })]);
 
 // card style for multi-item rows
+//
+// `direction: rtl` is load-bearing, not decoration. These sections are
+// Hebrew-first (textAlign:'right' here, 'שם מלא' in leadform), but `textAlign`
+// only moves the TEXT. Without `direction` the flex row still lays out
+// left-to-right, so item 1 renders leftmost when a Hebrew reader expects it
+// rightmost, and any child narrower than the card (the buttons) is pinned to
+// the LTR start edge, i.e. the wrong side. Field report 260814: "the design is
+// ugly, we are in Hebrew and it's LTR".
 const card = (extra = {}) => ({
   display: 'flex', flexDirection: 'column', gap: '10px', background: '#ffffff', borderRadius: '22px',
   padding: '28px 26px', border: `1px solid ${LINE}`, boxShadow: '0 18px 40px -24px rgba(0,0,0,0.22)',
-  boxSizing: 'border-box', textAlign: 'right', flex: '1 1 240px', margin: '10px', ...extra,
+  boxSizing: 'border-box', direction: 'rtl', textAlign: 'right', flex: '1 1 240px', margin: '10px', ...extra,
 });
-const cardsRow = (cards) => block(cards.map((kids) => col(kids, card(), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch' });
+// Set on the ROW as well as the card: the row-level value orders the cards
+// (first item on the right), the card-level value aligns each card's contents.
+const cardsRow = (cards) => block(cards.map((kids) => col(kids, card(), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch', direction: 'rtl' });
 
 /**
  * @param {string} pattern

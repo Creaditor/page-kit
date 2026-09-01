@@ -106,6 +106,40 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
   if (title) kids.push(heading(title, titleSize, onDark ? '#ffffff' : INK, 'center', palette));
   return block([col(kids, { display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', textAlign: 'center' })], { marginBottom: mb });
 }
+/**
+ * Message bubbles for the `conversation` variants.
+ *
+ * The device is not decoration for a messaging product, it is the product's own
+ * material. It also solves a real constraint: tenants flagged is_haredi_sector
+ * cannot use photographs of people at all, and the people-free stock photos the
+ * gate substitutes are reliably irrelevant (a live run put a "Hey Siri" paper
+ * macro in an About slot). A drawn conversation is always on-brand, never
+ * returns a competitor's logo on a wall, and needs no image search.
+ *
+ * `from: 'business'` is the tenant speaking, and sits on the RIGHT in Hebrew,
+ * which is flex-start under direction: rtl. Getting this backwards is the same
+ * class of bug as the cardsRow one shipped in 2026-08.
+ */
+function threadBubbles(thread, palette = {}) {
+  const { INK, LINE, MUTED } = neutrals(palette);
+  const P = palette.primary || '#1b65a0';
+  return (Array.isArray(thread) ? thread : []).slice(0, 6).map((m) => {
+    const mine = (m && m.from) !== 'customer';
+    const kids = [para(String((m && m.text) || ''), mine ? '#ffffff' : INK, 'right', palette)];
+    if (m && m.time) kids.push(para(String(m.time), mine ? mix(P, '#ffffff', 0.72) : MUTED, 'left', palette));
+    return col(kids, {
+      display: 'flex', flexDirection: 'column', gap: '4px',
+      background: mine ? P : '#ffffff', borderRadius: '22px',
+      [mine ? 'borderBottomRightRadius' : 'borderBottomLeftRadius']: '6px',
+      padding: '14px 18px', maxWidth: '86%', boxSizing: 'border-box',
+      border: mine ? 'none' : `1px solid ${LINE}`,
+      boxShadow: '0 18px 40px -26px rgba(0,0,0,0.45)',
+      alignSelf: mine ? 'flex-start' : 'flex-end',
+      direction: 'rtl', textAlign: 'right',
+    }, 'flex-start');
+  });
+}
+
 const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', textAlign: 'center' })]);
 
 // card style for multi-item rows
@@ -132,8 +166,14 @@ const cardsRow = (cards, palette = {}) => block(cards.map((kids) => col(kids, ca
  * @param {object} palette  { primary, secondary, accent, text, background }
  * @returns {{ section: object }}
  */
-function composeLandingSection(pattern, copy = {}, palette = {}) {
+function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
   const { INK, BODY, MUTED, LINE, LIGHT } = neutrals(palette);
+  // `variant` is resolved by the CALLER via resolveLandingVariant, which
+  // guarantees it is renderable. An unrecognised value still falls through to
+  // the pattern's first branch here rather than throwing, because this function
+  // is called inside a try/catch that skips the whole section on error, and
+  // losing a section to a typo is a worse outcome than rendering the default.
+  const variant = typeof opts.variant === 'string' ? opts.variant : null;
   const P = palette.primary || '#6328A7';
   const S = palette.secondary || palette.accent || P;
   const GRAD = `linear-gradient(135deg, ${S} 0%, ${P} 100%)`;
@@ -143,15 +183,45 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
 
   switch (pattern) {
     // ── §1 HERO ──────────────────────────────────────────────────────────────
-    case 'hero':
+    //
+    // Three variants. `centered` is the original and stays the default: it is
+    // the one that works with nothing but a headline. The other two need real
+    // material and look worse than centered without it, which is why
+    // resolveLandingVariant checks their `needs` before either is chosen.
+    case 'hero': {
+      // The eyebrow and subheading tints used to be literal '#F6D9EE' and
+      // '#F3E9FB', pink on every brand. Derived from the gradient now.
+      const onGrad = mix(S, '#ffffff', 0.82);
+      const onGradSoft = mix(P, '#ffffff', 0.86);
+      const heroCopy = (align) => [
+        copy.eyebrow ? T(copy.eyebrow, onGrad, align) : null,
+        H(copy.heading, align === 'center' ? '56px' : '48px', '#ffffff', align),
+        copy.subheading ? T(copy.subheading, onGradSoft, align) : null,
+        copy.cta ? button(copy.cta, '#ffffff', P) : null,
+      ].filter(Boolean);
+
+      if (variant === 'asymmetric' && copy.image) {
+        return { section: section([
+          block([
+            col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
+            col([photo(copy.image, 620, 420)], { display: 'flex', flex: '1 1 380px', margin: '12px' }, 'center'),
+          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }),
+        ], { background: GRAD, paddingTop: '92px', paddingBottom: '92px' }) };
+      }
+
+      if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
+        return { section: section([
+          block([
+            col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
+            col(threadBubbles(copy.thread, palette), { display: 'flex', flexDirection: 'column', gap: '14px', flex: '1 1 340px', margin: '12px', direction: 'rtl' }, 'flex-start'),
+          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }),
+        ], { background: GRAD, paddingTop: '92px', paddingBottom: '92px' }) };
+      }
+
       return { section: section([
-        block([col([
-          copy.eyebrow ? T(copy.eyebrow, '#F6D9EE', 'center') : null,
-          H(copy.heading, '56px', '#ffffff', 'center'),
-          copy.subheading ? T(copy.subheading, '#F3E9FB', 'center') : null,
-          copy.cta ? button(copy.cta, '#ffffff', P) : null,
-        ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })]),
+        block([col(heroCopy('center'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })]),
       ], { background: GRAD, paddingTop: '104px', paddingBottom: '104px' }) };
+    }
 
     // ── §2 PROBLEM / identification (editorial) ────────────────────────────────
     case 'problem':

@@ -45,8 +45,18 @@ const LANDING_VOCABULARY = {
     default: 'centered',
     variants: {
       centered: {
-        description: 'Headline, subheading and CTA stacked and centered on a brand gradient. The safe default.',
+        description: 'Headline, subheading and CTA stacked and centered on a brand gradient. The safe default, and the only one that works with nothing but a headline.',
         needs: ['heading'],
+        optional: ['eyebrow', 'subheading', 'cta'],
+      },
+      asymmetric: {
+        description: 'Copy on one side, a feature image on the other. Use when the business has a real photograph of its product, place or work. Do not choose it for a generic stock photo.',
+        needs: ['heading', 'image'],
+        optional: ['eyebrow', 'subheading', 'cta'],
+      },
+      conversation: {
+        description: 'Copy on one side, a short message exchange between the business and a customer on the other. Use when the offer is about staying in touch with customers, or when the business has no photograph worth showing. Needs `thread`: 2 to 4 messages, each { text, from: "business" | "customer", time }.',
+        needs: ['heading', 'thread'],
         optional: ['eyebrow', 'subheading', 'cta'],
       },
     },

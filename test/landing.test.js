@@ -52,6 +52,10 @@ const COPY = {
   ],
   image: 'https://example.test/photo.jpg',
   items: [{ title: 'כותרת פריט', text: 'טקסט פריט' }],
+  thread: [
+    { text: 'היי, נכנס משהו חדש. רוצים הצצה?', from: 'business', time: '09:41' },
+    { text: 'כן, תשלחו לי', from: 'customer', time: '09:44' },
+  ],
 };
 
 /**
@@ -94,11 +98,32 @@ function snapshot(name, value) {
 test('every declared variant renders and matches its snapshot', async (t) => {
   for (const { pattern, variant } of landingVariantPairs()) {
     await t.test(`${pattern}:${variant}`, () => {
-      const { section } = composeLandingSection(pattern, COPY, PALETTE);
+      const { section } = composeLandingSection(pattern, COPY, PALETTE, { variant });
       assert.ok(section, 'composeLandingSection returned no section');
       assert.strictEqual(section.type, 'section');
       snapshot(`${pattern}.${variant}`, stripIds(section));
     });
+  }
+});
+
+test('variants of the same pattern render differently', () => {
+  // Without this, adding a variant name to the vocabulary and forgetting to
+  // branch on it in the renderer would pass every other test in this file: the
+  // snapshots would simply be identical and nobody would look.
+  for (const pattern of LANDING_PATTERNS) {
+    const names = Object.keys(LANDING_VOCABULARY[pattern].variants);
+    if (names.length < 2) continue;
+    const seen = new Map();
+    for (const variant of names) {
+      const { section } = composeLandingSection(pattern, COPY, PALETTE, { variant });
+      const shape = JSON.stringify(stripIds(section));
+      const clash = seen.get(shape);
+      assert.ok(
+        !clash,
+        `${pattern}: variants "${clash}" and "${variant}" render an identical tree, so one of them is not wired up`,
+      );
+      seen.set(shape, variant);
+    }
   }
 });
 

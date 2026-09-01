@@ -30,13 +30,16 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#964462"
+                                  "fontSize": "44px",
+                                  "color": "#ffffff"
                                 }
+                              },
+                              {
+                                "type": "bold"
                               }
                             ],
                             "type": "text",
-                            "text": "לפני הכל"
+                            "text": "6"
                           }
                         ]
                       }
@@ -67,16 +70,13 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "38px",
-                                  "color": "#0f1c30"
+                                  "fontSize": "17px",
+                                  "color": "#a8c4db"
                                 }
-                              },
-                              {
-                                "type": "bold"
                               }
                             ],
                             "type": "text",
-                            "text": "כותרת ראשית לבדיקה"
+                            "text": "כלים במקום אחד"
                           }
                         ]
                       }
@@ -90,29 +90,17 @@
             "style": {
               "display": "flex",
               "flexDirection": "column",
-              "gap": "12px",
+              "gap": "6px",
               "alignItems": "center",
-              "textAlign": "center"
+              "textAlign": "center",
+              "flex": "1 1 180px",
+              "margin": "10px",
+              "boxSizing": "border-box"
             },
             "lg": 12,
             "justify": "center"
           }
-        }
-      ],
-      "props": {
-        "style": {
-          "width": "1240px",
-          "marginLeft": "auto",
-          "marginRight": "auto",
-          "paddingLeft": "28px",
-          "paddingRight": "28px",
-          "marginBottom": "36px"
-        }
-      }
-    },
-    {
-      "type": "block",
-      "children": [
+        },
         {
           "type": "col",
           "children": [
@@ -129,7 +117,7 @@
                         "attrs": {
                           "lineHeight": "1.4",
                           "direction": "rtl",
-                          "textAlign": "right"
+                          "textAlign": "center"
                         },
                         "content": [
                           {
@@ -138,45 +126,8 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#243d5c"
-                                }
-                              }
-                            ],
-                            "type": "text",
-                            "text": "\"שירות מצוין\""
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              }
-            },
-            {
-              "type": "text",
-              "children": [],
-              "props": {
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.4",
-                          "direction": "rtl",
-                          "textAlign": "right"
-                        },
-                        "content": [
-                          {
-                            "marks": [
-                              {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#0f1c30"
+                                  "fontSize": "44px",
+                                  "color": "#ffffff"
                                 }
                               },
                               {
@@ -184,7 +135,7 @@
                               }
                             ],
                             "type": "text",
-                            "text": "רותי"
+                            "text": "99"
                           }
                         ]
                       }
@@ -206,7 +157,7 @@
                         "attrs": {
                           "lineHeight": "1.4",
                           "direction": "rtl",
-                          "textAlign": "right"
+                          "textAlign": "center"
                         },
                         "content": [
                           {
@@ -216,12 +167,12 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#506f92"
+                                  "color": "#a8c4db"
                                 }
                               }
                             ],
                             "type": "text",
-                            "text": "בעלת חנות"
+                            "text": "לחודש"
                           }
                         ]
                       }
@@ -235,20 +186,15 @@
             "style": {
               "display": "flex",
               "flexDirection": "column",
-              "gap": "10px",
-              "background": "#ffffff",
-              "borderRadius": "22px",
-              "padding": "28px 26px",
-              "border": "1px solid #e8f0f6",
-              "boxShadow": "0 18px 40px -24px rgba(0,0,0,0.22)",
-              "boxSizing": "border-box",
-              "direction": "rtl",
-              "textAlign": "right",
-              "flex": "1 1 240px",
-              "margin": "10px"
+              "gap": "6px",
+              "alignItems": "center",
+              "textAlign": "center",
+              "flex": "1 1 180px",
+              "margin": "10px",
+              "boxSizing": "border-box"
             },
             "lg": 12,
-            "justify": "flex-start"
+            "justify": "center"
           }
         }
       ],
@@ -261,10 +207,14 @@
           "paddingRight": "28px",
           "display": "flex",
           "flexWrap": "wrap",
-          "gap": "20px",
           "justifyContent": "center",
           "alignItems": "stretch",
-          "direction": "rtl"
+          "direction": "rtl",
+          "background": "#0f1c30",
+          "borderRadius": "20px",
+          "padding": "30px 18px",
+          "boxShadow": "0 34px 70px -40px rgba(0,0,0,0.7)",
+          "marginTop": "-72px"
         }
       }
     }
@@ -274,9 +224,9 @@
     "classList": [],
     "style": {
       "width": "100%",
-      "paddingTop": "80px",
-      "paddingBottom": "80px",
-      "background": "#f7fafc"
+      "paddingTop": "0px",
+      "paddingBottom": "48px",
+      "background": "transparent"
     }
   }
 }

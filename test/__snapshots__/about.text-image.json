@@ -176,7 +176,44 @@
                               }
                             ],
                             "type": "text",
-                            "text": "פסקה קצרה שמסבירה את ההקשר בלי למכור."
+                            "text": "פסקה ראשונה על העסק."
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.4",
+                          "direction": "rtl",
+                          "textAlign": "right"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontSize": "17px",
+                                  "color": "#506f92"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "פסקה שנייה קצרה יותר."
                           }
                         ]
                       }

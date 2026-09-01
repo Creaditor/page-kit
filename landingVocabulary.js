@@ -71,6 +71,11 @@ const LANDING_VOCABULARY = {
         needs: ['heading'],
         optional: ['eyebrow', 'paragraph'],
       },
+      'badge-cards': {
+        description: 'Two to four obstacles as numbered cards. Use when the reader faces several distinct blockers rather than one feeling. Needs `items`, each { title, text }.',
+        needs: ['items'],
+        optional: ['eyebrow', 'heading'],
+      },
     },
   },
 
@@ -95,6 +100,11 @@ const LANDING_VOCABULARY = {
         needs: ['bullets'],
         optional: ['eyebrow', 'heading', 'paragraph', 'image'],
       },
+      conversation: {
+        description: 'Each capability as a message the business sends, in a staggered thread. Use when the capabilities are things the business sends or says, and when no worthwhile photograph exists. Needs `thread`.',
+        needs: ['thread'],
+        optional: ['eyebrow', 'heading'],
+      },
     },
   },
 
@@ -103,8 +113,8 @@ const LANDING_VOCABULARY = {
     default: 'quotes',
     variants: {
       quotes: {
-        description: 'Quote cards in a row.',
-        needs: ['bullets'],
+        description: 'Quote cards in a row. Needs `items`, each { quote, name, role }.',
+        needs: ['items'],
         optional: ['eyebrow', 'heading'],
       },
     },
@@ -115,9 +125,9 @@ const LANDING_VOCABULARY = {
     default: 'cards',
     variants: {
       cards: {
-        description: 'Reason cards in a row.',
-        needs: ['bullets'],
-        optional: ['eyebrow', 'heading'],
+        description: 'A short reason stated as prose under a heading.',
+        needs: ['heading'],
+        optional: ['eyebrow', 'paragraph'],
       },
     },
   },
@@ -139,21 +149,21 @@ const LANDING_VOCABULARY = {
     default: 'cards',
     variants: {
       cards: {
-        description: 'Bonus items as cards.',
-        needs: ['bullets'],
+        description: 'Bonus items as cards. Needs `items`, each { title, text }.',
+        needs: ['items'],
         optional: ['eyebrow', 'heading'],
       },
     },
   },
 
   pricing: {
-    description: 'Price. Use tiers only when the business genuinely has more than one.',
-    default: 'tiers',
+    description: 'Price. One plan, stated plainly.',
+    default: 'single',
     variants: {
-      tiers: {
-        description: 'Priced tier cards side by side. Reads as broken with a single tier.',
-        needs: ['tiers'],
-        optional: ['eyebrow', 'heading'],
+      single: {
+        description: 'One priced offer card, centered. Studio flattens tiers[0] into planName/price/features, so this renders a single plan, never a tier grid.',
+        needs: ['price'],
+        optional: ['eyebrow', 'heading', 'planName', 'features', 'regularNote', 'urgency', 'cta'],
       },
     },
   },
@@ -177,7 +187,7 @@ const LANDING_VOCABULARY = {
       panel: {
         description: 'Name, phone and email on a dark panel with a submit button.',
         needs: [],
-        optional: ['eyebrow', 'heading', 'paragraph', 'cta'],
+        optional: ['eyebrow', 'heading', 'submit'],
       },
     },
   },
@@ -187,8 +197,8 @@ const LANDING_VOCABULARY = {
     default: 'text-image',
     variants: {
       'text-image': {
-        description: 'A paragraph beside a photo.',
-        needs: ['paragraph'],
+        description: 'Paragraphs beside a photo. Needs `paragraphs` (an array).',
+        needs: ['paragraphs'],
         optional: ['eyebrow', 'heading', 'image'],
       },
     },
@@ -199,8 +209,8 @@ const LANDING_VOCABULARY = {
     default: 'list',
     variants: {
       list: {
-        description: 'Question and answer pairs.',
-        needs: ['bullets'],
+        description: 'Question and answer pairs. Needs `items`, each { q, a }.',
+        needs: ['items'],
         optional: ['eyebrow', 'heading'],
       },
     },
@@ -211,9 +221,50 @@ const LANDING_VOCABULARY = {
     default: 'cards',
     variants: {
       cards: {
-        description: 'Article cards with a thumbnail and a per-item link.',
-        needs: ['bullets'],
-        optional: ['eyebrow', 'heading'],
+        description: 'Article cards with a thumbnail and a per-item link. Needs `items`.',
+        needs: ['items'],
+        optional: ['eyebrow', 'heading', 'cta'],
+      },
+    },
+  },
+
+  statbar: {
+    description: 'Three or four numbers that make the offer concrete. Use PRODUCT FACTS (how many tools, what it costs, how long setup takes), never invented performance claims.',
+    default: 'row',
+    variants: {
+      row: {
+        description: 'A standalone dark bar. Needs `stats`, each { value, label }.',
+        needs: ['stats'],
+        optional: [],
+      },
+      overlap: {
+        description: 'The same bar pulled up so it overlaps the section above. Only valid directly after a hero.',
+        needs: ['stats'],
+        optional: [],
+      },
+    },
+  },
+
+  announcement: {
+    description: 'A thin strip above everything carrying one timely line (a date, a deadline, a free trial). Omit unless there is something genuinely time-bound to say.',
+    default: 'bar',
+    variants: {
+      bar: {
+        description: 'One short line, centered, no button. Needs `text`.',
+        needs: ['text'],
+        optional: [],
+      },
+    },
+  },
+
+  stickyCta: {
+    description: 'A repeated ask placed late on the page, after the case is made.',
+    default: 'panel',
+    variants: {
+      panel: {
+        description: 'A full-width brand band with one button. Needs `cta`.',
+        needs: ['cta'],
+        optional: ['heading'],
       },
     },
   },

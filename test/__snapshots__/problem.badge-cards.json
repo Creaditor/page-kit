@@ -129,7 +129,7 @@
                         "attrs": {
                           "lineHeight": "1.4",
                           "direction": "rtl",
-                          "textAlign": "right"
+                          "textAlign": "center"
                         },
                         "content": [
                           {
@@ -138,18 +138,31 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#243d5c"
+                                  "fontSize": "15px",
+                                  "color": "#ffffff"
                                 }
+                              },
+                              {
+                                "type": "bold"
                               }
                             ],
                             "type": "text",
-                            "text": "\"שירות מצוין\""
+                            "text": "01"
                           }
                         ]
                       }
                     ]
                   }
+                },
+                "style": {
+                  "background": "#964462",
+                  "width": "42px",
+                  "height": "42px",
+                  "lineHeight": "42px",
+                  "borderRadius": "999px",
+                  "marginTop": "-40px",
+                  "marginBottom": "6px",
+                  "boxShadow": "0 10px 22px -10px rgba(0,0,0,0.45)"
                 }
               }
             },
@@ -175,7 +188,7 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "17px",
+                                  "fontSize": "20px",
                                   "color": "#0f1c30"
                                 }
                               },
@@ -184,7 +197,7 @@
                               }
                             ],
                             "type": "text",
-                            "text": "רותי"
+                            "text": "כותרת פריט"
                           }
                         ]
                       }
@@ -221,7 +234,7 @@
                               }
                             ],
                             "type": "text",
-                            "text": "בעלת חנות"
+                            "text": "טקסט פריט"
                           }
                         ]
                       }

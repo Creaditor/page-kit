@@ -44,12 +44,19 @@ const COPY = {
   heading: 'כותרת ראשית לבדיקה',
   subheading: 'שורת משנה קצרה',
   paragraph: 'פסקה קצרה שמסבירה את ההקשר בלי למכור.',
+  paragraphs: ['פסקה ראשונה על העסק.', 'פסקה שנייה קצרה יותר.'],
   cta: 'רוצים לראות דוגמה?',
   bullets: ['פריט ראשון', 'פריט שני', 'פריט שלישי'],
-  tiers: [
-    { name: 'בסיסי', price: '99', features: ['תכונה א', 'תכונה ב'], cta: 'לפרטים' },
-    { name: 'מורחב', price: '199', features: ['תכונה ג'], cta: 'לפרטים' },
-  ],
+  // pricing's real contract: studio's toCopy flattens tiers[0] into these
+  // before page-kit ever sees it, so page-kit takes a single plan, not a list.
+  planName: 'חבילה לעסקים',
+  price: '99',
+  features: ['תכונה א', 'תכונה ב'],
+  regularNote: 'במקום 149',
+  urgency: 'עד סוף החודש',
+  stats: [{ value: '6', label: 'כלים במקום אחד' }, { value: '99', label: 'לחודש' }],
+  text: 'ההודעה הראשונה על חשבוננו',
+  submit: 'שלחו לי דוגמה',
   image: 'https://example.test/photo.jpg',
   items: [{ title: 'כותרת פריט', text: 'טקסט פריט' }],
   thread: [
@@ -57,6 +64,24 @@ const COPY = {
     { text: 'כן, תשלחו לי', from: 'customer', time: '09:44' },
   ],
 };
+
+/**
+ * `items` is not one shape. Each pattern reads different keys off it:
+ * testimonials wants { quote, name, role }, faq wants { q, a }, articles wants
+ * { title, text, url, image }, and problem/bonuses want { title, text }. A
+ * single fixture shape makes the needs cross-check pass for the wrong reason,
+ * so give each pattern the shape its renderer actually reads.
+ */
+const ITEMS_BY_PATTERN = {
+  testimonials: [{ quote: 'שירות מצוין', name: 'רותי', role: 'בעלת חנות' }],
+  faq: [{ q: 'כמה זה עולה?', a: 'תשעים ותשעה שקלים לחודש.' }],
+  articles: [{ title: 'כותרת מאמר', text: 'תקציר קצר', url: 'https://example.test/a', image: 'https://example.test/t.jpg' }],
+};
+
+function copyFor(pattern) {
+  const items = ITEMS_BY_PATTERN[pattern];
+  return items ? { ...COPY, items } : COPY;
+}
 
 /**
  * Ids are minted per call (`cid()` wraps randomUUID), so they cannot be part of
@@ -98,7 +123,7 @@ function snapshot(name, value) {
 test('every declared variant renders and matches its snapshot', async (t) => {
   for (const { pattern, variant } of landingVariantPairs()) {
     await t.test(`${pattern}:${variant}`, () => {
-      const { section } = composeLandingSection(pattern, COPY, PALETTE, { variant });
+      const { section } = composeLandingSection(pattern, copyFor(pattern), PALETTE, { variant });
       assert.ok(section, 'composeLandingSection returned no section');
       assert.strictEqual(section.type, 'section');
       snapshot(`${pattern}.${variant}`, stripIds(section));
@@ -115,7 +140,7 @@ test('variants of the same pattern render differently', () => {
     if (names.length < 2) continue;
     const seen = new Map();
     for (const variant of names) {
-      const { section } = composeLandingSection(pattern, COPY, PALETTE, { variant });
+      const { section } = composeLandingSection(pattern, copyFor(pattern), PALETTE, { variant });
       const shape = JSON.stringify(stripIds(section));
       const clash = seen.get(shape);
       assert.ok(
@@ -127,11 +152,57 @@ test('variants of the same pattern render differently', () => {
   }
 });
 
+test('a variant renders real content from its declared needs alone', () => {
+  // The sharpest anti-drift guard in this file. `needs` drives the fallback
+  // logic, so a `needs` naming the wrong field is silently destructive: the
+  // resolver thinks a variant is satisfiable, the renderer gets nothing it can
+  // use, and the page ships a section with no words in it.
+  //
+  // This caught four real errors when it was written. testimonials, bonuses,
+  // faq and articles all read `items`, not `bullets`; whyBuy reads `paragraph`;
+  // about reads `paragraphs`; pricing reads price/features because studio's
+  // toCopy flattens tiers[0] before it ever gets here.
+  for (const { pattern, variant } of landingVariantPairs()) {
+    const spec = LANDING_VOCABULARY[pattern].variants[variant];
+    // `leadform` genuinely needs no copy: it renders hardcoded field labels.
+    // An empty `needs` is a valid declaration, not a gap.
+    if (spec.needs.length === 0) continue;
+    const minimal = {};
+    const source = copyFor(pattern);
+    for (const field of spec.needs) minimal[field] = source[field];
+
+    const { section } = composeLandingSection(pattern, minimal, PALETTE, { variant });
+    const rendered = JSON.stringify(stripIds(section));
+
+    // Assert the fixture's OWN strings survive into the tree. Looking for a
+    // tiptap "text" field would be too narrow: faq renders through an
+    // `accordion` element whose copy lives in props.items, not in a text node.
+    const supplied = [];
+    const collect = (v) => {
+      if (typeof v === 'string' && v.trim()) supplied.push(v);
+      else if (Array.isArray(v)) v.forEach(collect);
+      else if (v && typeof v === 'object') Object.values(v).forEach(collect);
+    };
+    collect(minimal);
+
+    assert.ok(
+      supplied.length > 0,
+      `${pattern}:${variant} declares needs [${spec.needs.join(', ')}] but the fixture supplies nothing for them. ` +
+        'Add the field to COPY or ITEMS_BY_PATTERN, otherwise this test passes vacuously.',
+    );
+    assert.ok(
+      supplied.some((word) => rendered.includes(word)),
+      `${pattern}:${variant} renders none of the copy from its declared needs [${spec.needs.join(', ')}]. ` +
+        'Either needs names a field the renderer does not read, or the variant is not wired up.',
+    );
+  }
+});
+
 // ── 2. vocabulary integrity ──────────────────────────────────────────────────
 
 test('vocabulary declares nothing the renderer cannot produce', () => {
   for (const pattern of LANDING_PATTERNS) {
-    const { section } = composeLandingSection(pattern, COPY, PALETTE);
+    const { section } = composeLandingSection(pattern, copyFor(pattern), PALETTE);
     assert.ok(section, `pattern "${pattern}" is in the vocabulary but renders nothing`);
   }
 });

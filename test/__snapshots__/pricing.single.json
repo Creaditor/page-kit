@@ -138,6 +138,83 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontSize": "26px",
+                                  "color": "#0f1c30"
+                                }
+                              },
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "type": "text",
+                            "text": "חבילה לעסקים"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.4",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontSize": "17px",
+                                  "color": "#506f92"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "במקום 149"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.4",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "46px",
                                   "color": "#1b65a0"
                                 }
@@ -147,7 +224,7 @@
                               }
                             ],
                             "type": "text",
-                            "text": ""
+                            "text": "99"
                           }
                         ]
                       }
@@ -192,7 +269,7 @@
                                 "content": [
                                   {
                                     "type": "text",
-                                    "text": "",
+                                    "text": "תכונה א",
                                     "marks": [
                                       {
                                         "type": "textStyle",
@@ -207,6 +284,79 @@
                                 ]
                               }
                             ]
+                          },
+                          {
+                            "type": "customBulletItem",
+                            "attrs": {
+                              "svgIcon": "https://img.creaditor.ai/icons/serve/System/check-fill.png?width=24&height=24&color=964462",
+                              "width": 24,
+                              "height": 24,
+                              "mt": 0,
+                              "fill": "#964462"
+                            },
+                            "content": [
+                              {
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.5",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
+                                  {
+                                    "type": "text",
+                                    "text": "תכונה ב",
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontSize": "17px",
+                                          "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                          "color": "#243d5c"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.4",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontSize": "17px",
+                                  "color": "#B01254"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "עד סוף החודש"
                           }
                         ]
                       }

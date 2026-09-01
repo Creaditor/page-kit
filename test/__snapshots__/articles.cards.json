@@ -117,6 +117,24 @@
           "type": "col",
           "children": [
             {
+              "type": "image",
+              "children": [],
+              "props": {
+                "src": "https://example.test/t.jpg",
+                "alt": "",
+                "width": 640,
+                "height": 360,
+                "style": {
+                  "width": "100%",
+                  "height": "180px",
+                  "maxWidth": "640px",
+                  "borderRadius": "14px",
+                  "objectFit": "cover",
+                  "marginBottom": "4px"
+                }
+              }
+            },
+            {
               "type": "text",
               "children": [],
               "props": {
@@ -147,7 +165,7 @@
                               }
                             ],
                             "type": "text",
-                            "text": "כותרת פריט"
+                            "text": "כותרת מאמר"
                           }
                         ]
                       }
@@ -184,11 +202,45 @@
                               }
                             ],
                             "type": "text",
-                            "text": "טקסט פריט"
+                            "text": "תקציר קצר"
                           }
                         ]
                       }
                     ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "button",
+              "children": [],
+              "props": {
+                "text": "רוצים לראות דוגמה?",
+                "style": {
+                  "height": "auto",
+                  "width": "auto",
+                  "maxWidth": "100%",
+                  "minWidth": "30px",
+                  "background": "linear-gradient(135deg, #964462 0%, #1b65a0 100%)",
+                  "color": "#ffffff",
+                  "borderRadius": "999px",
+                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                  "fontSize": "16px",
+                  "direction": "rtl",
+                  "paddingTop": "14px",
+                  "paddingBottom": "14px",
+                  "paddingLeft": "32px",
+                  "paddingRight": "32px",
+                  "marginTop": "auto"
+                },
+                "interactions": [],
+                "show_on_desktop": true,
+                "show_on_tablet": true,
+                "show_on_mobile": true,
+                "onClick": {
+                  "link": {
+                    "href": "https://example.test/a",
+                    "target": "_blank"
                   }
                 }
               }

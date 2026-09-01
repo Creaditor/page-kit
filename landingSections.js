@@ -140,6 +140,23 @@ function threadBubbles(thread, palette = {}) {
   });
 }
 
+/**
+ * A small round badge that overhangs the top corner of the card it sits in.
+ * Negative margin rather than absolute positioning: the editor's renderer
+ * honours margins on a col reliably and position/zIndex are not part of the
+ * element contract.
+ */
+function badge(label, palette = {}) {
+  const S = palette.secondary || palette.primary || '#964462';
+  const el = makeText(label, { fontSize: '15px', color: '#ffffff', align: 'center', bold: true, fontFamily: FONT });
+  el.props.style = {
+    ...el.props.style, background: S, width: '42px', height: '42px', lineHeight: '42px',
+    borderRadius: '999px', marginTop: '-40px', marginBottom: '6px',
+    boxShadow: '0 10px 22px -10px rgba(0,0,0,0.45)',
+  };
+  return el;
+}
+
 const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', textAlign: 'center' })]);
 
 // card style for multi-item rows
@@ -224,11 +241,25 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
     }
 
     // ── §2 PROBLEM / identification (editorial) ────────────────────────────────
-    case 'problem':
+    case 'problem': {
+      if (variant === 'badge-cards' && Array.isArray(copy.items) && copy.items.length) {
+        // A numbered badge that breaks the card's top corner. The number is
+        // real information here: these are the reader's obstacles in the order
+        // they hit them, not decoration.
+        return { section: section([
+          hb(copy.eyebrow, copy.heading),
+          cardsRow(copy.items.slice(0, 4).map((it, i) => [
+            badge(String(i + 1).padStart(2, '0'), palette),
+            H(it.title || '', '20px', INK, 'right'),
+            it.text ? T(it.text, MUTED, 'right') : null,
+          ].filter(Boolean)), palette),
+        ], { background: LIGHT }) };
+      }
       return { section: section([
         hb(copy.eyebrow, copy.heading),
         centeredProse([T(copy.paragraph, BODY, 'center')]),
       ], { background: LIGHT }) };
+    }
 
     // ── §3 TARGET AUDIENCE (who it is for) ─────────────────────────────────────
     // Each audience point is its own card col inside a flex-wrap block, so the
@@ -244,6 +275,15 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
 
     // ── §4 SOLUTION (paragraph + bullets + product image) ──────────────────────
     case 'solution':
+      if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
+        return { section: section([
+          hb(copy.eyebrow, copy.heading),
+          block([col(threadBubbles(copy.thread, palette), {
+            display: 'flex', flexDirection: 'column', gap: '16px', direction: 'rtl',
+            flex: '0 1 680px', margin: '0 auto',
+          }, 'flex-start')], { display: 'flex', justifyContent: 'center' }),
+        ], { background: '#ffffff' }) };
+      }
       return { section: section([
         hb(copy.eyebrow, copy.heading),
         copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
@@ -345,6 +385,61 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           border: `1px solid ${LINE}`, boxShadow: '0 30px 60px -28px rgba(0,0,0,0.28)',
         })], { display: 'flex', justifyContent: 'center' }),
       ], { background: LIGHT }) };
+
+    // ── STAT BAR (new) ─────────────────────────────────────────────────────────
+    //
+    // Big numbers with a short label. Deliberately NOT a place for invented
+    // performance claims: studio's grounding gate exists because this model
+    // family will happily produce "47% increase". Feed it product facts (how
+    // many tools, what it costs, how long setup takes), which is what the
+    // reference client page does with "3 days" and "35 mentors".
+    case 'statbar': {
+      const stats = (Array.isArray(copy.stats) ? copy.stats : []).slice(0, 4);
+      const onInk = variant === 'overlap' || variant === 'row';
+      const cols = stats.map((st) => col([
+        H(String((st && st.value) || ''), '44px', '#ffffff', 'center'),
+        T(String((st && st.label) || ''), mix(P, '#ffffff', 0.62), 'center'),
+      ], {
+        display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center',
+        textAlign: 'center', flex: '1 1 180px', margin: '10px', boxSizing: 'border-box',
+      }, 'center'));
+      const bar = block(cols, {
+        display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'stretch',
+        direction: 'rtl', background: INK, borderRadius: '20px', padding: '30px 18px',
+        boxShadow: '0 34px 70px -40px rgba(0,0,0,0.7)',
+        ...(variant === 'overlap' ? { marginTop: '-72px' } : {}),
+      });
+      return { section: section([bar], {
+        background: 'transparent',
+        paddingTop: variant === 'overlap' ? '0px' : '48px',
+        paddingBottom: '48px',
+      }) };
+    }
+
+    // ── ANNOUNCEMENT (new) ─────────────────────────────────────────────────────
+    // A thin strip above everything. One short line, no CTA: it competes with
+    // the hero if it grows past that.
+    case 'announcement':
+      return { section: section([
+        block([col([T(copy.text || '', mix(P, '#ffffff', 0.86), 'center')], {
+          display: 'flex', justifyContent: 'center', textAlign: 'center',
+        }, 'center')]),
+      ], { background: INK, paddingTop: '12px', paddingBottom: '12px' }) };
+
+    // ── STICKY CTA (new) ───────────────────────────────────────────────────────
+    // Page-level rather than a section in the flow. The editor has no `position:
+    // fixed` in its element contract, so this renders as a full-width brand band
+    // that repeats the ask. It is the honest version of the device we can
+    // actually render, not a fake of one we cannot.
+    case 'stickyCta':
+      return { section: section([
+        block([col([
+          copy.heading ? H(copy.heading, '26px', '#ffffff', 'center') : null,
+          copy.cta ? button(copy.cta, '#ffffff', P) : null,
+        ].filter(Boolean), {
+          display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center', textAlign: 'center',
+        }, 'center')]),
+      ], { background: GRAD, paddingTop: '40px', paddingBottom: '40px' }) };
 
     // ── §11 GUARANTEE ──────────────────────────────────────────────────────────
     case 'guarantee':

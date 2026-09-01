@@ -173,7 +173,7 @@
                   {
                     "type": "button",
                     "props": {
-                      "text": "שליחה",
+                      "text": "שלחו לי דוגמה",
                       "style": {
                         "minHeight": "50px",
                         "width": "100%",

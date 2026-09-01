@@ -12,6 +12,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Heebo', sans-serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -19,7 +22,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.6",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -29,7 +32,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Heebo', sans-serif",
                                   "fontSize": "17px",
                                   "color": "#F6D9EE"
                                 }
@@ -49,6 +52,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Frank Ruhl Libre', serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -56,7 +62,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.18",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -66,7 +72,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Frank Ruhl Libre', serif",
                                   "fontSize": "38px",
                                   "color": "#ffffff"
                                 }
@@ -181,7 +187,7 @@
                         "color": "#fff",
                         "fontSize": "17px",
                         "borderRadius": "999px",
-                        "fontFamily": "Rubik, sans-serif"
+                        "fontFamily": "'Heebo', sans-serif"
                       }
                     }
                   }

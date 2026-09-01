@@ -12,6 +12,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Frank Ruhl Libre', serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -19,7 +22,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.3",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -29,7 +32,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Frank Ruhl Libre', serif",
                                   "fontSize": "26px",
                                   "color": "#ffffff"
                                 }
@@ -61,7 +64,7 @@
                   "background": "#ffffff",
                   "color": "#1b65a0",
                   "borderRadius": "999px",
-                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                  "fontFamily": "'Heebo', sans-serif",
                   "fontSize": "18px",
                   "direction": "rtl",
                   "paddingTop": "14px",

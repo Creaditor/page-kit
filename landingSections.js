@@ -61,24 +61,108 @@ function neutrals(palette = {}) {
   };
 }
 
-// ── element helpers ──────────────────────────────────────────────────────────
-// Brand font — page-kit's makeText defaults to Arial, which looks generic on a
-// landing page; the creaditor editor ships Rubik/Assistant, so bake those in.
-const FONT = 'Rubik, Assistant, Arial, sans-serif';
-const heading = (text, fontSize, color, align) =>
-  makeText(text || '', { fontSize, color, align, bold: true, fontFamily: FONT });
+// ── type system ──────────────────────────────────────────────────────────────
+//
+// Three roles, not one face at three sizes. A landing page's personality lives
+// in its type, and until now every text node on every generated page carried
+// the same `'Rubik, Assistant, Arial, sans-serif'`. That string ALSO matched
+// nothing in the editor's font catalogue, so it loaded no webfont and the pages
+// shipped in Arial. Both halves of that are fixed here.
+//
+// These strings are the `cssRule` values from editor-api `src/seedFonts.js`,
+// verbatim. The editor exact-matches on them to decide which font link to
+// inject, so quotes and spacing are load-bearing, not style. Only five faces in
+// that catalogue cover Hebrew: Rubik, Heebo, Assistant, Secular One and Frank
+// Ruhl Libre. Anything outside those five renders in a fallback.
+//
+// DISPLAY: Frank Ruhl Libre, a Hebrew serif, used only for statements. Hebrew
+//   SaaS pages are overwhelmingly geometric sans, so a serif reads as written
+//   rather than generated, which suits a product about writing to customers.
+// BODY: Heebo. Quiet, and different enough from the serif to read as a pair
+//   rather than an accident.
+// DATA: a system mono, for machine output only: timestamps, prices, counters,
+//   stat values. It needs no webfont because these are Latin digits, and it is
+//   the one device that makes the numbers read as product rather than
+//   decoration. Where the content genuinely IS machine output, a mono face
+//   carries meaning instead of adding noise.
+//
+// Secular One was considered and rejected: it ships at a single weight and is
+// heavy enough to fight the serif for the same job.
+const DISPLAY = "'Frank Ruhl Libre', serif";
+const BODY_FONT = "'Heebo', sans-serif";
+const DATA = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+// Buttons are an interface element rather than prose, so they take the body
+// face. makeButton has its own hardcoded default that must be overridden.
+const UI_FONT = BODY_FONT;
+
+/**
+ * Display type. `lineHeight` tightens as the size grows: makeText's 1.4 default
+ * is right for a paragraph and slack enough at 38px and up to make a heading
+ * look unset. A three-line Hebrew headline at 1.4 is the single most templated
+ * thing on the old pages.
+ */
+const heading = (text, fontSize, color, align) => {
+  const px = parseInt(String(fontSize), 10) || 16;
+  const lineHeight = px >= 44 ? '1.08' : px >= 28 ? '1.18' : '1.3';
+  return makeText(text || '', { fontSize, color, align, bold: true, fontFamily: DISPLAY, lineHeight });
+};
 const para = (text, color, align) =>
-  makeText(text || '', { fontSize: '17px', color, align, fontFamily: FONT });
+  makeText(text || '', { fontSize: '17px', color, align, fontFamily: BODY_FONT, lineHeight: '1.6' });
+/**
+ * Machine output: a time, a price, a count, a stat value.
+ *
+ * The mono stack is Latin only, so it is applied ONLY to strings with no
+ * Hebrew or Arabic letters in them. A stat value is not reliably a bare number:
+ * a live run produced "10 דקות", which in a Latin mono falls back per glyph and
+ * renders as spaced-out, mismatched Hebrew. Guarded here rather than in the
+ * prompt, because "keep the value numeric" is exactly the kind of instruction
+ * this model family follows four times out of five.
+ *
+ * Mixed strings take the display face instead: at stat sizes it still reads as
+ * a number, and Frank Ruhl Libre has real Hebrew.
+ */
+const HAS_RTL_LETTERS = /[\u0590-\u05FF\u0600-\u06FF]/;
+
+/**
+ * Force a font family through a whole subtree.
+ *
+ * The richer catalog elements (accordion, form, countdown) come from stored
+ * bodies in catalog.json, and those were authored with `fontFamily: "Arial"`
+ * baked in. The type system cannot reach them any other way, so an FAQ built
+ * from the accordion silently opted out of the page's typography while every
+ * section around it opted in.
+ */
+function applyFont(node, family) {
+  if (Array.isArray(node)) { node.forEach((n) => applyFont(n, family)); return node; }
+  if (!node || typeof node !== 'object') return node;
+  for (const k in node) {
+    if (k === 'fontFamily' && typeof node[k] === 'string') node[k] = family;
+    else if (node[k] && typeof node[k] === 'object') applyFont(node[k], family);
+  }
+  return node;
+}
+const data = (text, color, align, fontSize = '15px') => {
+  const str = String(text || '');
+  const mono = !HAS_RTL_LETTERS.test(str);
+  return makeText(str, {
+    fontSize,
+    color,
+    align,
+    bold: !mono,
+    fontFamily: mono ? DATA : DISPLAY,
+    lineHeight: '1.2',
+  });
+};
 // `href` is optional: makeButton defaults it to '#', which is what every
 // pattern except `articles` wants (a landing CTA scrolls or is wired later).
 // Passing it through is what lets each article card carry its own destination.
 const button = (text, background, color, href) => {
   const b = makeButton(text || '', { href, background, color, borderRadius: '999px', fontSize: '18px' });
-  b.props.style.fontFamily = FONT;
+  b.props.style.fontFamily = UI_FONT;
   return b;
 };
 const bullets = (items, color, iconColor) =>
-  makeList(Array.isArray(items) ? items : [], { icon: 'check', iconColor, color, fontSize: '17px', fontFamily: FONT });
+  makeList(Array.isArray(items) ? items : [], { icon: 'check', iconColor, color, fontSize: '17px', fontFamily: BODY_FONT });
 // Thumbnail for a card inside a row, as opposed to `photo` which is a
 // full-width feature image. Shorter, and a smaller radius so it sits INSIDE
 // the card's 22px corners instead of fighting them.
@@ -126,7 +210,7 @@ function threadBubbles(thread, palette = {}) {
   return (Array.isArray(thread) ? thread : []).slice(0, 6).map((m) => {
     const mine = (m && m.from) !== 'customer';
     const kids = [para(String((m && m.text) || ''), mine ? '#ffffff' : INK, 'right', palette)];
-    if (m && m.time) kids.push(para(String(m.time), mine ? mix(P, '#ffffff', 0.72) : MUTED, 'left', palette));
+    if (m && m.time) kids.push(data(String(m.time), mine ? mix(P, '#ffffff', 0.78) : MUTED, 'left', '13px'));
     return col(kids, {
       display: 'flex', flexDirection: 'column', gap: '4px',
       background: mine ? P : '#ffffff', borderRadius: '22px',
@@ -148,7 +232,7 @@ function threadBubbles(thread, palette = {}) {
  */
 function badge(label, palette = {}) {
   const S = palette.secondary || palette.primary || '#964462';
-  const el = makeText(label, { fontSize: '15px', color: '#ffffff', align: 'center', bold: true, fontFamily: FONT });
+  const el = makeText(label, { fontSize: '15px', color: '#ffffff', align: 'center', bold: true, fontFamily: DATA });
   el.props.style = {
     ...el.props.style, background: S, width: '42px', height: '42px', lineHeight: '42px',
     borderRadius: '999px', marginTop: '-40px', marginBottom: '6px',
@@ -375,7 +459,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         block([col([
           copy.planName ? H(copy.planName, '26px', INK, 'center') : null,
           copy.regularNote ? T(copy.regularNote, MUTED, 'center') : null,
-          H(copy.price, '46px', P, 'center'),
+          data(copy.price, P, 'center', '48px'),
           bullets(copy.features, BODY, S),
           copy.urgency ? T(copy.urgency, '#B01254', 'center') : null,
           copy.cta ? button(copy.cta, GRAD, '#ffffff') : null,
@@ -397,7 +481,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       const stats = (Array.isArray(copy.stats) ? copy.stats : []).slice(0, 4);
       const onInk = variant === 'overlap' || variant === 'row';
       const cols = stats.map((st) => col([
-        H(String((st && st.value) || ''), '44px', '#ffffff', 'center'),
+        data(String((st && st.value) || ''), '#ffffff', 'center', '46px'),
         T(String((st && st.label) || ''), mix(P, '#ffffff', 0.62), 'center'),
       ], {
         display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center',
@@ -454,7 +538,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         { type: 'input', id: 'name', props: { type: 'text', label_field: { props: { text: 'שם מלא' } }, isRequired: true, style: { width: '100%' }, paramName: 'name' } },
         { type: 'input', id: 'phone', props: { type: 'tel', label_field: { props: { text: 'טלפון' } }, isRequired: true, style: { width: '100%' }, paramName: 'phone' } },
         { type: 'input', id: 'email', props: { type: 'email', label_field: { props: { text: 'אימייל' } }, isRequired: false, style: { width: '100%' }, paramName: 'email' } },
-        { type: 'button', id: 'submit', props: { text: copy.submit || 'שליחה', style: { minHeight: '50px', width: '100%', background: GRAD, color: '#fff', fontSize: '17px', borderRadius: '999px', fontFamily: 'Rubik, sans-serif' } } },
+        { type: 'button', id: 'submit', props: { text: copy.submit || 'שליחה', style: { minHeight: '50px', width: '100%', background: GRAD, color: '#fff', fontSize: '17px', borderRadius: '999px', fontFamily: UI_FONT } } },
       ] } }, palette);
       return { section: section([
         hb(copy.eyebrow, copy.heading, { onDark: true }),
@@ -478,7 +562,10 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       return { section: section([
         hb(copy.eyebrow, copy.heading),
         block([col([
-          buildElement({ type: 'accordion', props: { items: (copy.items || []).map((it) => ({ title: it.q || it.title || '', content: it.a || it.content || '' })) } }, palette),
+          applyFont(
+            buildElement({ type: 'accordion', props: { items: (copy.items || []).map((it) => ({ title: it.q || it.title || '', content: it.a || it.content || '' })) }, style: { fontFamily: BODY_FONT } }, palette),
+            BODY_FONT,
+          ),
         ], { display: 'flex', flexDirection: 'column', margin: '0 auto', flex: '0 1 720px' })], { display: 'flex', justifyContent: 'center' }),
       ], { background: '#ffffff' }) };
 

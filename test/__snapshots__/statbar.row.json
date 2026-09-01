@@ -12,6 +12,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -19,7 +22,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.2",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -29,13 +32,10 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "44px",
+                                  "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                  "fontSize": "46px",
                                   "color": "#ffffff"
                                 }
-                              },
-                              {
-                                "type": "bold"
                               }
                             ],
                             "type": "text",
@@ -52,6 +52,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Heebo', sans-serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -59,7 +62,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.6",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -69,7 +72,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Heebo', sans-serif",
                                   "fontSize": "17px",
                                   "color": "#a8c4db"
                                 }
@@ -108,6 +111,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -115,7 +121,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.2",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -125,13 +131,10 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "44px",
+                                  "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                  "fontSize": "46px",
                                   "color": "#ffffff"
                                 }
-                              },
-                              {
-                                "type": "bold"
                               }
                             ],
                             "type": "text",
@@ -148,6 +151,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Heebo', sans-serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -155,7 +161,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.6",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -165,7 +171,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Heebo', sans-serif",
                                   "fontSize": "17px",
                                   "color": "#a8c4db"
                                 }

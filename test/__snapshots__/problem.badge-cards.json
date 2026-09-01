@@ -12,6 +12,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Heebo', sans-serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -19,7 +22,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.6",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -29,7 +32,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Heebo', sans-serif",
                                   "fontSize": "17px",
                                   "color": "#964462"
                                 }
@@ -49,6 +52,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Frank Ruhl Libre', serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -56,7 +62,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.18",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -66,7 +72,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Frank Ruhl Libre', serif",
                                   "fontSize": "38px",
                                   "color": "#0f1c30"
                                 }
@@ -120,6 +126,17 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                  "background": "#964462",
+                  "width": "42px",
+                  "height": "42px",
+                  "lineHeight": "42px",
+                  "borderRadius": "999px",
+                  "marginTop": "-40px",
+                  "marginBottom": "6px",
+                  "boxShadow": "0 10px 22px -10px rgba(0,0,0,0.45)"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -137,7 +154,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
                                   "fontSize": "15px",
                                   "color": "#ffffff"
                                 }
@@ -153,16 +170,6 @@
                       }
                     ]
                   }
-                },
-                "style": {
-                  "background": "#964462",
-                  "width": "42px",
-                  "height": "42px",
-                  "lineHeight": "42px",
-                  "borderRadius": "999px",
-                  "marginTop": "-40px",
-                  "marginBottom": "6px",
-                  "boxShadow": "0 10px 22px -10px rgba(0,0,0,0.45)"
                 }
               }
             },
@@ -170,6 +177,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Frank Ruhl Libre', serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -177,7 +187,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.3",
                           "direction": "rtl",
                           "textAlign": "right"
                         },
@@ -187,7 +197,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Frank Ruhl Libre', serif",
                                   "fontSize": "20px",
                                   "color": "#0f1c30"
                                 }
@@ -210,6 +220,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Heebo', sans-serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -217,7 +230,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.6",
                           "direction": "rtl",
                           "textAlign": "right"
                         },
@@ -227,7 +240,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Heebo', sans-serif",
                                   "fontSize": "17px",
                                   "color": "#506f92"
                                 }

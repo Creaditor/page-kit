@@ -259,3 +259,87 @@ test('missing copy is judged by emptiness, not just presence', () => {
   const blank = resolveLandingVariant('guarantee', 'panel', { heading: '   ' });
   assert.strictEqual(blank.fellBackFrom, 'panel', 'a whitespace-only string must count as missing');
 });
+
+// ── 5. the type system ───────────────────────────────────────────────────────
+//
+// Font family is not cosmetic here. The editor decides which webfont link to
+// inject by EXACT-matching the fontFamily string against its catalogue
+// (editor-api seedFonts.js). A value that matches nothing loads nothing and the
+// page silently renders in Arial, which is what every generated landing page
+// did for months while the code read 'Rubik, Assistant, Arial, sans-serif'.
+
+/** Every fontFamily anywhere in a tree. */
+function fontsIn(node, out = new Set()) {
+  if (Array.isArray(node)) { node.forEach((n) => fontsIn(n, out)); return out; }
+  if (!node || typeof node !== 'object') return out;
+  for (const [k, v] of Object.entries(node)) {
+    if (k === 'fontFamily' && typeof v === 'string') out.add(v);
+    else if (v && typeof v === 'object') fontsIn(v, out);
+  }
+  return out;
+}
+
+// The cssRule strings from editor-api src/seedFonts.js, verbatim, plus the
+// system mono stack (Latin digits only, needs no catalogue entry).
+const SERVABLE_FONTS = new Set([
+  "'Rubik', sans-serif",
+  "'Heebo', sans-serif",
+  "'Assistant', sans-serif",
+  "'Secular One', sans-serif",
+  "'Frank Ruhl Libre', serif",
+  'ui-monospace, SFMono-Regular, Menlo, monospace',
+]);
+
+test('every font asked for is one the editor can actually serve', () => {
+  for (const { pattern, variant } of landingVariantPairs()) {
+    const { section } = composeLandingSection(pattern, copyFor(pattern), PALETTE, { variant });
+    for (const font of fontsIn(section)) {
+      assert.ok(
+        SERVABLE_FONTS.has(font),
+        `${pattern}:${variant} asks for "${font}", which is not a cssRule in the editor's font catalogue. ` +
+        'It will load no webfont and render in Arial.',
+      );
+    }
+  }
+});
+
+test('the three type roles are actually distinct on a page that uses all of them', () => {
+  const { section } = composeLandingSection(
+    'statbar',
+    { stats: [{ value: '99', label: 'לחודש' }] },
+    PALETTE,
+    { variant: 'row' },
+  );
+  const fonts = fontsIn(section);
+  assert.ok(fonts.has('ui-monospace, SFMono-Regular, Menlo, monospace'), 'a bare numeric stat value is machine output and takes the mono role');
+  assert.ok(fonts.has("'Heebo', sans-serif"), 'its label is prose and takes the body role');
+});
+
+test('the mono role is never applied to Hebrew, which it has no glyphs for', () => {
+  // A live run put "10 דקות" in a stat value. In a Latin mono that falls back
+  // per glyph and renders as spaced-out mismatched Hebrew.
+  const { section } = composeLandingSection(
+    'statbar',
+    { stats: [{ value: '10 דקות', label: 'להתחלה' }] },
+    PALETTE,
+    { variant: 'row' },
+  );
+  const json = JSON.stringify(section);
+  const monoRun = /"fontFamily":"ui-monospace[^"]*"[^}]*}[^}]*}[^}]*"text":"10 דקות"/.test(json);
+  assert.ok(!monoRun, 'a stat value containing Hebrew must not take the mono role');
+  assert.ok(json.includes('Frank Ruhl Libre'), 'it takes the display face instead, which has Hebrew');
+});
+
+test('display type is set tighter than body type', () => {
+  const { section } = composeLandingSection('hero', { heading: 'כותרת', subheading: 'גוף' }, PALETTE, { variant: 'centered' });
+  const heights = [];
+  (function walk(n) {
+    if (Array.isArray(n)) return n.forEach(walk);
+    if (!n || typeof n !== 'object') return;
+    if (n.type === 'paragraph' && n.attrs && n.attrs.lineHeight) heights.push(Number(n.attrs.lineHeight));
+    Object.values(n).forEach((v) => { if (v && typeof v === 'object') walk(v); });
+  })(section);
+  assert.ok(heights.length >= 2, 'expected a heading and a paragraph');
+  assert.ok(Math.min(...heights) < 1.2, 'the display line must be set tight, not at the 1.4 body default');
+  assert.ok(Math.max(...heights) >= 1.4, 'body copy must stay loose enough to read');
+});

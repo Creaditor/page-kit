@@ -68,7 +68,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "38px",
-                                  "color": "#17091F"
+                                  "color": "#0f1c30"
                                 }
                               },
                               {
@@ -139,7 +139,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#6C6284"
+                                  "color": "#506f92"
                                 }
                               }
                             ],
@@ -206,7 +206,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#40364F"
+                                  "color": "#243d5c"
                                 }
                               }
                             ],
@@ -229,7 +229,7 @@
               "background": "#ffffff",
               "borderRadius": "22px",
               "padding": "28px 26px",
-              "border": "1px solid #ECE5F4",
+              "border": "1px solid #e8f0f6",
               "boxShadow": "0 18px 40px -24px rgba(0,0,0,0.22)",
               "boxSizing": "border-box",
               "direction": "rtl",
@@ -267,7 +267,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#40364F"
+                                  "color": "#243d5c"
                                 }
                               }
                             ],
@@ -290,7 +290,7 @@
               "background": "#ffffff",
               "borderRadius": "22px",
               "padding": "28px 26px",
-              "border": "1px solid #ECE5F4",
+              "border": "1px solid #e8f0f6",
               "boxShadow": "0 18px 40px -24px rgba(0,0,0,0.22)",
               "boxSizing": "border-box",
               "direction": "rtl",
@@ -328,7 +328,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#40364F"
+                                  "color": "#243d5c"
                                 }
                               }
                             ],
@@ -351,7 +351,7 @@
               "background": "#ffffff",
               "borderRadius": "22px",
               "padding": "28px 26px",
-              "border": "1px solid #ECE5F4",
+              "border": "1px solid #e8f0f6",
               "boxShadow": "0 18px 40px -24px rgba(0,0,0,0.22)",
               "boxSizing": "border-box",
               "direction": "rtl",
@@ -388,7 +388,7 @@
       "width": "100%",
       "paddingTop": "80px",
       "paddingBottom": "80px",
-      "background": "#F7F5FC"
+      "background": "#f7fafc"
     }
   }
 }

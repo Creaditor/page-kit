@@ -68,7 +68,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "38px",
-                                  "color": "#17091F"
+                                  "color": "#0f1c30"
                                 }
                               },
                               {
@@ -199,7 +199,7 @@
                                         "attrs": {
                                           "fontSize": "17px",
                                           "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                          "color": "#40364F"
+                                          "color": "#243d5c"
                                         }
                                       }
                                     ]
@@ -261,7 +261,7 @@
               "padding": "44px 38px",
               "margin": "0 auto",
               "flex": "0 1 520px",
-              "border": "1px solid #ECE5F4",
+              "border": "1px solid #e8f0f6",
               "boxShadow": "0 30px 60px -28px rgba(0,0,0,0.28)"
             },
             "lg": 12,
@@ -289,7 +289,7 @@
       "width": "100%",
       "paddingTop": "80px",
       "paddingBottom": "80px",
-      "background": "#F7F5FC"
+      "background": "#f7fafc"
     }
   }
 }

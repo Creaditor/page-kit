@@ -68,7 +68,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "38px",
-                                  "color": "#17091F"
+                                  "color": "#0f1c30"
                                 }
                               },
                               {
@@ -139,7 +139,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#40364F"
+                                  "color": "#243d5c"
                                 }
                               }
                             ],

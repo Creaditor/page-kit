@@ -68,7 +68,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "38px",
-                                  "color": "#17091F"
+                                  "color": "#0f1c30"
                                 }
                               },
                               {
@@ -139,7 +139,7 @@
                                 "attrs": {
                                   "fontFamily": "Rubik, Assistant, Arial, sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#6C6284"
+                                  "color": "#506f92"
                                 }
                               }
                             ],
@@ -226,7 +226,7 @@
                                         "attrs": {
                                           "fontSize": "17px",
                                           "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                          "color": "#40364F"
+                                          "color": "#243d5c"
                                         }
                                       }
                                     ]
@@ -262,7 +262,7 @@
                                         "attrs": {
                                           "fontSize": "17px",
                                           "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                          "color": "#40364F"
+                                          "color": "#243d5c"
                                         }
                                       }
                                     ]
@@ -298,7 +298,7 @@
                                         "attrs": {
                                           "fontSize": "17px",
                                           "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                          "color": "#40364F"
+                                          "color": "#243d5c"
                                         }
                                       }
                                     ]

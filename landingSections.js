@@ -18,14 +18,48 @@
  *   leadform(§12) about(§13) faq(§14) finalcta
  */
 const b = require('./builder.js');
-const { cid, makeText, makeButton, makeImage, makeList, buildElement, readableTextOn } = b;
+const { cid, makeText, makeButton, makeImage, makeList, buildElement, readableTextOn, parseColor, toHex } = b;
 
-const INK = '#17091F';
-const MUTED = '#6C6284';
-const BODY = '#40364F';
-const LINE = '#ECE5F4';
-const LIGHT = '#F7F5FC';
 const CONTENT_WIDTH = 1240; // px content width (width only; block max-width left to the editor)
+
+// ── neutrals, derived from the brand ─────────────────────────────────────────
+//
+// These used to be five hardcoded constants (INK '#17091F', LIGHT '#F7F5FC',
+// LINE '#ECE5F4' and friends), every one of them purple-tinted. That is fine
+// for a purple brand and quietly wrong for every other one: on the SendMsg
+// tenant, whose palette is blue (#1b65a0), every heading, hairline and section
+// band pulled the page toward a purple it does not own. Field report, 2026-09-01:
+// "it doesn't look like the brand".
+//
+// So the neutral ramp is now mixed FROM the brand hue. Same role, same
+// contrast, tinted to whatever brand is being rendered. A grey with a trace of
+// the brand in it reads as deliberate; a grey with a trace of someone else's
+// brand reads as a template.
+const mix = (a, bColor, t) => {
+  const x = parseColor(a) || { r: 0, g: 0, b: 0 };
+  const y = parseColor(bColor) || { r: 255, g: 255, b: 255 };
+  return toHex({
+    r: Math.round(x.r + (y.r - x.r) * t),
+    g: Math.round(x.g + (y.g - x.g) * t),
+    b: Math.round(x.b + (y.b - x.b) * t),
+  });
+};
+
+/**
+ * Build the neutral ramp for one palette. Ratios are tuned so the resulting
+ * contrasts match what the old fixed constants delivered, which is why the
+ * snapshot diff for this change is colour-only and never structural.
+ */
+function neutrals(palette = {}) {
+  const brand = palette.primary || '#1b65a0';
+  return {
+    INK: mix(brand, '#0b0710', 0.78),   // headings. brand pushed most of the way to black
+    BODY: mix(brand, '#2a2532', 0.62),  // body copy
+    MUTED: mix(brand, '#7b7787', 0.55), // secondary copy
+    LINE: mix(brand, '#ffffff', 0.90),  // hairlines and card borders
+    LIGHT: mix(brand, '#ffffff', 0.965), // tinted section bands
+  };
+}
 
 // ── element helpers ──────────────────────────────────────────────────────────
 // Brand font — page-kit's makeText defaults to Arial, which looks generic on a
@@ -66,6 +100,7 @@ const section = (blocks, style = {}) => ({ id: cid(), type: 'section', layer: '1
 
 function headingBlock(eyebrow, title, opts = {}, palette) {
   const { onDark = false, titleSize = '38px', mb = '36px' } = opts;
+  const { INK } = neutrals(palette);
   const kids = [];
   if (eyebrow) kids.push(para(eyebrow, onDark ? '#F6D9EE' : palette.secondary || palette.primary, 'center', palette));
   if (title) kids.push(heading(title, titleSize, onDark ? '#ffffff' : INK, 'center', palette));
@@ -82,14 +117,14 @@ const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirectio
 // reader expects it rightmost, and any child narrower than the card (the
 // buttons) is pinned to the LTR start edge, i.e. the wrong side. Field report
 // 260814: "the design is ugly, we are in Hebrew and it's LTR".
-const card = (extra = {}) => ({
+const card = (extra = {}, palette = {}) => ({
   display: 'flex', flexDirection: 'column', gap: '10px', background: '#ffffff', borderRadius: '22px',
-  padding: '28px 26px', border: `1px solid ${LINE}`, boxShadow: '0 18px 40px -24px rgba(0,0,0,0.22)',
+  padding: '28px 26px', border: `1px solid ${neutrals(palette).LINE}`, boxShadow: '0 18px 40px -24px rgba(0,0,0,0.22)',
   boxSizing: 'border-box', direction: 'rtl', textAlign: 'right', flex: '1 1 240px', margin: '10px', ...extra,
 });
 // Set on the ROW as well as the card: the row-level value orders the cards
 // (first item on the right), the card-level value aligns each card's contents.
-const cardsRow = (cards) => block(cards.map((kids) => col(kids, card(), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch', direction: 'rtl' });
+const cardsRow = (cards, palette = {}) => block(cards.map((kids) => col(kids, card({}, palette), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch', direction: 'rtl' });
 
 /**
  * @param {string} pattern
@@ -98,6 +133,7 @@ const cardsRow = (cards) => block(cards.map((kids) => col(kids, card(), 'flex-st
  * @returns {{ section: object }}
  */
 function composeLandingSection(pattern, copy = {}, palette = {}) {
+  const { INK, BODY, MUTED, LINE, LIGHT } = neutrals(palette);
   const P = palette.primary || '#6328A7';
   const S = palette.secondary || palette.accent || P;
   const GRAD = `linear-gradient(135deg, ${S} 0%, ${P} 100%)`;
@@ -132,7 +168,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
         hb(copy.eyebrow, copy.heading),
         copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
         (copy.bullets && copy.bullets.length)
-          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]))
+          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]), palette)
           : null,
       ].filter(Boolean), { background: '#ffffff' }) };
 
@@ -173,7 +209,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
         hb(copy.eyebrow, copy.heading),
         copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
         (copy.bullets && copy.bullets.length)
-          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]))
+          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]), palette)
           : null,
       ].filter(Boolean), { background: LIGHT }) };
 

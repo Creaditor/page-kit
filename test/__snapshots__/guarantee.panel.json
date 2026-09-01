@@ -1,0 +1,191 @@
+{
+  "type": "section",
+  "layer": "1",
+  "children": [
+    {
+      "type": "block",
+      "children": [
+        {
+          "type": "col",
+          "children": [
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.4",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontSize": "17px",
+                                  "color": "#964462"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "לפני הכל"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.4",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontSize": "38px",
+                                  "color": "#17091F"
+                                }
+                              },
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "type": "text",
+                            "text": "כותרת ראשית לבדיקה"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "display": "flex",
+              "flexDirection": "column",
+              "gap": "12px",
+              "alignItems": "center",
+              "textAlign": "center"
+            },
+            "lg": 12,
+            "justify": "center"
+          }
+        }
+      ],
+      "props": {
+        "style": {
+          "width": "1240px",
+          "marginLeft": "auto",
+          "marginRight": "auto",
+          "paddingLeft": "28px",
+          "paddingRight": "28px",
+          "marginBottom": "36px"
+        }
+      }
+    },
+    {
+      "type": "block",
+      "children": [
+        {
+          "type": "col",
+          "children": [
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.4",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontSize": "17px",
+                                  "color": "#40364F"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "פסקה קצרה שמסבירה את ההקשר בלי למכור."
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "display": "flex",
+              "flexDirection": "column",
+              "gap": "12px",
+              "alignItems": "center",
+              "textAlign": "center"
+            },
+            "lg": 12,
+            "justify": "center"
+          }
+        }
+      ],
+      "props": {
+        "style": {
+          "width": "1240px",
+          "marginLeft": "auto",
+          "marginRight": "auto",
+          "paddingLeft": "28px",
+          "paddingRight": "28px"
+        }
+      }
+    }
+  ],
+  "props": {
+    "opacity": 1,
+    "classList": [],
+    "style": {
+      "width": "100%",
+      "paddingTop": "80px",
+      "paddingBottom": "80px",
+      "background": "#ffffff"
+    }
+  }
+}

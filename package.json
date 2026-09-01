@@ -8,11 +8,15 @@
     "index.js",
     "builder.js",
     "landingSections.js",
+    "landingVocabulary.js",
     "catalog.json",
     "sections.json",
     "index.d.ts"
   ],
   "dependencies": {
     "uuid": "^3.4.0"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\""
   }
 }

@@ -58,6 +58,32 @@ declare namespace pageKit {
     body: Tree;
   }
 
+  /** One variant of a landing pattern, as declared in LANDING_VOCABULARY. */
+  export interface LandingVariantSpec {
+    /** What the variant is for, written for a language model to read. */
+    description: string;
+    /** Copy fields without which this variant cannot render. */
+    needs: string[];
+    /** Copy fields the variant uses if present. */
+    optional?: string[];
+  }
+
+  /** One landing pattern and every variant it can be rendered as. */
+  export interface LandingPatternSpec {
+    description: string;
+    /** Variant used when none is given, or when the requested one is unusable. */
+    default: string;
+    variants: Record<string, LandingVariantSpec>;
+  }
+
+  /** What resolveLandingVariant returns for a renderable request. */
+  export interface ResolvedLandingVariant {
+    pattern: string;
+    variant: string;
+    /** The requested variant, when it could not be used. Null when honoured. */
+    fellBackFrom: string | null;
+  }
+
   export interface PageKit {
     // color / contrast
     parseColor(str: string): RGB | null;
@@ -92,7 +118,27 @@ declare namespace pageKit {
     composeSection(pattern: string, args?: Record<string, unknown>, palette?: Palette, pageBg?: string, lang?: string): SectionResult;
     /** Role-based landing/sales section (hero, problem, solution, pricing, leadform,
      *  about, testimonials, …) built from LLM-authored copy + the brand palette. */
-    composeLandingSection(pattern: string, copy?: Record<string, unknown>, palette?: Palette): { section: Tree };
+    composeLandingSection(
+      pattern: string,
+      copy?: Record<string, unknown>,
+      palette?: Palette,
+      opts?: { variant?: string | null },
+    ): { section: Tree };
+
+    // landing vocabulary: the single declaration of what a landing page can be
+    // built from. Consumers derive their enums and prompts from this rather
+    // than hardcoding a list, so an unrenderable request cannot be expressed.
+    LANDING_VOCABULARY: Record<string, LandingPatternSpec>;
+    LANDING_PATTERNS: string[];
+    landingVariantPairs(): Array<{ pattern: string; variant: string }>;
+    /** Never throws. Returns null when the pattern is unknown, so the caller skips it. */
+    resolveLandingVariant(
+      pattern: string,
+      variant?: string | null,
+      copy?: Record<string, unknown>,
+    ): ResolvedLandingVariant | null;
+    /** The vocabulary rendered as the menu text a generation prompt shows the model. */
+    describeLandingVocabulary(): string;
 
     // data
     CATALOG_BODIES: Record<string, CatalogEntry>;

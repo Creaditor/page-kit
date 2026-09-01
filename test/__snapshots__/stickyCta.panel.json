@@ -63,9 +63,9 @@
                   "minWidth": "30px",
                   "background": "#ffffff",
                   "color": "#1b65a0",
-                  "borderRadius": "999px",
+                  "borderRadius": "0px",
                   "fontFamily": "'Heebo', sans-serif",
-                  "fontSize": "18px",
+                  "fontSize": "17px",
                   "direction": "rtl",
                   "paddingTop": "14px",
                   "paddingBottom": "14px",
@@ -114,9 +114,9 @@
     "classList": [],
     "style": {
       "width": "100%",
-      "paddingTop": "40px",
-      "paddingBottom": "40px",
-      "background": "linear-gradient(135deg, #964462 0%, #1b65a0 100%)"
+      "paddingTop": "44px",
+      "paddingBottom": "44px",
+      "background": "#09263e"
     }
   }
 }

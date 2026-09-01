@@ -58,6 +58,11 @@ function neutrals(palette = {}) {
     MUTED: mix(brand, '#7b7787', 0.55), // secondary copy
     LINE: mix(brand, '#ffffff', 0.90),  // hairlines and card borders
     LIGHT: mix(brand, '#ffffff', 0.965), // tinted section bands
+    // The page's one dark ground. The brand deepened rather than a new colour,
+    // which is what keeps a dark band reading as the tenant's rather than as a
+    // theme borrowed from somewhere else.
+    FIELD: mix(brand, '#02101c', 0.74),
+    FIELD_LINE: mix(brand, '#2b4257', 0.55),
   };
 }
 
@@ -157,7 +162,9 @@ const data = (text, color, align, fontSize = '15px') => {
 // pattern except `articles` wants (a landing CTA scrolls or is wired later).
 // Passing it through is what lets each article card carry its own destination.
 const button = (text, background, color, href) => {
-  const b = makeButton(text || '', { href, background, color, borderRadius: '999px', fontSize: '18px' });
+  // Square. A pill button beside a serif headline and a hairline rule is three
+  // different opinions about shape on one page; the page holds one.
+  const b = makeButton(text || '', { href, background, color, borderRadius: '0px', fontSize: '17px' });
   b.props.style.fontFamily = UI_FONT;
   return b;
 };
@@ -178,17 +185,97 @@ function photo(src, w, h) {
 }
 
 // ── structural helpers ───────────────────────────────────────────────────────
-const col = (children, style = {}, justify = 'center') => ({ id: cid(), type: 'col', children, props: { style, lg: 12, justify } });
-const block = (cols, style = {}) => ({ id: cid(), type: 'block', children: cols, props: { style: { width: `${CONTENT_WIDTH}px`, marginLeft: 'auto', marginRight: 'auto', paddingLeft: '28px', paddingRight: '28px', ...style } } });
-const section = (blocks, style = {}) => ({ id: cid(), type: 'section', layer: '1', children: blocks, props: { opacity: 1, classList: [], style: { width: '100%', paddingTop: '80px', paddingBottom: '80px', ...style } } });
+// Nullish children are dropped at every level rather than at each call site.
+// `headingBlock` returns null for a section with neither eyebrow nor heading,
+// and a null landing in a children array is not a rendering bug, it is a crash
+// in every consumer that walks the tree.
+const kept = (xs) => (Array.isArray(xs) ? xs : [xs]).filter(Boolean);
+const col = (children, style = {}, justify = 'center') => ({ id: cid(), type: 'col', children: kept(children), props: { style, lg: 12, justify } });
+const block = (cols, style = {}) => ({ id: cid(), type: 'block', children: kept(cols), props: { style: { width: `${CONTENT_WIDTH}px`, marginLeft: 'auto', marginRight: 'auto', paddingLeft: '28px', paddingRight: '28px', ...style } } });
+const section = (blocks, style = {}) => ({ id: cid(), type: 'section', layer: '1', children: kept(blocks), props: { opacity: 1, classList: [], style: { width: '100%', paddingTop: '80px', paddingBottom: '80px', ...style } } });
 
+/**
+ * The section head.
+ *
+ * This used to be a centered eyebrow over a centered heading, and fourteen of
+ * the fifteen patterns opened with it. That single helper is why every section
+ * of every generated page looked the same: the variants changed the block
+ * UNDER the head and never the head itself, so the page's grammar was one
+ * device repeated six times. Field report: "everything, the layout, the design,
+ * the style."
+ *
+ * Now it is a rule. The eyebrow sits on it in the data face, the heading hangs
+ * off it in the display face, both to the reading edge, and the head occupies a
+ * column rather than the full width so the page has a shape instead of a
+ * centre line. The empty half is deliberate.
+ */
 function headingBlock(eyebrow, title, opts = {}, palette) {
-  const { onDark = false, titleSize = '38px', mb = '36px' } = opts;
-  const { INK } = neutrals(palette);
+  const { onDark = false, titleSize = '38px', mb = '44px' } = opts;
+  const { INK, LINE } = neutrals(palette);
+  const S = palette.secondary || palette.primary || '#964462';
+  const ruleColor = onDark ? mix(INK, '#ffffff', 0.22) : INK;
+  const hairline = onDark ? mix(INK, '#ffffff', 0.16) : LINE;
   const kids = [];
-  if (eyebrow) kids.push(para(eyebrow, onDark ? '#F6D9EE' : palette.secondary || palette.primary, 'center', palette));
-  if (title) kids.push(heading(title, titleSize, onDark ? '#ffffff' : INK, 'center', palette));
-  return block([col(kids, { display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', textAlign: 'center' })], { marginBottom: mb });
+
+  if (eyebrow) {
+    // The label and the hairline share a row: the label is measured by its own
+    // width and the rule takes whatever is left, which is what makes the head
+    // read as ruled rather than as a centered caption.
+    kids.push(block([
+      col([data(eyebrow, onDark ? mix(S, '#ffffff', 0.55) : S, 'right', '13px')],
+        { display: 'flex', flex: '0 0 auto' }, 'flex-start'),
+      col([], { display: 'flex', flex: '1 1 auto', borderBottom: `1px solid ${hairline}`, marginBottom: '7px' }, 'flex-start'),
+    ], {
+      display: 'flex', gap: '14px', alignItems: 'center', direction: 'rtl',
+      paddingLeft: '0px', paddingRight: '0px', width: '100%',
+      paddingBottom: '14px', borderBottom: `1px solid ${ruleColor}`, marginBottom: '26px',
+    }));
+  }
+  if (title) {
+    kids.push(block([
+      col([heading(title, titleSize, onDark ? '#ffffff' : INK, 'right')],
+        { display: 'flex', flex: '0 1 42ch', textAlign: 'right', direction: 'rtl' }, 'flex-start'),
+    ], { display: 'flex', direction: 'rtl', paddingLeft: '0px', paddingRight: '0px', width: '100%' }));
+  }
+  if (!kids.length) return null;
+  return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: mb });
+}
+
+/**
+ * A ruled list: the replacement for a row of floating cards.
+ *
+ * Three shadowed boxes in a row is the most generic layout on the web, it wraps
+ * badly at four items, and Hebrew body copy in a narrow card sets terribly.
+ * A ruled row takes a marker, a title column and the prose, holds any number of
+ * items, and reads as editorial rather than as a template.
+ *
+ * `marker` is optional and should carry information when present. Numbering a
+ * set of parallel obstacles 01/02/03 is decoration; numbering the steps of a
+ * process is not. Callers decide.
+ */
+function ruledRows(items, palette = {}, opts = {}) {
+  const { numbered = false } = opts;
+  const { INK, MUTED, LINE } = neutrals(palette);
+  const S = palette.secondary || palette.primary || '#964462';
+  const rows = (Array.isArray(items) ? items : []).map((it, i) => {
+    const kids = [];
+    if (numbered) {
+      kids.push(col([data(String(i + 1).padStart(2, '0'), S, 'right', '15px')],
+        { display: 'flex', flex: '0 0 52px' }, 'flex-start'));
+    }
+    kids.push(col([heading(it.title || '', '19px', INK, 'right')],
+      { display: 'flex', flex: '0 0 250px' }, 'flex-start'));
+    if (it.text) {
+      kids.push(col([para(it.text, MUTED, 'right')],
+        { display: 'flex', flex: '1 1 auto' }, 'flex-start'));
+    }
+    return col(kids, {
+      display: 'flex', gap: '32px', direction: 'rtl', width: '100%',
+      paddingTop: '26px', paddingBottom: '26px',
+      ...(i === 0 ? {} : { borderTop: `1px solid ${LINE}` }),
+    }, 'flex-start');
+  });
+  return block([col(rows, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')]);
 }
 /**
  * Message bubbles for the `conversation` variants.
@@ -217,7 +304,6 @@ function threadBubbles(thread, palette = {}) {
       [mine ? 'borderBottomRightRadius' : 'borderBottomLeftRadius']: '6px',
       padding: '14px 18px', maxWidth: '86%', boxSizing: 'border-box',
       border: mine ? 'none' : `1px solid ${LINE}`,
-      boxShadow: '0 18px 40px -26px rgba(0,0,0,0.45)',
       alignSelf: mine ? 'flex-start' : 'flex-end',
       direction: 'rtl', textAlign: 'right',
     }, 'flex-start');
@@ -241,7 +327,14 @@ function badge(label, palette = {}) {
   return el;
 }
 
-const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', textAlign: 'center' })]);
+// Prose sits in a measured column at the reading edge, not centered. Centered
+// body copy is unreadable past two lines and it was the second half of the
+// centered-eyebrow-centered-heading-centered-paragraph grammar that made every
+// section look the same.
+const centeredProse = (kids) => block([col(kids, {
+  display: 'flex', flexDirection: 'column', gap: '14px',
+  alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '0 1 62ch',
+}, 'flex-start')], { display: 'flex', direction: 'rtl' });
 
 // card style for multi-item rows
 //
@@ -252,9 +345,13 @@ const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirectio
 // reader expects it rightmost, and any child narrower than the card (the
 // buttons) is pinned to the LTR start edge, i.e. the wrong side. Field report
 // 260814: "the design is ugly, we are in Hebrew and it's LTR".
+// A card is a bordered panel, not a floating one. Every card on the old pages
+// carried a 40px drop shadow and a 22px radius, and with the gradient behind
+// them that combination is the generated look in one line of CSS. Border does
+// the separating now.
 const card = (extra = {}, palette = {}) => ({
-  display: 'flex', flexDirection: 'column', gap: '10px', background: '#ffffff', borderRadius: '22px',
-  padding: '28px 26px', border: `1px solid ${neutrals(palette).LINE}`, boxShadow: '0 18px 40px -24px rgba(0,0,0,0.22)',
+  display: 'flex', flexDirection: 'column', gap: '10px', background: '#ffffff', borderRadius: '4px',
+  padding: '26px 24px', border: `1px solid ${neutrals(palette).LINE}`,
   boxSizing: 'border-box', direction: 'rtl', textAlign: 'right', flex: '1 1 240px', margin: '10px', ...extra,
 });
 // Set on the ROW as well as the card: the row-level value orders the cards
@@ -268,7 +365,7 @@ const cardsRow = (cards, palette = {}) => block(cards.map((kids) => col(kids, ca
  * @returns {{ section: object }}
  */
 function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
-  const { INK, BODY, MUTED, LINE, LIGHT } = neutrals(palette);
+  const { INK, BODY, MUTED, LINE, LIGHT, FIELD, FIELD_LINE } = neutrals(palette);
   // `variant` is resolved by the CALLER via resolveLandingVariant, which
   // guarantees it is renderable. An unrecognised value still falls through to
   // the pattern's first branch here rather than throwing, because this function
@@ -277,7 +374,11 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
   const variant = typeof opts.variant === 'string' ? opts.variant : null;
   const P = palette.primary || '#6328A7';
   const S = palette.secondary || palette.accent || P;
-  const GRAD = `linear-gradient(135deg, ${S} 0%, ${P} 100%)`;
+  // GRAD was a 135deg two-colour diagonal behind the hero and every CTA band.
+  // It is the single most dated thing a generated page can carry and it was on
+  // four sections at once. Kept as a name so nothing downstream breaks, but it
+  // resolves to the flat field: one ground, no ramp, no diagonal.
+  const GRAD = FIELD;
   const H = (t, fs, c, al) => heading(t, fs, c, al, palette);
   const T = (t, c, al) => para(t, c, al, palette);
   const hb = (eyebrow, title, opts) => headingBlock(eyebrow, title, opts, palette);
@@ -292,13 +393,17 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
     case 'hero': {
       // The eyebrow and subheading tints used to be literal '#F6D9EE' and
       // '#F3E9FB', pink on every brand. Derived from the gradient now.
-      const onGrad = mix(S, '#ffffff', 0.82);
-      const onGradSoft = mix(P, '#ffffff', 0.86);
+      // On the ink field the eyebrow is data-face and the lede is muted. The
+      // headline stays ONE colour: the accent is spent on numerals elsewhere,
+      // and a two-tone headline plus a serif plus a mono row is one idea too
+      // many for the same screen.
+      const onGrad = mix(P, '#ffffff', 0.62);
+      const onGradSoft = mix(P, '#ffffff', 0.72);
       const heroCopy = (align) => [
-        copy.eyebrow ? T(copy.eyebrow, onGrad, align) : null,
-        H(copy.heading, align === 'center' ? '56px' : '48px', '#ffffff', align),
+        copy.eyebrow ? data(copy.eyebrow, onGrad, align, '13px') : null,
+        H(copy.heading, align === 'center' ? '58px' : '54px', '#ffffff', align),
         copy.subheading ? T(copy.subheading, onGradSoft, align) : null,
-        copy.cta ? button(copy.cta, '#ffffff', P) : null,
+        copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,
       ].filter(Boolean);
 
       if (variant === 'asymmetric' && copy.image) {
@@ -307,7 +412,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
             col([photo(copy.image, 620, 420)], { display: 'flex', flex: '1 1 380px', margin: '12px' }, 'center'),
           ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }),
-        ], { background: GRAD, paddingTop: '92px', paddingBottom: '92px' }) };
+        ], { background: FIELD, paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
       if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
@@ -316,32 +421,29 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
             col(threadBubbles(copy.thread, palette), { display: 'flex', flexDirection: 'column', gap: '14px', flex: '1 1 340px', margin: '12px', direction: 'rtl' }, 'flex-start'),
           ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }),
-        ], { background: GRAD, paddingTop: '92px', paddingBottom: '92px' }) };
+        ], { background: FIELD, paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
       return { section: section([
         block([col(heroCopy('center'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })]),
-      ], { background: GRAD, paddingTop: '104px', paddingBottom: '104px' }) };
+      ], { background: FIELD, paddingTop: '96px', paddingBottom: '96px' }) };
     }
 
     // ── §2 PROBLEM / identification (editorial) ────────────────────────────────
     case 'problem': {
       if (variant === 'badge-cards' && Array.isArray(copy.items) && copy.items.length) {
-        // A numbered badge that breaks the card's top corner. The number is
-        // real information here: these are the reader's obstacles in the order
-        // they hit them, not decoration.
+        // A numbered ruled list, not a row of cards. The number is real
+        // information here: these are the obstacles in the order the reader
+        // hits them. Where a set is genuinely parallel rather than sequential,
+        // pass numbered:false and the markers disappear.
         return { section: section([
           hb(copy.eyebrow, copy.heading),
-          cardsRow(copy.items.slice(0, 4).map((it, i) => [
-            badge(String(i + 1).padStart(2, '0'), palette),
-            H(it.title || '', '20px', INK, 'right'),
-            it.text ? T(it.text, MUTED, 'right') : null,
-          ].filter(Boolean)), palette),
-        ], { background: LIGHT }) };
+          ruledRows(copy.items.slice(0, 5), palette, { numbered: true }),
+        ], { background: '#ffffff' }) };
       }
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        centeredProse([T(copy.paragraph, BODY, 'center')]),
+        centeredProse([T(copy.paragraph, BODY, 'right')]),
       ], { background: LIGHT }) };
     }
 
@@ -351,9 +453,9 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
     case 'audience':
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
+        copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'right')]) : null,
         (copy.bullets && copy.bullets.length)
-          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]), palette)
+          ? ruledRows(copy.bullets.map((t) => ({ title: t })), palette)
           : null,
       ].filter(Boolean), { background: '#ffffff' }) };
 
@@ -362,15 +464,18 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
         return { section: section([
           hb(copy.eyebrow, copy.heading),
+          // At the reading edge, not centered on the page. Everything else in
+          // the system hangs off the same right margin, and a centered column
+          // in the middle of it reads as a different page.
           block([col(threadBubbles(copy.thread, palette), {
-            display: 'flex', flexDirection: 'column', gap: '16px', direction: 'rtl',
-            flex: '0 1 680px', margin: '0 auto',
-          }, 'flex-start')], { display: 'flex', justifyContent: 'center' }),
+            display: 'flex', flexDirection: 'column', gap: '14px', direction: 'rtl',
+            flex: '0 1 620px',
+          }, 'flex-start')], { display: 'flex', direction: 'rtl' }),
         ], { background: '#ffffff' }) };
       }
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
+        copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'right')]) : null,
         block([
           col([bullets(copy.bullets, BODY, S)], { display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: '1 1 320px', margin: '12px' }, 'flex-start'),
           copy.image ? col([photo(copy.image, 720, 360)], { display: 'flex', flex: '1 1 320px', margin: '12px' }, 'center') : null,
@@ -392,7 +497,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
     case 'whyBuy':
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        centeredProse([T(copy.paragraph, BODY, 'center')]),
+        centeredProse([T(copy.paragraph, BODY, 'right')]),
       ], { background: '#ffffff' }) };
 
     // ── §7 OFFER (short bullets) ───────────────────────────────────────────────
@@ -401,9 +506,9 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
     case 'offer':
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
+        copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'right')]) : null,
         (copy.bullets && copy.bullets.length)
-          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]), palette)
+          ? ruledRows(copy.bullets.map((t) => ({ title: t })), palette)
           : null,
       ].filter(Boolean), { background: LIGHT }) };
 
@@ -434,7 +539,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       return { section: section([
         hb(copy.eyebrow, copy.heading),
         cardsRow((copy.items || []).map((it) => {
-          const cta = it.url ? button(label, GRAD, '#ffffff', it.url) : null;
+          const cta = it.url ? button(label, INK, '#ffffff', it.url) : null;
           if (cta) {
             cta.props.style.fontSize = '16px';
             // Cards in a row stretch to equal height (cardsRow sets
@@ -456,18 +561,25 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
     case 'pricing':
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        block([col([
-          copy.planName ? H(copy.planName, '26px', INK, 'center') : null,
-          copy.regularNote ? T(copy.regularNote, MUTED, 'center') : null,
-          data(copy.price, P, 'center', '48px'),
-          bullets(copy.features, BODY, S),
-          copy.urgency ? T(copy.urgency, '#B01254', 'center') : null,
-          copy.cta ? button(copy.cta, GRAD, '#ffffff') : null,
-        ].filter(Boolean), {
-          display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center', textAlign: 'center',
-          background: '#ffffff', borderRadius: '26px', padding: '44px 38px', margin: '0 auto', flex: '0 1 520px',
-          border: `1px solid ${LINE}`, boxShadow: '0 30px 60px -28px rgba(0,0,0,0.28)',
-        })], { display: 'flex', justifyContent: 'center' }),
+        // The price, what is included, and the action, side by side above a
+        // rule. This used to be one centred card with a 60px shadow floating in
+        // dead space, which is what a three-column tier layout holding a single
+        // tier looks like once the other two are gone.
+        block([
+          col([
+            data(copy.price, INK, 'right', '66px'),
+            copy.planName ? T(copy.planName, MUTED, 'right') : null,
+            copy.regularNote ? T(copy.regularNote, MUTED, 'right') : null,
+          ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '8px', flex: '0 0 280px', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
+          col([
+            bullets(copy.features, BODY, S),
+            copy.urgency ? T(copy.urgency, S, 'right') : null,
+          ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '10px', flex: '1 1 auto', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
+          ...(copy.cta ? [col([button(copy.cta, INK, '#ffffff')], { display: 'flex', flex: '0 0 auto' }, 'flex-start')] : []),
+        ], {
+          display: 'flex', gap: '48px', direction: 'rtl', alignItems: 'flex-start',
+          borderTop: `1px solid ${INK}`, paddingTop: '40px',
+        }),
       ], { background: LIGHT }) };
 
     // ── STAT BAR (new) ─────────────────────────────────────────────────────────
@@ -480,23 +592,29 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
     case 'statbar': {
       const stats = (Array.isArray(copy.stats) ? copy.stats : []).slice(0, 4);
       const onInk = variant === 'overlap' || variant === 'row';
-      const cols = stats.map((st) => col([
-        data(String((st && st.value) || ''), '#ffffff', 'center', '46px'),
-        T(String((st && st.label) || ''), mix(P, '#ffffff', 0.62), 'center'),
+      const cols = stats.map((st, i) => col([
+        data(String((st && st.value) || ''), '#ffffff', 'right', '48px'),
+        T(String((st && st.label) || ''), mix(P, '#ffffff', 0.58), 'right'),
       ], {
-        display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center',
-        textAlign: 'center', flex: '1 1 180px', margin: '10px', boxSizing: 'border-box',
-      }, 'center'));
+        display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start',
+        textAlign: 'right', direction: 'rtl', flex: '1 1 180px', boxSizing: 'border-box',
+        paddingTop: '28px', paddingBottom: '40px', paddingRight: '28px', paddingLeft: '28px',
+        ...(i === 0 ? {} : { borderRight: `1px solid ${FIELD_LINE}` }),
+      }, 'flex-start'));
+      // The band belongs to the field above it rather than floating on top of
+      // it. `overlap` used to mean a rounded black pill with a 70px shadow
+      // dropped over the hero; it now means the row continues the same ground,
+      // divided by hairlines, which is what makes the numbers read as part of
+      // the masthead instead of as a widget.
       const bar = block(cols, {
-        display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'stretch',
-        direction: 'rtl', background: INK, borderRadius: '20px', padding: '30px 18px',
-        boxShadow: '0 34px 70px -40px rgba(0,0,0,0.7)',
-        ...(variant === 'overlap' ? { marginTop: '-72px' } : {}),
+        display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl',
+        borderTop: `1px solid ${FIELD_LINE}`,
       });
       return { section: section([bar], {
-        background: 'transparent',
-        paddingTop: variant === 'overlap' ? '0px' : '48px',
-        paddingBottom: '48px',
+        background: FIELD,
+        paddingTop: '0px',
+        paddingBottom: variant === 'overlap' ? '8px' : '24px',
+        ...(variant === 'overlap' ? { marginTop: '-1px' } : {}),
       }) };
     }
 
@@ -508,7 +626,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         block([col([T(copy.text || '', mix(P, '#ffffff', 0.86), 'center')], {
           display: 'flex', justifyContent: 'center', textAlign: 'center',
         }, 'center')]),
-      ], { background: INK, paddingTop: '12px', paddingBottom: '12px' }) };
+      ], { background: FIELD, paddingTop: '13px', paddingBottom: '13px' }) };
 
     // ── STICKY CTA (new) ───────────────────────────────────────────────────────
     // Page-level rather than a section in the flow. The editor has no `position:
@@ -523,13 +641,13 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         ].filter(Boolean), {
           display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center', textAlign: 'center',
         }, 'center')]),
-      ], { background: GRAD, paddingTop: '40px', paddingBottom: '40px' }) };
+      ], { background: FIELD, paddingTop: '44px', paddingBottom: '44px' }) };
 
     // ── §11 GUARANTEE ──────────────────────────────────────────────────────────
     case 'guarantee':
       return { section: section([
         hb(copy.eyebrow, copy.heading),
-        centeredProse([T(copy.paragraph, BODY, 'center')]),
+        centeredProse([T(copy.paragraph, BODY, 'right')]),
       ], { background: '#ffffff' }) };
 
     // ── §12 LEAD FORM ──────────────────────────────────────────────────────────
@@ -538,12 +656,15 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         { type: 'input', id: 'name', props: { type: 'text', label_field: { props: { text: 'שם מלא' } }, isRequired: true, style: { width: '100%' }, paramName: 'name' } },
         { type: 'input', id: 'phone', props: { type: 'tel', label_field: { props: { text: 'טלפון' } }, isRequired: true, style: { width: '100%' }, paramName: 'phone' } },
         { type: 'input', id: 'email', props: { type: 'email', label_field: { props: { text: 'אימייל' } }, isRequired: false, style: { width: '100%' }, paramName: 'email' } },
-        { type: 'button', id: 'submit', props: { text: copy.submit || 'שליחה', style: { minHeight: '50px', width: '100%', background: GRAD, color: '#fff', fontSize: '17px', borderRadius: '999px', fontFamily: UI_FONT } } },
+        { type: 'button', id: 'submit', props: { text: copy.submit || 'שליחה', style: { minHeight: '52px', width: '100%', background: '#ffffff', color: FIELD, fontSize: '17px', borderRadius: '0px', fontFamily: UI_FONT } } },
       ] } }, palette);
       return { section: section([
         hb(copy.eyebrow, copy.heading, { onDark: true }),
-        block([col([form], { display: 'flex', flexDirection: 'column', background: '#ffffff', borderRadius: '24px', padding: '34px 32px', margin: '0 auto', flex: '0 1 480px', boxShadow: '0 30px 60px -28px rgba(0,0,0,0.4)' })], { display: 'flex', justifyContent: 'center' }),
-      ], { background: GRAD }) };
+        // The form sits on the field itself. A white rounded card with a 60px
+        // shadow dropped onto a dark band is the same floating-panel device the
+        // rest of the page just lost.
+        block([col([form], { display: 'flex', flexDirection: 'column', flex: '0 1 560px', direction: 'rtl' }, 'flex-start')], { display: 'flex', direction: 'rtl' }),
+      ], { background: FIELD, paddingTop: '86px', paddingBottom: '86px' }) };
     }
 
     // ── §13 ABOUT (paragraph(s) + professional photo) ──────────────────────────
@@ -573,11 +694,11 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
     case 'finalcta':
       return { section: section([
         block([col([
-          H(copy.heading, '46px', '#ffffff', 'center'),
-          copy.subheading ? T(copy.subheading, '#EDE7F5', 'center') : null,
-          copy.cta ? button(copy.cta, GRAD, '#ffffff') : null,
-        ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '18px', alignItems: 'center', textAlign: 'center' })]),
-      ], { background: INK, paddingTop: '104px', paddingBottom: '104px' }) };
+          H(copy.heading, '44px', '#ffffff', 'right'),
+          copy.subheading ? T(copy.subheading, mix(P, '#ffffff', 0.72), 'right') : null,
+          copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,
+        ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '0 1 46ch' }, 'flex-start')], { display: 'flex', direction: 'rtl' }),
+      ], { background: FIELD, paddingTop: '92px', paddingBottom: '92px' }) };
 
     default:
       throw new Error(`Unknown landing pattern "${pattern}".`);

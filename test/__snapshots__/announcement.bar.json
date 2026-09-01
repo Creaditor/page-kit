@@ -76,9 +76,9 @@
     "classList": [],
     "style": {
       "width": "100%",
-      "paddingTop": "12px",
-      "paddingBottom": "12px",
-      "background": "#0f1c30"
+      "paddingTop": "13px",
+      "paddingBottom": "13px",
+      "background": "#09263e"
     }
   }
 }

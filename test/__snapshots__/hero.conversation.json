@@ -13,7 +13,7 @@
               "children": [],
               "props": {
                 "style": {
-                  "fontFamily": "'Heebo', sans-serif"
+                  "fontFamily": "'Frank Ruhl Libre', serif"
                 },
                 "text": {
                   "childNodes": {
@@ -22,7 +22,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.6",
+                          "lineHeight": "1.2",
                           "direction": "rtl",
                           "textAlign": "right"
                         },
@@ -32,10 +32,13 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "'Heebo', sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#ecdde3"
+                                  "fontFamily": "'Frank Ruhl Libre', serif",
+                                  "fontSize": "13px",
+                                  "color": "#a8c4db"
                                 }
+                              },
+                              {
+                                "type": "bold"
                               }
                             ],
                             "type": "text",
@@ -73,7 +76,7 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "'Frank Ruhl Libre', serif",
-                                  "fontSize": "48px",
+                                  "fontSize": "54px",
                                   "color": "#ffffff"
                                 }
                               },
@@ -117,7 +120,7 @@
                                 "attrs": {
                                   "fontFamily": "'Heebo', sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#dfe9f2"
+                                  "color": "#bfd4e4"
                                 }
                               }
                             ],
@@ -142,10 +145,10 @@
                   "maxWidth": "100%",
                   "minWidth": "30px",
                   "background": "#ffffff",
-                  "color": "#1b65a0",
-                  "borderRadius": "999px",
+                  "color": "#09263e",
+                  "borderRadius": "0px",
                   "fontFamily": "'Heebo', sans-serif",
-                  "fontSize": "18px",
+                  "fontSize": "17px",
                   "direction": "rtl",
                   "paddingTop": "14px",
                   "paddingBottom": "14px",
@@ -278,7 +281,6 @@
                   "maxWidth": "86%",
                   "boxSizing": "border-box",
                   "border": "none",
-                  "boxShadow": "0 18px 40px -26px rgba(0,0,0,0.45)",
                   "alignSelf": "flex-start",
                   "direction": "rtl",
                   "textAlign": "right"
@@ -383,7 +385,6 @@
                   "maxWidth": "86%",
                   "boxSizing": "border-box",
                   "border": "1px solid #e8f0f6",
-                  "boxShadow": "0 18px 40px -26px rgba(0,0,0,0.45)",
                   "alignSelf": "flex-end",
                   "direction": "rtl",
                   "textAlign": "right"
@@ -428,9 +429,9 @@
     "classList": [],
     "style": {
       "width": "100%",
-      "paddingTop": "92px",
-      "paddingBottom": "92px",
-      "background": "linear-gradient(135deg, #964462 0%, #1b65a0 100%)"
+      "paddingTop": "84px",
+      "paddingBottom": "76px",
+      "background": "#09263e"
     }
   }
 }

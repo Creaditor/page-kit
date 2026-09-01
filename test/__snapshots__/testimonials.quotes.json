@@ -9,85 +9,167 @@
           "type": "col",
           "children": [
             {
-              "type": "text",
-              "children": [],
+              "type": "block",
+              "children": [
+                {
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Frank Ruhl Libre', serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
+                            "content": [
+                              {
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.2",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
+                                  {
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Frank Ruhl Libre', serif",
+                                          "fontSize": "13px",
+                                          "color": "#964462"
+                                        }
+                                      },
+                                      {
+                                        "type": "bold"
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "לפני הכל"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "0 0 auto"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
+                  }
+                },
+                {
+                  "type": "col",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "1 1 auto",
+                      "borderBottom": "1px solid #e8f0f6",
+                      "marginBottom": "7px"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
+                  }
+                }
+              ],
               "props": {
                 "style": {
-                  "fontFamily": "'Heebo', sans-serif"
-                },
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.6",
-                          "direction": "rtl",
-                          "textAlign": "center"
-                        },
-                        "content": [
-                          {
-                            "marks": [
-                              {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "'Heebo', sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#964462"
-                                }
-                              }
-                            ],
-                            "type": "text",
-                            "text": "לפני הכל"
-                          }
-                        ]
-                      }
-                    ]
-                  }
+                  "width": "100%",
+                  "marginLeft": "auto",
+                  "marginRight": "auto",
+                  "paddingLeft": "0px",
+                  "paddingRight": "0px",
+                  "display": "flex",
+                  "gap": "14px",
+                  "alignItems": "center",
+                  "direction": "rtl",
+                  "paddingBottom": "14px",
+                  "borderBottom": "1px solid #0f1c30",
+                  "marginBottom": "26px"
                 }
               }
             },
             {
-              "type": "text",
-              "children": [],
+              "type": "block",
+              "children": [
+                {
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Frank Ruhl Libre', serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
+                            "content": [
+                              {
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.18",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
+                                  {
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Frank Ruhl Libre', serif",
+                                          "fontSize": "38px",
+                                          "color": "#0f1c30"
+                                        }
+                                      },
+                                      {
+                                        "type": "bold"
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "כותרת ראשית לבדיקה"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "0 1 42ch",
+                      "textAlign": "right",
+                      "direction": "rtl"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
+                  }
+                }
+              ],
               "props": {
                 "style": {
-                  "fontFamily": "'Frank Ruhl Libre', serif"
-                },
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.18",
-                          "direction": "rtl",
-                          "textAlign": "center"
-                        },
-                        "content": [
-                          {
-                            "marks": [
-                              {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "'Frank Ruhl Libre', serif",
-                                  "fontSize": "38px",
-                                  "color": "#0f1c30"
-                                }
-                              },
-                              {
-                                "type": "bold"
-                              }
-                            ],
-                            "type": "text",
-                            "text": "כותרת ראשית לבדיקה"
-                          }
-                        ]
-                      }
-                    ]
-                  }
+                  "width": "100%",
+                  "marginLeft": "auto",
+                  "marginRight": "auto",
+                  "paddingLeft": "0px",
+                  "paddingRight": "0px",
+                  "display": "flex",
+                  "direction": "rtl"
                 }
               }
             }
@@ -96,12 +178,10 @@
             "style": {
               "display": "flex",
               "flexDirection": "column",
-              "gap": "12px",
-              "alignItems": "center",
-              "textAlign": "center"
+              "width": "100%"
             },
             "lg": 12,
-            "justify": "center"
+            "justify": "flex-start"
           }
         }
       ],
@@ -112,7 +192,7 @@
           "marginRight": "auto",
           "paddingLeft": "28px",
           "paddingRight": "28px",
-          "marginBottom": "36px"
+          "marginBottom": "44px"
         }
       }
     },
@@ -252,10 +332,9 @@
               "flexDirection": "column",
               "gap": "10px",
               "background": "#ffffff",
-              "borderRadius": "22px",
-              "padding": "28px 26px",
+              "borderRadius": "4px",
+              "padding": "26px 24px",
               "border": "1px solid #e8f0f6",
-              "boxShadow": "0 18px 40px -24px rgba(0,0,0,0.22)",
               "boxSizing": "border-box",
               "direction": "rtl",
               "textAlign": "right",

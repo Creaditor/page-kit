@@ -1,0 +1,81 @@
+{
+  "type": "section",
+  "layer": "1",
+  "children": [
+    {
+      "type": "block",
+      "children": [
+        {
+          "type": "col",
+          "children": [
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.4",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontSize": "17px",
+                                  "color": "#dfe9f2"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "ההודעה הראשונה על חשבוננו"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "display": "flex",
+              "justifyContent": "center",
+              "textAlign": "center"
+            },
+            "lg": 12,
+            "justify": "center"
+          }
+        }
+      ],
+      "props": {
+        "style": {
+          "width": "1240px",
+          "marginLeft": "auto",
+          "marginRight": "auto",
+          "paddingLeft": "28px",
+          "paddingRight": "28px"
+        }
+      }
+    }
+  ],
+  "props": {
+    "opacity": 1,
+    "classList": [],
+    "style": {
+      "width": "100%",
+      "paddingTop": "12px",
+      "paddingBottom": "12px",
+      "background": "#0f1c30"
+    }
+  }
+}

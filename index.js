@@ -13,6 +13,7 @@
 
 const builder = require('./builder');
 const { composeLandingSection } = require('./landingSections');
+const landingVocabulary = require('./landingVocabulary');
 const SECTION_TEMPLATES = require('./sections.json');
 
 // Every element type a page can contain: the tuned core content types plus the
@@ -39,6 +40,7 @@ const editPatch = (siteId, userId, transactions, transactionId) => ({
 module.exports = {
   ...builder,
   composeLandingSection,
+  ...landingVocabulary,
   SECTION_TEMPLATES,
   ELEMENT_TYPES,
   editPatch,

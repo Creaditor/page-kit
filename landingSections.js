@@ -18,14 +18,48 @@
  *   leadform(§12) about(§13) faq(§14) finalcta
  */
 const b = require('./builder.js');
-const { cid, makeText, makeButton, makeImage, makeList, buildElement, readableTextOn } = b;
+const { cid, makeText, makeButton, makeImage, makeList, buildElement, readableTextOn, parseColor, toHex } = b;
 
-const INK = '#17091F';
-const MUTED = '#6C6284';
-const BODY = '#40364F';
-const LINE = '#ECE5F4';
-const LIGHT = '#F7F5FC';
 const CONTENT_WIDTH = 1240; // px content width (width only; block max-width left to the editor)
+
+// ── neutrals, derived from the brand ─────────────────────────────────────────
+//
+// These used to be five hardcoded constants (INK '#17091F', LIGHT '#F7F5FC',
+// LINE '#ECE5F4' and friends), every one of them purple-tinted. That is fine
+// for a purple brand and quietly wrong for every other one: on the SendMsg
+// tenant, whose palette is blue (#1b65a0), every heading, hairline and section
+// band pulled the page toward a purple it does not own. Field report, 2026-09-01:
+// "it doesn't look like the brand".
+//
+// So the neutral ramp is now mixed FROM the brand hue. Same role, same
+// contrast, tinted to whatever brand is being rendered. A grey with a trace of
+// the brand in it reads as deliberate; a grey with a trace of someone else's
+// brand reads as a template.
+const mix = (a, bColor, t) => {
+  const x = parseColor(a) || { r: 0, g: 0, b: 0 };
+  const y = parseColor(bColor) || { r: 255, g: 255, b: 255 };
+  return toHex({
+    r: Math.round(x.r + (y.r - x.r) * t),
+    g: Math.round(x.g + (y.g - x.g) * t),
+    b: Math.round(x.b + (y.b - x.b) * t),
+  });
+};
+
+/**
+ * Build the neutral ramp for one palette. Ratios are tuned so the resulting
+ * contrasts match what the old fixed constants delivered, which is why the
+ * snapshot diff for this change is colour-only and never structural.
+ */
+function neutrals(palette = {}) {
+  const brand = palette.primary || '#1b65a0';
+  return {
+    INK: mix(brand, '#0b0710', 0.78),   // headings. brand pushed most of the way to black
+    BODY: mix(brand, '#2a2532', 0.62),  // body copy
+    MUTED: mix(brand, '#7b7787', 0.55), // secondary copy
+    LINE: mix(brand, '#ffffff', 0.90),  // hairlines and card borders
+    LIGHT: mix(brand, '#ffffff', 0.965), // tinted section bands
+  };
+}
 
 // ── element helpers ──────────────────────────────────────────────────────────
 // Brand font — page-kit's makeText defaults to Arial, which looks generic on a
@@ -66,11 +100,63 @@ const section = (blocks, style = {}) => ({ id: cid(), type: 'section', layer: '1
 
 function headingBlock(eyebrow, title, opts = {}, palette) {
   const { onDark = false, titleSize = '38px', mb = '36px' } = opts;
+  const { INK } = neutrals(palette);
   const kids = [];
   if (eyebrow) kids.push(para(eyebrow, onDark ? '#F6D9EE' : palette.secondary || palette.primary, 'center', palette));
   if (title) kids.push(heading(title, titleSize, onDark ? '#ffffff' : INK, 'center', palette));
   return block([col(kids, { display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', textAlign: 'center' })], { marginBottom: mb });
 }
+/**
+ * Message bubbles for the `conversation` variants.
+ *
+ * The device is not decoration for a messaging product, it is the product's own
+ * material. It also solves a real constraint: tenants flagged is_haredi_sector
+ * cannot use photographs of people at all, and the people-free stock photos the
+ * gate substitutes are reliably irrelevant (a live run put a "Hey Siri" paper
+ * macro in an About slot). A drawn conversation is always on-brand, never
+ * returns a competitor's logo on a wall, and needs no image search.
+ *
+ * `from: 'business'` is the tenant speaking, and sits on the RIGHT in Hebrew,
+ * which is flex-start under direction: rtl. Getting this backwards is the same
+ * class of bug as the cardsRow one shipped in 2026-08.
+ */
+function threadBubbles(thread, palette = {}) {
+  const { INK, LINE, MUTED } = neutrals(palette);
+  const P = palette.primary || '#1b65a0';
+  return (Array.isArray(thread) ? thread : []).slice(0, 6).map((m) => {
+    const mine = (m && m.from) !== 'customer';
+    const kids = [para(String((m && m.text) || ''), mine ? '#ffffff' : INK, 'right', palette)];
+    if (m && m.time) kids.push(para(String(m.time), mine ? mix(P, '#ffffff', 0.72) : MUTED, 'left', palette));
+    return col(kids, {
+      display: 'flex', flexDirection: 'column', gap: '4px',
+      background: mine ? P : '#ffffff', borderRadius: '22px',
+      [mine ? 'borderBottomRightRadius' : 'borderBottomLeftRadius']: '6px',
+      padding: '14px 18px', maxWidth: '86%', boxSizing: 'border-box',
+      border: mine ? 'none' : `1px solid ${LINE}`,
+      boxShadow: '0 18px 40px -26px rgba(0,0,0,0.45)',
+      alignSelf: mine ? 'flex-start' : 'flex-end',
+      direction: 'rtl', textAlign: 'right',
+    }, 'flex-start');
+  });
+}
+
+/**
+ * A small round badge that overhangs the top corner of the card it sits in.
+ * Negative margin rather than absolute positioning: the editor's renderer
+ * honours margins on a col reliably and position/zIndex are not part of the
+ * element contract.
+ */
+function badge(label, palette = {}) {
+  const S = palette.secondary || palette.primary || '#964462';
+  const el = makeText(label, { fontSize: '15px', color: '#ffffff', align: 'center', bold: true, fontFamily: FONT });
+  el.props.style = {
+    ...el.props.style, background: S, width: '42px', height: '42px', lineHeight: '42px',
+    borderRadius: '999px', marginTop: '-40px', marginBottom: '6px',
+    boxShadow: '0 10px 22px -10px rgba(0,0,0,0.45)',
+  };
+  return el;
+}
+
 const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', textAlign: 'center' })]);
 
 // card style for multi-item rows
@@ -82,14 +168,14 @@ const centeredProse = (kids) => block([col(kids, { display: 'flex', flexDirectio
 // reader expects it rightmost, and any child narrower than the card (the
 // buttons) is pinned to the LTR start edge, i.e. the wrong side. Field report
 // 260814: "the design is ugly, we are in Hebrew and it's LTR".
-const card = (extra = {}) => ({
+const card = (extra = {}, palette = {}) => ({
   display: 'flex', flexDirection: 'column', gap: '10px', background: '#ffffff', borderRadius: '22px',
-  padding: '28px 26px', border: `1px solid ${LINE}`, boxShadow: '0 18px 40px -24px rgba(0,0,0,0.22)',
+  padding: '28px 26px', border: `1px solid ${neutrals(palette).LINE}`, boxShadow: '0 18px 40px -24px rgba(0,0,0,0.22)',
   boxSizing: 'border-box', direction: 'rtl', textAlign: 'right', flex: '1 1 240px', margin: '10px', ...extra,
 });
 // Set on the ROW as well as the card: the row-level value orders the cards
 // (first item on the right), the card-level value aligns each card's contents.
-const cardsRow = (cards) => block(cards.map((kids) => col(kids, card(), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch', direction: 'rtl' });
+const cardsRow = (cards, palette = {}) => block(cards.map((kids) => col(kids, card({}, palette), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch', direction: 'rtl' });
 
 /**
  * @param {string} pattern
@@ -97,7 +183,14 @@ const cardsRow = (cards) => block(cards.map((kids) => col(kids, card(), 'flex-st
  * @param {object} palette  { primary, secondary, accent, text, background }
  * @returns {{ section: object }}
  */
-function composeLandingSection(pattern, copy = {}, palette = {}) {
+function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
+  const { INK, BODY, MUTED, LINE, LIGHT } = neutrals(palette);
+  // `variant` is resolved by the CALLER via resolveLandingVariant, which
+  // guarantees it is renderable. An unrecognised value still falls through to
+  // the pattern's first branch here rather than throwing, because this function
+  // is called inside a try/catch that skips the whole section on error, and
+  // losing a section to a typo is a worse outcome than rendering the default.
+  const variant = typeof opts.variant === 'string' ? opts.variant : null;
   const P = palette.primary || '#6328A7';
   const S = palette.secondary || palette.accent || P;
   const GRAD = `linear-gradient(135deg, ${S} 0%, ${P} 100%)`;
@@ -107,22 +200,66 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
 
   switch (pattern) {
     // ── §1 HERO ──────────────────────────────────────────────────────────────
-    case 'hero':
+    //
+    // Three variants. `centered` is the original and stays the default: it is
+    // the one that works with nothing but a headline. The other two need real
+    // material and look worse than centered without it, which is why
+    // resolveLandingVariant checks their `needs` before either is chosen.
+    case 'hero': {
+      // The eyebrow and subheading tints used to be literal '#F6D9EE' and
+      // '#F3E9FB', pink on every brand. Derived from the gradient now.
+      const onGrad = mix(S, '#ffffff', 0.82);
+      const onGradSoft = mix(P, '#ffffff', 0.86);
+      const heroCopy = (align) => [
+        copy.eyebrow ? T(copy.eyebrow, onGrad, align) : null,
+        H(copy.heading, align === 'center' ? '56px' : '48px', '#ffffff', align),
+        copy.subheading ? T(copy.subheading, onGradSoft, align) : null,
+        copy.cta ? button(copy.cta, '#ffffff', P) : null,
+      ].filter(Boolean);
+
+      if (variant === 'asymmetric' && copy.image) {
+        return { section: section([
+          block([
+            col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
+            col([photo(copy.image, 620, 420)], { display: 'flex', flex: '1 1 380px', margin: '12px' }, 'center'),
+          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }),
+        ], { background: GRAD, paddingTop: '92px', paddingBottom: '92px' }) };
+      }
+
+      if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
+        return { section: section([
+          block([
+            col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
+            col(threadBubbles(copy.thread, palette), { display: 'flex', flexDirection: 'column', gap: '14px', flex: '1 1 340px', margin: '12px', direction: 'rtl' }, 'flex-start'),
+          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }),
+        ], { background: GRAD, paddingTop: '92px', paddingBottom: '92px' }) };
+      }
+
       return { section: section([
-        block([col([
-          copy.eyebrow ? T(copy.eyebrow, '#F6D9EE', 'center') : null,
-          H(copy.heading, '56px', '#ffffff', 'center'),
-          copy.subheading ? T(copy.subheading, '#F3E9FB', 'center') : null,
-          copy.cta ? button(copy.cta, '#ffffff', P) : null,
-        ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })]),
+        block([col(heroCopy('center'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })]),
       ], { background: GRAD, paddingTop: '104px', paddingBottom: '104px' }) };
+    }
 
     // ── §2 PROBLEM / identification (editorial) ────────────────────────────────
-    case 'problem':
+    case 'problem': {
+      if (variant === 'badge-cards' && Array.isArray(copy.items) && copy.items.length) {
+        // A numbered badge that breaks the card's top corner. The number is
+        // real information here: these are the reader's obstacles in the order
+        // they hit them, not decoration.
+        return { section: section([
+          hb(copy.eyebrow, copy.heading),
+          cardsRow(copy.items.slice(0, 4).map((it, i) => [
+            badge(String(i + 1).padStart(2, '0'), palette),
+            H(it.title || '', '20px', INK, 'right'),
+            it.text ? T(it.text, MUTED, 'right') : null,
+          ].filter(Boolean)), palette),
+        ], { background: LIGHT }) };
+      }
       return { section: section([
         hb(copy.eyebrow, copy.heading),
         centeredProse([T(copy.paragraph, BODY, 'center')]),
       ], { background: LIGHT }) };
+    }
 
     // ── §3 TARGET AUDIENCE (who it is for) ─────────────────────────────────────
     // Each audience point is its own card col inside a flex-wrap block, so the
@@ -132,12 +269,21 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
         hb(copy.eyebrow, copy.heading),
         copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
         (copy.bullets && copy.bullets.length)
-          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]))
+          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]), palette)
           : null,
       ].filter(Boolean), { background: '#ffffff' }) };
 
     // ── §4 SOLUTION (paragraph + bullets + product image) ──────────────────────
     case 'solution':
+      if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
+        return { section: section([
+          hb(copy.eyebrow, copy.heading),
+          block([col(threadBubbles(copy.thread, palette), {
+            display: 'flex', flexDirection: 'column', gap: '16px', direction: 'rtl',
+            flex: '0 1 680px', margin: '0 auto',
+          }, 'flex-start')], { display: 'flex', justifyContent: 'center' }),
+        ], { background: '#ffffff' }) };
+      }
       return { section: section([
         hb(copy.eyebrow, copy.heading),
         copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
@@ -173,7 +319,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
         hb(copy.eyebrow, copy.heading),
         copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'center')]) : null,
         (copy.bullets && copy.bullets.length)
-          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]))
+          ? cardsRow(copy.bullets.map((t) => [T(t, BODY, 'right')]), palette)
           : null,
       ].filter(Boolean), { background: LIGHT }) };
 
@@ -239,6 +385,61 @@ function composeLandingSection(pattern, copy = {}, palette = {}) {
           border: `1px solid ${LINE}`, boxShadow: '0 30px 60px -28px rgba(0,0,0,0.28)',
         })], { display: 'flex', justifyContent: 'center' }),
       ], { background: LIGHT }) };
+
+    // ── STAT BAR (new) ─────────────────────────────────────────────────────────
+    //
+    // Big numbers with a short label. Deliberately NOT a place for invented
+    // performance claims: studio's grounding gate exists because this model
+    // family will happily produce "47% increase". Feed it product facts (how
+    // many tools, what it costs, how long setup takes), which is what the
+    // reference client page does with "3 days" and "35 mentors".
+    case 'statbar': {
+      const stats = (Array.isArray(copy.stats) ? copy.stats : []).slice(0, 4);
+      const onInk = variant === 'overlap' || variant === 'row';
+      const cols = stats.map((st) => col([
+        H(String((st && st.value) || ''), '44px', '#ffffff', 'center'),
+        T(String((st && st.label) || ''), mix(P, '#ffffff', 0.62), 'center'),
+      ], {
+        display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center',
+        textAlign: 'center', flex: '1 1 180px', margin: '10px', boxSizing: 'border-box',
+      }, 'center'));
+      const bar = block(cols, {
+        display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'stretch',
+        direction: 'rtl', background: INK, borderRadius: '20px', padding: '30px 18px',
+        boxShadow: '0 34px 70px -40px rgba(0,0,0,0.7)',
+        ...(variant === 'overlap' ? { marginTop: '-72px' } : {}),
+      });
+      return { section: section([bar], {
+        background: 'transparent',
+        paddingTop: variant === 'overlap' ? '0px' : '48px',
+        paddingBottom: '48px',
+      }) };
+    }
+
+    // ── ANNOUNCEMENT (new) ─────────────────────────────────────────────────────
+    // A thin strip above everything. One short line, no CTA: it competes with
+    // the hero if it grows past that.
+    case 'announcement':
+      return { section: section([
+        block([col([T(copy.text || '', mix(P, '#ffffff', 0.86), 'center')], {
+          display: 'flex', justifyContent: 'center', textAlign: 'center',
+        }, 'center')]),
+      ], { background: INK, paddingTop: '12px', paddingBottom: '12px' }) };
+
+    // ── STICKY CTA (new) ───────────────────────────────────────────────────────
+    // Page-level rather than a section in the flow. The editor has no `position:
+    // fixed` in its element contract, so this renders as a full-width brand band
+    // that repeats the ask. It is the honest version of the device we can
+    // actually render, not a fake of one we cannot.
+    case 'stickyCta':
+      return { section: section([
+        block([col([
+          copy.heading ? H(copy.heading, '26px', '#ffffff', 'center') : null,
+          copy.cta ? button(copy.cta, '#ffffff', P) : null,
+        ].filter(Boolean), {
+          display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center', textAlign: 'center',
+        }, 'center')]),
+      ], { background: GRAD, paddingTop: '40px', paddingBottom: '40px' }) };
 
     // ── §11 GUARANTEE ──────────────────────────────────────────────────────────
     case 'guarantee':

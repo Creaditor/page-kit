@@ -81,24 +81,18 @@ function neutrals(palette = {}) {
 // that catalogue cover Hebrew: Rubik, Heebo, Assistant, Secular One and Frank
 // Ruhl Libre. Anything outside those five renders in a fallback.
 //
-// DISPLAY: Frank Ruhl Libre, a Hebrew serif, used only for statements. Hebrew
-//   SaaS pages are overwhelmingly geometric sans, so a serif reads as written
-//   rather than generated, which suits a product about writing to customers.
-// BODY: Heebo. Quiet, and different enough from the serif to read as a pair
-//   rather than an accident.
+// DISPLAY: no longer a fixed face. It is resolved per tenant from
+//   `palette.displayFont`, see the next block. It WAS Frank Ruhl Libre, a
+//   Hebrew serif, on the reasoning that a serif reads as written rather than
+//   generated. That was rejected on sight in the 2026-09-02 design review:
+//   no serif survived the picks, and the face is now the tenant's to choose.
+// BODY: Heebo. Quiet, and different enough from the display face to read as a
+//   pair rather than an accident.
 // DATA: a system mono, for machine output only: timestamps, prices, counters,
 //   stat values. It needs no webfont because these are Latin digits, and it is
 //   the one device that makes the numbers read as product rather than
 //   decoration. Where the content genuinely IS machine output, a mono face
 //   carries meaning instead of adding noise.
-//
-// Secular One was considered and rejected: it ships at a single weight and is
-// heavy enough to fight the serif for the same job.
-//
-// DISPLAY stays the literal default the file always had. It backs `data()`'s
-// unwired call sites (numbering markers, stat values, the head's own eyebrow
-// row) so nothing outside the three sites below changes behaviour.
-const DISPLAY = "'Frank Ruhl Libre', serif";
 const BODY_FONT = "'Heebo', sans-serif";
 const DATA = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 // Buttons are an interface element rather than prose, so they take the body
@@ -166,7 +160,7 @@ const para = (text, color, align) =>
  * this model family follows four times out of five.
  *
  * Mixed strings take the display face instead: at stat sizes it still reads as
- * a number, and Frank Ruhl Libre has real Hebrew.
+ * a number, and every face in FONT_CATALOGUE has real Hebrew.
  */
 const HAS_RTL_LETTERS = /[\u0590-\u05FF\u0600-\u06FF]/;
 
@@ -188,14 +182,17 @@ function applyFont(node, family) {
   }
   return node;
 }
-// `family` defaults to DISPLAY (not FALLBACK_DISPLAY): almost every call site
-// renders bare digits and takes the mono branch regardless of family, so the
-// default only surfaces on the rare mixed-content string (a stat value with
-// a Hebrew unit, e.g. "10 דקות"). Keeping that default at the file's original
-// serif rather than the new fallback keeps every one of those call sites
-// byte-for-byte unchanged; only the hero eyebrow is wired to the resolved
-// business-context font, via its own explicit `family` argument below.
-const data = (text, color, align, fontSize = '15px', family = DISPLAY) => {
+// `family` defaults to FALLBACK_DISPLAY, and every call site that renders
+// words rather than digits passes the resolved font explicitly.
+//
+// It briefly defaulted to the file's original serif on the reasoning that the
+// default "only surfaces on the rare mixed-content string". That was wrong:
+// `headingBlock` renders EVERY section's eyebrow through `data()`, a Hebrew
+// eyebrow has letters so it takes the non-mono branch, and the eyebrow call
+// did not pass a family. So fifteen of fifteen patterns kept a serif eyebrow
+// while their headings moved to the resolved font. Digits still take the mono
+// branch regardless of what is passed here.
+const data = (text, color, align, fontSize = '15px', family = FALLBACK_DISPLAY) => {
   const str = String(text || '');
   const mono = !HAS_RTL_LETTERS.test(str);
   return makeText(str, {
@@ -272,7 +269,7 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
     // width and the rule takes whatever is left, which is what makes the head
     // read as ruled rather than as a centered caption.
     kids.push(block([
-      col([data(eyebrow, onDark ? mix(S, '#ffffff', 0.55) : S, 'right', '13px')],
+      col([data(eyebrow, onDark ? mix(S, '#ffffff', 0.55) : S, 'right', '13px', DISPLAY)],
         { display: 'flex', flex: '0 0 auto' }, 'flex-start'),
       col([], { display: 'flex', flex: '1 1 auto', borderBottom: `1px solid ${hairline}`, marginBottom: '7px' }, 'flex-start'),
     ], {

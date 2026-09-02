@@ -281,6 +281,7 @@ function fontsIn(node, out = new Set()) {
 
 // The cssRule strings from editor-api src/seedFonts.js, verbatim, plus the
 // system mono stack (Latin digits only, needs no catalogue entry).
+const DATA_STACK = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 const SERVABLE_FONTS = new Set([
   "'Rubik', sans-serif",
   "'Heebo', sans-serif",
@@ -327,7 +328,15 @@ test('the mono role is never applied to Hebrew, which it has no glyphs for', () 
   const json = JSON.stringify(section);
   const monoRun = /"fontFamily":"ui-monospace[^"]*"[^}]*}[^}]*}[^}]*"text":"10 דקות"/.test(json);
   assert.ok(!monoRun, 'a stat value containing Hebrew must not take the mono role');
-  assert.ok(json.includes('Frank Ruhl Libre'), 'it takes the display face instead, which has Hebrew');
+  // It takes the display face instead, which has Hebrew. Asserted as "one of
+  // the catalogue faces" rather than by name: the display face is resolved per
+  // tenant from `palette.displayFont` now, so naming one here would pin a
+  // design decision the tenant owns. This test is about the mono guard.
+  const display = [...fontsIn(section)].filter((f) => f !== DATA_STACK);
+  assert.ok(display.length > 0, 'the stat value must carry some non-mono face');
+  for (const f of display) {
+    assert.ok(SERVABLE_FONTS.has(f), `${f} is not a catalogue cssRule`);
+  }
 });
 
 test('display type is set tighter than body type', () => {

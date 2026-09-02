@@ -101,6 +101,11 @@ const LANDING_VOCABULARY = {
         needs: ['items'],
         optional: ['eyebrow', 'heading'],
       },
+      lift: {
+        description: 'Comes up to a pale ground tinted from the brand, the one moment on the page that is not near-black. Use for a page that should feel like it takes a breath after a dark hero, or when the reader needs a change of register to keep reading. Needs `items`, 2 to 4 obstacles, each { title, text }.',
+        needs: ['items'],
+        optional: ['eyebrow', 'heading'],
+      },
     },
   },
 

@@ -671,6 +671,30 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         return { section: section([headBlock, panelsBlock], { background: theme.FIELD }) };
       }
 
+      // ── LIFT ───────────────────────────────────────────────────────────
+      // The one problem variant that comes up to a pale ground. Takes the
+      // LIGHT bundle exclusively (theme.LIFT / theme.ON_LIGHT /
+      // theme.LIFT_INK / theme.LIFT_LINE / theme.LIFT_BODY), never the dark
+      // FIELD/ON_DARK pair continuous and panels just used: the dark-ground
+      // accent measures 1.8:1 to 2.6:1 on this ground, unreadable.
+      if (variant === 'lift' && Array.isArray(copy.items) && copy.items.length) {
+        const headBlock = problemHead(theme.ON_LIGHT, theme.LIFT_INK);
+        const rows = copy.items.slice(0, 4).map((it, i) => col([
+          col([makeText(String(i + 1).padStart(2, '0'), {
+            fontSize: '54px', color: theme.ON_LIGHT, align: 'right', bold: false,
+            fontFamily: "'Secular One', sans-serif", lineHeight: '1',
+          })], { display: 'flex', flex: '0 0 86px' }, 'flex-start'),
+          col([H(it.title, '22px', theme.LIFT_INK, 'right')], { display: 'flex', flex: '0 0 250px' }, 'flex-start'),
+          col([para(it.text, theme.LIFT_BODY, 'right')], { display: 'flex', flex: '1 1 320px' }, 'flex-start'),
+        ], {
+          display: 'flex', gap: '38px', direction: 'rtl', width: '100%',
+          paddingTop: '34px', paddingBottom: '34px',
+          ...(i === 0 ? {} : { borderTop: `1px solid ${theme.LIFT_LINE}` }),
+        }, 'flex-start'));
+        const rowsBlock = block(rows, { display: 'flex', flexDirection: 'column', width: '100%' });
+        return { section: section([headBlock, rowsBlock], { background: theme.LIFT }) };
+      }
+
       if (variant === 'badge-cards' && Array.isArray(copy.items) && copy.items.length) {
         // A numbered ruled list, not a row of cards. The number is real
         // information here: these are the obstacles in the order the reader

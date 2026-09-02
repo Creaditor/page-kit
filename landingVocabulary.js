@@ -91,6 +91,16 @@ const LANDING_VOCABULARY = {
         needs: ['items'],
         optional: ['eyebrow', 'heading'],
       },
+      continuous: {
+        description: 'Stays on the same dark ground as the hero, no colour break between the two sections. Each obstacle is a ruled row with an ordinal marker in the accent colour. Use when the page should read as one continuous scroll rather than a series of separate screens. Needs `items`, 2 to 4 obstacles, each { title, text }.',
+        needs: ['items'],
+        optional: ['eyebrow', 'heading'],
+      },
+      panels: {
+        description: 'Stays dark like continuous, but each obstacle owns a solid block one shade off the ground, flush and touching rather than floating on a shadow. Use when the obstacles need more visual weight than a plain ruled list. Needs `items`, 2 to 4 obstacles, each { title, text }.',
+        needs: ['items'],
+        optional: ['eyebrow', 'heading'],
+      },
     },
   },
 

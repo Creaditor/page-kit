@@ -596,6 +596,81 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
 
     // ── §2 PROBLEM / identification (editorial) ────────────────────────────────
     case 'problem': {
+      // continuous, panels and lift share one derived theme, computed once
+      // here rather than per branch (mirrors how the hero case above shares
+      // its own `theme` local across gold-night/coral-cut/cinema-block).
+      const theme = deriveTheme(palette.primary, palette.secondary);
+
+      // A bespoke head for continuous/panels/lift: an eyebrow line directly
+      // above an H, no ruled top bar. `headingBlock`'s full-width ruled line
+      // above the heading is section ONE's own device now (gold-night above
+      // reuses it); giving section two the same head over the same body
+      // helpers is exactly the "one device repeated" grammar the
+      // 2026-09-02 design review rejected. Not extracted to a top-level
+      // helper: only these three branches call it.
+      const problemHead = (eyebrowColor, headingColor) => {
+        const kids = [];
+        if (copy.eyebrow) {
+          kids.push(block([col([makeText(copy.eyebrow, {
+            fontSize: '14px', color: eyebrowColor, align: 'right',
+            fontFamily: BODY_FONT, bold: false, lineHeight: '1',
+          })], { display: 'flex' }, 'flex-start')]));
+        }
+        if (copy.heading) {
+          kids.push(block([col([H(copy.heading, '44px', headingColor, 'right')],
+            { display: 'flex', flex: '0 1 20ch', direction: 'rtl' }, 'flex-start')]));
+        }
+        if (!kids.length) return null;
+        return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: '54px' });
+      };
+
+      // ── CONTINUOUS ─────────────────────────────────────────────────────
+      // Stays on the hero's own dark ground, no colour break between
+      // sections. Ruled rows, an ordinal marker in the accent colour, up to
+      // 4 obstacles. The marker is never bold (Secular One is seeded 400
+      // only) and never white/bold: that combination is gold-night's own
+      // numeral device, a business STAT rather than a list position, and the
+      // two must stay visually distinct even when both land on one page.
+      if (variant === 'continuous' && Array.isArray(copy.items) && copy.items.length) {
+        const headBlock = problemHead(theme.ON_DARK, '#ffffff');
+        const rows = copy.items.slice(0, 4).map((it, i) => col([
+          col([makeText(String(i + 1).padStart(2, '0'), {
+            fontSize: '54px', color: theme.ON_DARK, align: 'right', bold: false,
+            fontFamily: "'Secular One', sans-serif", lineHeight: '1',
+          })], { display: 'flex', flex: '0 0 86px' }, 'flex-start'),
+          col([H(it.title, '22px', '#ffffff', 'right')], { display: 'flex', flex: '0 0 250px' }, 'flex-start'),
+          col([para(it.text, theme.MUTED, 'right')], { display: 'flex', flex: '1 1 320px' }, 'flex-start'),
+        ], {
+          display: 'flex', gap: '38px', direction: 'rtl', width: '100%',
+          paddingTop: '34px', paddingBottom: '34px',
+          ...(i === 0 ? {} : { borderTop: `1px solid ${theme.LINE}` }),
+        }, 'flex-start'));
+        const rowsBlock = block(rows, { display: 'flex', flexDirection: 'column', width: '100%' });
+        return { section: section([headBlock, rowsBlock], { background: theme.FIELD }) };
+      }
+
+      // ── PANELS ─────────────────────────────────────────────────────────
+      // Still dark, but each obstacle owns a solid block one shade off the
+      // ground (theme.PANEL, already derived in landingTheme.js for exactly
+      // this), square and flush rather than floating on a shadow.
+      if (variant === 'panels' && Array.isArray(copy.items) && copy.items.length) {
+        const headBlock = problemHead(theme.ON_DARK, '#ffffff');
+        const panelCols = copy.items.slice(0, 4).map((it, i) => {
+          const numeral = makeText(String(i + 1).padStart(2, '0'), {
+            fontSize: '64px', color: theme.ON_DARK, align: 'right', bold: false,
+            fontFamily: "'Secular One', sans-serif", lineHeight: '1',
+          });
+          numeral.props.style = { ...numeral.props.style, marginBottom: '26px' };
+          const title = H(it.title, '22px', '#ffffff', 'right');
+          title.props.style = { ...title.props.style, marginBottom: '14px' };
+          return col([numeral, title, para(it.text, theme.MUTED, 'right')], {
+            background: theme.PANEL, padding: '38px 32px 42px', flex: '1 1 300px', boxSizing: 'border-box',
+          }, 'flex-start');
+        });
+        const panelsBlock = block(panelCols, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl' });
+        return { section: section([headBlock, panelsBlock], { background: theme.FIELD }) };
+      }
+
       if (variant === 'badge-cards' && Array.isArray(copy.items) && copy.items.length) {
         // A numbered ruled list, not a row of cards. The number is real
         // information here: these are the obstacles in the order the reader

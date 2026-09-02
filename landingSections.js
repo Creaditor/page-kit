@@ -462,6 +462,86 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,
       ].filter(Boolean);
 
+      // gold-night and coral-cut share one derived theme, computed once here
+      // rather than per branch: both variants read from it, and cinema-block
+      // (below) reuses the same local.
+      const theme = deriveTheme(palette.primary, palette.secondary);
+
+      // ── GOLD NIGHT ───────────────────────────────────────────────────────
+      // Deep ink ground, one gold accent, numerals on their own ruled row
+      // under the headline. Secular One is seeded at 400 only, so the
+      // headline and the numeral values must resolve bold:false explicitly.
+      if (variant === 'gold-night') {
+        const cells = (Array.isArray(copy.stats) ? copy.stats : []).slice(0, 4).map((st, i) => col([
+          makeText(String((st && st.value) || ''), { fontSize: '42px', color: '#ffffff', align: 'right', bold: false, fontFamily: "'Secular One', sans-serif", lineHeight: '1' }),
+          makeText(String((st && st.label) || ''), { fontSize: '14px', color: theme.MUTED, align: 'right', fontFamily: BODY_FONT, lineHeight: '1.3' }),
+        ], {
+          display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start',
+          textAlign: 'right', direction: 'rtl', flex: '1 1 160px', boxSizing: 'border-box',
+          paddingTop: '26px', paddingBottom: '8px', paddingRight: '26px', paddingLeft: '26px',
+          ...(i === 0 ? {} : { borderRight: `1px solid ${theme.LINE}` }),
+        }, 'flex-start'));
+
+        const goldCopy = [
+          copy.eyebrow ? makeText(copy.eyebrow, { fontSize: '14px', color: theme.ON_DARK, align: 'right', fontFamily: BODY_FONT, bold: false, lineHeight: '1' }) : null,
+          heading(copy.heading, '80px', '#ffffff', 'right', "'Secular One', sans-serif", false),
+          copy.subheading ? makeText(copy.subheading, { fontSize: '20px', color: theme.MUTED, align: 'right', fontFamily: BODY_FONT, lineHeight: '1.65' }) : null,
+          copy.cta ? button(copy.cta, theme.ON_DARK, theme.FIELD) : null,
+        ].filter(Boolean);
+
+        const goldBlocks = [
+          block([col(goldCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl' }, 'flex-start')]),
+        ];
+        if (cells.length) {
+          goldBlocks.push(block(cells, { display: 'flex', flexWrap: 'wrap', direction: 'rtl', marginTop: '62px', borderTop: `1px solid ${theme.ON_DARK}` }));
+        }
+        return { section: section(goldBlocks, { background: theme.FIELD, paddingTop: '92px', paddingBottom: '84px' }) };
+      }
+
+      // ── CORAL CUT ────────────────────────────────────────────────────────
+      // Copy on one side, three numbers in their own accent-coloured field on
+      // the other. One block, width 100%, holding two full-height cols: the
+      // editor's BlockElement forces `margin: 0 auto` on every block, so two
+      // adjacent blocks would always be re-centred by the driver regardless
+      // of what width or margin page-kit sets on them. A single full-width
+      // block makes that forced centring a no-op.
+      if (variant === 'coral-cut' && Array.isArray(copy.stats) && copy.stats.length) {
+        const coralCopy = [
+          copy.eyebrow ? makeText(copy.eyebrow, { fontSize: '13px', color: theme.ON_DARK, align: 'right', fontFamily: BODY_FONT, bold: true, lineHeight: '1' }) : null,
+          heading(copy.heading, '78px', '#ffffff', 'right', "'Assistant', sans-serif", true),
+          copy.subheading ? makeText(copy.subheading, { fontSize: '19px', color: theme.MUTED, align: 'right', fontFamily: BODY_FONT, lineHeight: '1.7' }) : null,
+          copy.cta ? button(copy.cta, theme.ON_DARK, theme.onAccentDark) : null,
+        ].filter(Boolean);
+
+        const stats = copy.stats.slice(0, 3);
+        const statRows = stats.map((st, i) => col([
+          makeText(String((st && st.value) || ''), { fontSize: '44px', color: theme.onAccentDark, align: 'right', bold: true, fontFamily: "'Assistant', sans-serif", lineHeight: '1' }),
+          makeText(String((st && st.label) || ''), { fontSize: '15px', color: theme.onAccentDark, align: 'right', fontFamily: BODY_FONT, lineHeight: '1.5' }),
+        ], {
+          display: 'flex', flexDirection: 'column', gap: '6px', width: '100%', boxSizing: 'border-box',
+          paddingTop: i === 0 ? '0px' : '26px',
+          paddingBottom: i === stats.length - 1 ? '0px' : '26px',
+          ...(i === stats.length - 1 ? {} : { borderBottom: `1px solid ${mix(theme.ON_DARK, '#ffffff', 0.18)}` }),
+        }, 'flex-start'));
+
+        return { section: section([
+          block([
+            col(coralCopy, {
+              display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start',
+              textAlign: 'right', direction: 'rtl', flex: '1 1 720px', background: theme.FIELD,
+              boxSizing: 'border-box', paddingTop: '84px', paddingBottom: '88px', paddingLeft: '56px', paddingRight: '56px',
+            }, 'flex-start'),
+            col(statRows, {
+              display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: '0 1 380px', minWidth: '300px',
+              background: theme.ON_DARK, boxSizing: 'border-box', paddingTop: '56px', paddingBottom: '56px', paddingLeft: '44px', paddingRight: '44px',
+            }, 'center'),
+          ], {
+            display: 'flex', flexWrap: 'wrap', direction: 'rtl',
+            width: '100%', marginLeft: '0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px',
+          }),
+        ], { paddingTop: '0px', paddingBottom: '0px' }) };
+      }
+
       if (variant === 'asymmetric' && copy.image) {
         return { section: section([
           block([

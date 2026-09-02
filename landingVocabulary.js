@@ -59,6 +59,16 @@ const LANDING_VOCABULARY = {
         needs: ['heading', 'thread'],
         optional: ['eyebrow', 'subheading', 'cta'],
       },
+      'gold-night': {
+        description: 'Deep ink ground, a single gold accent, and a ruled row of numbers under the headline. Use when the business has round numbers worth leading with (a price, a count, a duration) and no photograph or second colour worth featuring.',
+        needs: ['heading'],
+        optional: ['eyebrow', 'subheading', 'cta', 'stats'],
+      },
+      'coral-cut': {
+        description: 'Copy on one side, three numbers in their own accent-coloured field on the other. Use when the business has three short stats worth foregrounding and wants the most colour-forward opening.',
+        needs: ['heading', 'stats'],
+        optional: ['eyebrow', 'subheading', 'cta'],
+      },
     },
   },
 

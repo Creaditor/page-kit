@@ -69,6 +69,11 @@ const LANDING_VOCABULARY = {
         needs: ['heading', 'stats'],
         optional: ['eyebrow', 'subheading', 'cta'],
       },
+      'cinema-block': {
+        description: 'Copy beside a tall narrow photograph. Use when the business has a real photograph of its product, place or work, for an opening with more atmosphere than `asymmetric`. The narrow crop asks far less of the image than a full-bleed band, so it tolerates an ordinary tenant photo where other photo variants would not.',
+        needs: ['heading', 'image'],
+        optional: ['eyebrow', 'subheading', 'cta'],
+      },
     },
   },
 

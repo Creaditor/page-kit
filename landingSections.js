@@ -542,6 +542,38 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         ], { paddingTop: '0px', paddingBottom: '0px' }) };
       }
 
+      // ── CINEMA BLOCK ─────────────────────────────────────────────────────
+      // Copy beside a tall narrow photograph. The `filter: grayscale(...)`
+      // treatment the sketch specifies on the image was left un-verified: the
+      // editor's `image` element resolves through a config-driven plugin
+      // scheme whose source did not turn up in a repo-wide grep of the
+      // frontend, and standing up the live editor to check is out of scope
+      // for this task. The crop shape carries the real value here (per the
+      // sketch's own README, "every stock photo tested failed the band, none
+      // failed the column"), so the variant ships without the monochrome
+      // finish rather than being blocked or dropped.
+      if (variant === 'cinema-block' && copy.image) {
+        const cinemaCopy = [
+          copy.eyebrow ? makeText(copy.eyebrow, { fontSize: '13px', color: theme.ON_DARK, align: 'right', fontFamily: BODY_FONT, bold: false, lineHeight: '1' }) : null,
+          heading(copy.heading, '68px', '#ffffff', 'right', "'Rubik', sans-serif", true),
+          copy.subheading ? makeText(copy.subheading, { fontSize: '19px', color: theme.MUTED, align: 'right', fontFamily: BODY_FONT, lineHeight: '1.7' }) : null,
+          copy.cta ? button(copy.cta, theme.ON_DARK, theme.FIELD) : null,
+        ].filter(Boolean);
+
+        // photo() defaults to a fixed height, rounded corners and a drop
+        // shadow; overridden here to fill the column edge-to-edge, matching
+        // both the sketch and the file's own square-corner, no-shadow rules.
+        const cinemaImg = photo(copy.image, 440, 480);
+        cinemaImg.props.style = { ...cinemaImg.props.style, height: '100%', minHeight: '480px', borderRadius: '0px', boxShadow: 'none' };
+
+        return { section: section([
+          block([
+            col(cinemaCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '1 1 700px' }, 'flex-start'),
+            col([cinemaImg], { display: 'flex', flex: '0 1 440px', minWidth: '260px', background: theme.FIELD }, 'center'),
+          ], { display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl' }),
+        ], { background: theme.FIELD, paddingTop: '84px', paddingBottom: '84px' }) };
+      }
+
       if (variant === 'asymmetric' && copy.image) {
         return { section: section([
           block([

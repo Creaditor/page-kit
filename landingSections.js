@@ -19,6 +19,7 @@
  */
 const b = require('./builder.js');
 const { cid, makeText, makeButton, makeImage, makeList, buildElement, readableTextOn, parseColor, toHex } = b;
+const { deriveTheme } = require('./landingTheme.js');
 
 const CONTENT_WIDTH = 1240; // px content width (width only; block max-width left to the editor)
 
@@ -93,6 +94,10 @@ function neutrals(palette = {}) {
 //
 // Secular One was considered and rejected: it ships at a single weight and is
 // heavy enough to fight the serif for the same job.
+//
+// DISPLAY stays the literal default the file always had. It backs `data()`'s
+// unwired call sites (numbering markers, stat values, the head's own eyebrow
+// row) so nothing outside the three sites below changes behaviour.
 const DISPLAY = "'Frank Ruhl Libre', serif";
 const BODY_FONT = "'Heebo', sans-serif";
 const DATA = 'ui-monospace, SFMono-Regular, Menlo, monospace';
@@ -100,16 +105,53 @@ const DATA = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 // face. makeButton has its own hardcoded default that must be overridden.
 const UI_FONT = BODY_FONT;
 
+// ── the business-context-driven display font ─────────────────────────────────
+//
+// `heading()` used to close over the module-level DISPLAY constant, which
+// meant every generated page used the exact same serif regardless of the
+// tenant. Nothing populates `palette.displayFont` yet (that is a future
+// phase's job), so today every page still gets the same fallback everywhere
+// `heading()` is called without an explicit family. The seam exists so that
+// the day a field shows up on BusinessContext, this needs no further
+// page-kit change.
+//
+// FALLBACK_DISPLAY is Assistant, not Arial. Arial is not a catalogue face,
+// see test/landing.test.js's `SERVABLE_FONTS` guard, which this file must
+// never fail: it is the regression test for the months-long bug where every
+// generated page silently rendered in Arial because the fontFamily string
+// matched nothing in the editor's catalogue.
+const FONT_CATALOGUE = new Set([
+  "'Rubik', sans-serif",
+  "'Heebo', sans-serif",
+  "'Assistant', sans-serif",
+  "'Secular One', sans-serif",
+  "'Frank Ruhl Libre', serif",
+]);
+const FALLBACK_DISPLAY = "'Assistant', sans-serif";
+/**
+ * Resolve a requested display font to one the editor can actually serve.
+ * Returns `requested` verbatim only if it is a catalogue `cssRule` string,
+ * otherwise falls back to Assistant.
+ */
+function resolveDisplayFont(requested) {
+  return typeof requested === 'string' && FONT_CATALOGUE.has(requested) ? requested : FALLBACK_DISPLAY;
+}
+
 /**
  * Display type. `lineHeight` tightens as the size grows: makeText's 1.4 default
  * is right for a paragraph and slack enough at 38px and up to make a heading
  * look unset. A three-line Hebrew headline at 1.4 is the single most templated
  * thing on the old pages.
+ *
+ * `family` defaults to FALLBACK_DISPLAY so an un-wired call still renders a
+ * catalogue face. `bold` defaults true, preserving every caller that predates
+ * it; gold-night's headline is the one caller that needs it false (Secular
+ * One is seeded at 400 only).
  */
-const heading = (text, fontSize, color, align) => {
+const heading = (text, fontSize, color, align, family = FALLBACK_DISPLAY, bold = true) => {
   const px = parseInt(String(fontSize), 10) || 16;
   const lineHeight = px >= 44 ? '1.08' : px >= 28 ? '1.18' : '1.3';
-  return makeText(text || '', { fontSize, color, align, bold: true, fontFamily: DISPLAY, lineHeight });
+  return makeText(text || '', { fontSize, color, align, bold, fontFamily: family, lineHeight });
 };
 const para = (text, color, align) =>
   makeText(text || '', { fontSize: '17px', color, align, fontFamily: BODY_FONT, lineHeight: '1.6' });
@@ -146,7 +188,14 @@ function applyFont(node, family) {
   }
   return node;
 }
-const data = (text, color, align, fontSize = '15px') => {
+// `family` defaults to DISPLAY (not FALLBACK_DISPLAY): almost every call site
+// renders bare digits and takes the mono branch regardless of family, so the
+// default only surfaces on the rare mixed-content string (a stat value with
+// a Hebrew unit, e.g. "10 דקות"). Keeping that default at the file's original
+// serif rather than the new fallback keeps every one of those call sites
+// byte-for-byte unchanged; only the hero eyebrow is wired to the resolved
+// business-context font, via its own explicit `family` argument below.
+const data = (text, color, align, fontSize = '15px', family = DISPLAY) => {
   const str = String(text || '');
   const mono = !HAS_RTL_LETTERS.test(str);
   return makeText(str, {
@@ -154,7 +203,7 @@ const data = (text, color, align, fontSize = '15px') => {
     color,
     align,
     bold: !mono,
-    fontFamily: mono ? DATA : DISPLAY,
+    fontFamily: mono ? DATA : family,
     lineHeight: '1.2',
   });
 };
@@ -213,6 +262,7 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
   const { onDark = false, titleSize = '38px', mb = '44px' } = opts;
   const { INK, LINE } = neutrals(palette);
   const S = palette.secondary || palette.primary || '#964462';
+  const DISPLAY = resolveDisplayFont(palette && palette.displayFont);
   const ruleColor = onDark ? mix(INK, '#ffffff', 0.22) : INK;
   const hairline = onDark ? mix(INK, '#ffffff', 0.16) : LINE;
   const kids = [];
@@ -233,7 +283,7 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
   }
   if (title) {
     kids.push(block([
-      col([heading(title, titleSize, onDark ? '#ffffff' : INK, 'right')],
+      col([heading(title, titleSize, onDark ? '#ffffff' : INK, 'right', DISPLAY)],
         { display: 'flex', flex: '0 1 42ch', textAlign: 'right', direction: 'rtl' }, 'flex-start'),
     ], { display: 'flex', direction: 'rtl', paddingLeft: '0px', paddingRight: '0px', width: '100%' }));
   }
@@ -257,13 +307,14 @@ function ruledRows(items, palette = {}, opts = {}) {
   const { numbered = false } = opts;
   const { INK, MUTED, LINE } = neutrals(palette);
   const S = palette.secondary || palette.primary || '#964462';
+  const DISPLAY = resolveDisplayFont(palette && palette.displayFont);
   const rows = (Array.isArray(items) ? items : []).map((it, i) => {
     const kids = [];
     if (numbered) {
       kids.push(col([data(String(i + 1).padStart(2, '0'), S, 'right', '15px')],
         { display: 'flex', flex: '0 0 52px' }, 'flex-start'));
     }
-    kids.push(col([heading(it.title || '', '19px', INK, 'right')],
+    kids.push(col([heading(it.title || '', '19px', INK, 'right', DISPLAY)],
       { display: 'flex', flex: '0 0 250px' }, 'flex-start'));
     if (it.text) {
       kids.push(col([para(it.text, MUTED, 'right')],
@@ -379,8 +430,13 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
   // four sections at once. Kept as a name so nothing downstream breaks, but it
   // resolves to the flat field: one ground, no ramp, no diagonal.
   const GRAD = FIELD;
-  const H = (t, fs, c, al) => heading(t, fs, c, al, palette);
+  // Business-context-driven display font: nothing populates palette.displayFont
+  // today, so this resolves to FALLBACK_DISPLAY (Assistant) everywhere until a
+  // future phase adds the field.
+  const DISPLAY = resolveDisplayFont(palette.displayFont);
+  const H = (t, fs, c, al) => heading(t, fs, c, al, DISPLAY);
   const T = (t, c, al) => para(t, c, al, palette);
+  const D = (t, c, al, fs) => data(t, c, al, fs, DISPLAY);
   const hb = (eyebrow, title, opts) => headingBlock(eyebrow, title, opts, palette);
 
   switch (pattern) {
@@ -400,7 +456,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       const onGrad = mix(P, '#ffffff', 0.62);
       const onGradSoft = mix(P, '#ffffff', 0.72);
       const heroCopy = (align) => [
-        copy.eyebrow ? data(copy.eyebrow, onGrad, align, '13px') : null,
+        copy.eyebrow ? D(copy.eyebrow, onGrad, align, '13px') : null,
         H(copy.heading, align === 'center' ? '58px' : '54px', '#ffffff', align),
         copy.subheading ? T(copy.subheading, onGradSoft, align) : null,
         copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,

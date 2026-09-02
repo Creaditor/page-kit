@@ -24,6 +24,8 @@ declare namespace pageKit {
     text?: string;
     background?: string;
     all?: string[];
+    /** An editor-api `cssRule` string, verbatim, or omitted to fall back to Assistant. */
+    displayFont?: string;
   }
 
   /** What makeSection/composeSection return: the section tree plus its ids. */

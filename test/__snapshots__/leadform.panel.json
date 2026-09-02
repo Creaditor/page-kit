@@ -110,7 +110,7 @@
                       "children": [],
                       "props": {
                         "style": {
-                          "fontFamily": "'Frank Ruhl Libre', serif"
+                          "fontFamily": "'Assistant', sans-serif"
                         },
                         "text": {
                           "childNodes": {
@@ -129,7 +129,7 @@
                                       {
                                         "type": "textStyle",
                                         "attrs": {
-                                          "fontFamily": "'Frank Ruhl Libre', serif",
+                                          "fontFamily": "'Assistant', sans-serif",
                                           "fontSize": "38px",
                                           "color": "#ffffff"
                                         }

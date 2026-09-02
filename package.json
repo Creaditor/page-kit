@@ -9,6 +9,7 @@
     "builder.js",
     "landingSections.js",
     "landingVocabulary.js",
+    "landingTheme.js",
     "catalog.json",
     "sections.json",
     "index.d.ts"

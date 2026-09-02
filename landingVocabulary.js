@@ -135,6 +135,16 @@ const LANDING_VOCABULARY = {
         needs: ['thread'],
         optional: ['eyebrow', 'heading'],
       },
+      tiles: {
+        description: 'The capabilities as a tight grid of solid cells with a thin seam between them, the name carrying the weight in the accent colour. Use when there are several distinct capabilities to show at once and none of them should read as more important than the others. Needs `items`, up to 6 capabilities, each { title, text }.',
+        needs: ['items'],
+        optional: ['eyebrow', 'heading', 'paragraph'],
+      },
+      stack: {
+        description: 'The capabilities set as one continuous typographic list at display size, no cells and no rules. Use for a shorter, calmer list where each capability name should carry the weight on its own line. Needs `items`, up to 6 capabilities, each { title, text }.',
+        needs: ['items'],
+        optional: ['eyebrow', 'heading', 'paragraph'],
+      },
     },
   },
 

@@ -1,0 +1,393 @@
+{
+  "type": "section",
+  "layer": "1",
+  "children": [
+    {
+      "type": "block",
+      "children": [
+        {
+          "type": "col",
+          "children": [
+            {
+              "type": "block",
+              "children": [
+                {
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Heebo', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
+                            "content": [
+                              {
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
+                                  {
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Heebo', sans-serif",
+                                          "fontSize": "13px",
+                                          "color": "#dc5a8a"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "לפני הכל"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
+                  }
+                }
+              ],
+              "props": {
+                "style": {
+                  "width": "1240px",
+                  "marginLeft": "auto",
+                  "marginRight": "auto",
+                  "paddingLeft": "28px",
+                  "paddingRight": "28px"
+                }
+              }
+            },
+            {
+              "type": "block",
+              "children": [
+                {
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Assistant', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
+                            "content": [
+                              {
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.18",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
+                                  {
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Assistant', sans-serif",
+                                          "fontSize": "42px",
+                                          "color": "#ffffff"
+                                        }
+                                      },
+                                      {
+                                        "type": "bold"
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "כותרת ראשית לבדיקה"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "0 1 20ch",
+                      "direction": "rtl"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
+                  }
+                }
+              ],
+              "props": {
+                "style": {
+                  "width": "1240px",
+                  "marginLeft": "auto",
+                  "marginRight": "auto",
+                  "paddingLeft": "28px",
+                  "paddingRight": "28px"
+                }
+              }
+            },
+            {
+              "type": "block",
+              "children": [
+                {
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Heebo', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
+                            "content": [
+                              {
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.6",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
+                                  {
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Heebo', sans-serif",
+                                          "fontSize": "17px",
+                                          "color": "#95aabb"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "פסקה קצרה שמסבירה את ההקשר בלי למכור."
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "0 1 46ch",
+                      "direction": "rtl"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
+                  }
+                }
+              ],
+              "props": {
+                "style": {
+                  "width": "1240px",
+                  "marginLeft": "auto",
+                  "marginRight": "auto",
+                  "paddingLeft": "28px",
+                  "paddingRight": "28px"
+                }
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "display": "flex",
+              "flexDirection": "column",
+              "width": "100%"
+            },
+            "lg": 12,
+            "justify": "flex-start"
+          }
+        }
+      ],
+      "props": {
+        "style": {
+          "width": "1240px",
+          "marginLeft": "auto",
+          "marginRight": "auto",
+          "paddingLeft": "28px",
+          "paddingRight": "28px",
+          "marginBottom": "52px"
+        }
+      }
+    },
+    {
+      "type": "block",
+      "children": [
+        {
+          "type": "col",
+          "children": [
+            {
+              "type": "col",
+              "children": [
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "'Assistant', sans-serif"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.18",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "'Assistant', sans-serif",
+                                      "fontSize": "40px",
+                                      "color": "#dc5a8a"
+                                    }
+                                  },
+                                  {
+                                    "type": "bold"
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "כותרת פריט"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {
+                  "display": "flex",
+                  "flex": "0 0 auto"
+                },
+                "lg": 12,
+                "justify": "flex-start"
+              }
+            },
+            {
+              "type": "col",
+              "children": [
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "'Heebo', sans-serif"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.6",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "'Heebo', sans-serif",
+                                      "fontSize": "17px",
+                                      "color": "#95aabb"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "טקסט פריט"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {
+                  "display": "flex",
+                  "flex": "1 1 300px"
+                },
+                "lg": 12,
+                "justify": "flex-start"
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "display": "flex",
+              "gap": "20px",
+              "direction": "rtl",
+              "alignItems": "baseline",
+              "flexWrap": "wrap",
+              "width": "100%"
+            },
+            "lg": 12,
+            "justify": "flex-start"
+          }
+        }
+      ],
+      "props": {
+        "style": {
+          "width": "100%",
+          "marginLeft": "auto",
+          "marginRight": "auto",
+          "paddingLeft": "28px",
+          "paddingRight": "28px",
+          "display": "flex",
+          "flexDirection": "column",
+          "gap": "22px"
+        }
+      }
+    }
+  ],
+  "props": {
+    "opacity": 1,
+    "classList": [],
+    "style": {
+      "width": "100%",
+      "paddingTop": "80px",
+      "paddingBottom": "80px",
+      "background": "#091e2f"
+    }
+  }
+}

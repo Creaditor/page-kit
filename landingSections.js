@@ -724,7 +724,77 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       ].filter(Boolean), { background: '#ffffff' }) };
 
     // ── §4 SOLUTION (paragraph + bullets + product image) ──────────────────────
-    case 'solution':
+    case 'solution': {
+      // tiles, stack and (from Task 2) conversation share one derived theme
+      // and one ground bundle, mirroring how problem's three dark/light
+      // variants share `theme` above. bullets-image, the original default,
+      // needs neither: it has no ground concept and stays on '#ffffff'.
+      const theme = deriveTheme(palette.primary, palette.secondary);
+      // A ground is a bundle: background, ink, body, line, and the accent
+      // that belongs to THAT ground, so no variant can accidentally put the
+      // dark accent on the light background (the failure sketch 005
+      // measured at 1.8:1). Mirrors sketch 007's own `grounds` object.
+      const groundOf = (which) => which === 'light'
+        ? { BG: theme.LIFT, INK: theme.LIFT_INK, BODY: theme.LIFT_BODY, LINE: theme.LIFT_LINE, ACC: theme.ON_LIGHT, ON_ACC: theme.onAccentLight, PANEL: '#ffffff' }
+        : { BG: theme.FIELD, INK: '#ffffff', BODY: theme.MUTED, LINE: theme.LINE, ACC: theme.ON_DARK, ON_ACC: theme.onAccentDark, PANEL: theme.PANEL };
+      const ground = opts.ground === 'light' ? 'light' : 'dark';
+      const g = groundOf(ground);
+
+      // A bespoke head for tiles/stack/conversation, mirroring problemHead:
+      // eyebrow, heading, and (new relative to problemHead) an optional
+      // paragraph line, all ground-aware. Not extracted to a top-level
+      // helper, same reasoning as problemHead: only these three branches
+      // call it.
+      const solutionHead = () => {
+        const kids = [];
+        if (copy.eyebrow) {
+          kids.push(block([col([makeText(copy.eyebrow, {
+            fontSize: '13px', color: g.ACC, align: 'right',
+            fontFamily: BODY_FONT, bold: false, lineHeight: '1',
+          })], { display: 'flex' }, 'flex-start')]));
+        }
+        if (copy.heading) {
+          kids.push(block([col([H(copy.heading, '42px', g.INK, 'right')],
+            { display: 'flex', flex: '0 1 20ch', direction: 'rtl' }, 'flex-start')]));
+        }
+        if (copy.paragraph) {
+          kids.push(block([col([T(copy.paragraph, g.BODY, 'right')],
+            { display: 'flex', flex: '0 1 46ch', direction: 'rtl' }, 'flex-start')]));
+        }
+        if (!kids.length) return null;
+        return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: '52px' });
+      };
+
+      // ── TILES ────────────────────────────────────────────────────────
+      // The capabilities as a tight grid of solid cells, one seam between
+      // them. Dense and rich, and structurally nothing like problem: no
+      // numerals, no hairline rows, no reading column.
+      if (variant === 'tiles' && Array.isArray(copy.items) && copy.items.length) {
+        const headBlock = solutionHead();
+        const cells = copy.items.slice(0, 6).map((it) => {
+          const name = H(it.title, '26px', g.ACC, 'right');
+          name.props.style = { ...name.props.style, marginBottom: '12px' };
+          return col([name, T(it.text, g.BODY, 'right')], {
+            background: g.PANEL, padding: '34px 30px 38px', flex: '1 1 330px', boxSizing: 'border-box',
+          }, 'flex-start');
+        });
+        const cellsBlock = block(cells, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl' });
+        return { section: section([headBlock, cellsBlock], { background: g.BG }) };
+      }
+
+      // ── STACK ────────────────────────────────────────────────────────
+      // The capabilities set as one continuous typographic list at display
+      // size, no cells and no rules. The section IS the list.
+      if (variant === 'stack' && Array.isArray(copy.items) && copy.items.length) {
+        const headBlock = solutionHead();
+        const rows = copy.items.slice(0, 6).map((it) => col([
+          col([H(it.title, '40px', g.ACC, 'right')], { display: 'flex', flex: '0 0 auto' }, 'flex-start'),
+          col([T(it.text, g.BODY, 'right')], { display: 'flex', flex: '1 1 300px' }, 'flex-start'),
+        ], { display: 'flex', gap: '20px', direction: 'rtl', alignItems: 'baseline', flexWrap: 'wrap', width: '100%' }, 'flex-start'));
+        const stackBlock = block(rows, { display: 'flex', flexDirection: 'column', gap: '22px', width: '100%' });
+        return { section: section([headBlock, stackBlock], { background: g.BG }) };
+      }
+
       if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
         return { section: section([
           hb(copy.eyebrow, copy.heading),
@@ -745,6 +815,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           copy.image ? col([photo(copy.image, 720, 360)], { display: 'flex', flex: '1 1 320px', margin: '12px' }, 'center') : null,
         ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center' }),
       ].filter(Boolean), { background: '#ffffff' }) };
+    }
 
     // ── §5 / §8 TESTIMONIALS (quote cards) ─────────────────────────────────────
     case 'testimonials':

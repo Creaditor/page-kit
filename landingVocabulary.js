@@ -131,9 +131,9 @@ const LANDING_VOCABULARY = {
         optional: ['eyebrow', 'heading', 'paragraph', 'image'],
       },
       conversation: {
-        description: 'Each capability as a message the business sends, in a staggered thread. Use when the capabilities are things the business sends or says, and when no worthwhile photograph exists. Needs `thread`.',
-        needs: ['thread'],
-        optional: ['eyebrow', 'heading'],
+        description: 'Each capability shown as the thing the business actually sends, beside a real message thread. The strongest option when the capabilities are things the business sends or says: it is the product own material, needs no photograph, and sidesteps the stock-photo problem entirely. Needs `items` (2 to 4 capabilities, each { title, text }) and `thread` (2 to 4 messages, each { text, from: "business" | "customer", time }).',
+        needs: ['items', 'thread'],
+        optional: ['eyebrow', 'heading', 'paragraph'],
       },
       tiles: {
         description: 'The capabilities as a tight grid of solid cells with a thin seam between them, the name carrying the weight in the accent colour. Use when there are several distinct capabilities to show at once and none of them should read as more important than the others. Needs `items`, up to 6 capabilities, each { title, text }.',

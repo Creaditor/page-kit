@@ -795,17 +795,52 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         return { section: section([headBlock, stackBlock], { background: g.BG }) };
       }
 
-      if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
-        return { section: section([
-          hb(copy.eyebrow, copy.heading),
-          // At the reading edge, not centered on the page. Everything else in
-          // the system hangs off the same right margin, and a centered column
-          // in the middle of it reads as a different page.
-          block([col(threadBubbles(copy.thread, palette), {
-            display: 'flex', flexDirection: 'column', gap: '14px', direction: 'rtl',
-            flex: '0 1 620px',
-          }, 'flex-start')], { display: 'flex', direction: 'rtl' }),
-        ], { background: '#ffffff' }) };
+      // ── CONVERSATION ─────────────────────────────────────────────────
+      // Restyled onto the ground-bundle system: the same idea (each
+      // capability shown beside a real message thread) at the fidelity the
+      // rest of this case now uses, not a second concept under the same
+      // name. Needs items AND thread now: the sketch shows the capability
+      // list beside the thread, not the thread alone.
+      if (variant === 'conversation' && Array.isArray(copy.items) && copy.items.length && Array.isArray(copy.thread) && copy.thread.length) {
+        const headBlock = solutionHead();
+        const capRows = copy.items.slice(0, 4).map((it, i) => col([
+          col([H(it.title, '17px', g.INK, 'right')], { display: 'flex', flex: '0 0 170px' }, 'flex-start'),
+          col([T(it.text, g.BODY, 'right')], { display: 'flex', flex: '1 1 auto' }, 'flex-start'),
+        ], {
+          display: 'flex', gap: '14px', direction: 'rtl', width: '100%',
+          paddingTop: '15px', paddingBottom: '15px',
+          ...(i === 0 ? {} : { borderTop: `1px solid ${g.LINE}` }),
+        }, 'flex-start'));
+        const capsCol = col(capRows, { display: 'flex', flexDirection: 'column', width: '100%', flex: '1 1 420px', minWidth: '300px', direction: 'rtl' }, 'flex-start');
+
+        // On the light ground, ON_LIGHT renders a dark brown "mine" bubble:
+        // legible but the least lovely thing in the sketch. A bubble is a
+        // surface, not a mark on a surface, so on light ground it takes the
+        // brand primary directly instead, with readableTextOn choosing the
+        // bubble text so a pastel primary still stays readable. Dark ground
+        // has no equivalent complaint and keeps the derived accent.
+        const dim = (fg, bg) => mix(fg, bg, 0.4);
+        const bubbles = copy.thread.slice(0, 6).map((m) => {
+          const mine = (m && m.from) !== 'customer';
+          const bg = mine ? (ground === 'light' ? P : g.ACC) : g.PANEL;
+          const fg = mine ? (ground === 'light' ? readableTextOn(P) : g.ON_ACC) : g.INK;
+          const kids = [T(String((m && m.text) || ''), fg, 'right')];
+          if (m && m.time) kids.push(data(String(m.time), dim(fg, bg), 'left', '13px'));
+          return col(kids, {
+            display: 'flex', flexDirection: 'column', gap: '6px', background: bg,
+            // Chat-bubble corner radii are a deliberate, sketch-exact exception
+            // to the page's square-corner rule: hero.conversation's own
+            // threadBubbles already ships rounded bubbles today. Messaging
+            // bubbles are the one established genre exception on this page.
+            borderRadius: mine ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+            padding: '14px 17px', maxWidth: '92%', boxSizing: 'border-box',
+            alignSelf: mine ? 'flex-start' : 'flex-end', direction: 'rtl', textAlign: 'right',
+          }, 'flex-start');
+        });
+        const bubblesCol = col(bubbles, { display: 'flex', flexDirection: 'column', gap: '10px', flex: '0 1 420px', minWidth: '300px', direction: 'rtl' }, 'flex-start');
+
+        const bodyBlock = block([capsCol, bubblesCol], { display: 'flex', flexWrap: 'wrap', gap: '64px', direction: 'rtl', alignItems: 'flex-start' });
+        return { section: section([headBlock, bodyBlock], { background: g.BG }) };
       }
       return { section: section([
         hb(copy.eyebrow, copy.heading),

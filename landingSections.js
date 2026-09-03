@@ -687,7 +687,27 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             background: theme.PANEL, padding: '38px 32px 42px', flex: '1 1 300px', boxSizing: 'border-box',
           }, 'flex-start');
         });
-        const panelsBlock = block(panelCols, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl' }, 'flex-start');
+        // block()'s OWN style is a dead end for a gap between panelCols: the
+        // driver's Block component puts an MUI Grid container between the
+        // styled div and its children (children = panelCols), so the div that
+        // carries the style ends up with exactly ONE dom child (that Grid
+        // wrapper) and the gap has nothing to separate -- measured on the real
+        // renderer as a flex/gap div with kids:1. Column, unlike Block, copies
+        // gap + flexDirection from its OWN style into the inner Grid container
+        // that directly holds ITS children, so the fix is the same shape
+        // problemHead already uses one level up: wrap the actual multi-child
+        // row in a col(), and wrap that single col in the outer block() only
+        // for the 1240px content width.
+        // alignItems: 'stretch' -- Column's own default is 'start' (its cross-
+        // axis alignment for the Grid container holding these children), which
+        // top-aligns each panel at its own natural (text-driven) height instead
+        // of filling the row. With items of different line counts that leaves
+        // a panel short of its neighbours, exposing the section's FIELD ground
+        // through the shortfall -- the opposite of "square, flush and
+        // touching." Measured: 324/324/297px heights in one row before this.
+        const panelsBlock = block([
+          col(panelCols, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl', alignItems: 'stretch' }, 'flex-start'),
+        ], {}, 'flex-start');
         return { section: section([headBlock, panelsBlock], { background: theme.FIELD }) };
       }
 
@@ -800,7 +820,21 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             background: g.PANEL, padding: '34px 30px 38px', flex: '1 1 330px', boxSizing: 'border-box',
           }, 'flex-start');
         });
-        const cellsBlock = block(cells, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl' }, 'flex-start');
+        // Same fix as problem:panels' panelsBlock, same reason: block()'s own
+        // style is a dead end for a gap on its multiple children, because the
+        // driver's Block component interposes an MUI Grid container between
+        // the styled div and those children (measured as kids:1 on the real
+        // renderer). Column copies gap onto the Grid container that actually
+        // holds its children, so the gap has to live one level down, on a col()
+        // wrapping the cells, with block() providing only the 1240px width.
+        // alignItems: 'stretch', same reason as panelsBlock: Column's own
+        // default cross-axis alignment is 'start', which top-aligns each cell
+        // at its own text-driven height rather than filling the row -- a
+        // one-line cell next to two-line neighbours left a visible dark strip
+        // of the section's ground colour under the short cell.
+        const cellsBlock = block([
+          col(cells, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl', alignItems: 'stretch' }, 'flex-start'),
+        ], {}, 'flex-start');
         return { section: section([headBlock, cellsBlock], { background: g.BG }) };
       }
 

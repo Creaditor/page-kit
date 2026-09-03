@@ -379,3 +379,111 @@ test('every block carries an explicit justify, so the driver never falls back to
     })(section);
   }
 });
+
+// ── 7. the block-vs-col layout guard ─────────────────────────────────────────
+//
+// The Creaditor render driver's Block component always interposes an MUI
+// `<Grid container>` between the div carrying block()'s own style and
+// block()'s actual children:
+//
+//   <div style={block-style /* layout lands HERE */}>
+//     <Grid container>{children /* one level deeper */}</Grid>
+//   </div>
+//
+// So a flex property set on a block() (display:'flex', gap, flexWrap,
+// alignItems, justifyContent) applies to a wrapper holding exactly one child
+// and does nothing. It is invisible to a snapshot diff (the JSON is exactly
+// what was authored, it renders, nothing throws) and invisible to the
+// preview renderer (which never applies the driver's Grid defaults at all).
+// The only way anyone found this was by looking at a real render.
+//
+// col() does not have this problem: components/col/index.js copies the col's
+// own flexDirection/gap onto the Grid CONTAINER that holds the col's own
+// children, one level down from where block()'s style lands.
+//
+// The fix shape, everywhere in this file: layout goes on a col(), a block()
+// is only a content-width wrapper.
+//   block([col(kids, { display:'flex', gap, flexDirection, ... }, justify)], blockStyle, justify)
+//
+// This test walks every declared pattern/variant and fails on the exact
+// shape that goes silently dead: a `block` node whose OWN style carries a
+// layout property while it has more than one child. A block with exactly one
+// child is fine (that child does the layout); a block with layout props and
+// zero/one children is fine too (there is nothing multi-item for the dead
+// property to have been trying to arrange).
+const BLOCK_LAYOUT_PROPS = ['display', 'gap', 'flexWrap', 'alignItems', 'justifyContent'];
+
+test('a block() never carries layout props alongside more than one child (dead due to Grid interposition)', () => {
+  for (const { pattern, variant } of landingVariantPairs()) {
+    const { section } = composeLandingSection(pattern, copyFor(pattern), PALETTE, { variant });
+    (function walk(n) {
+      if (Array.isArray(n)) return n.forEach(walk);
+      if (!n || typeof n !== 'object') return;
+      if (n.type === 'block') {
+        const style = (n.props && n.props.style) || {};
+        const offenders = BLOCK_LAYOUT_PROPS.filter((k) => style[k] !== undefined);
+        const childCount = Array.isArray(n.children) ? n.children.length : 0;
+        assert.ok(
+          offenders.length === 0 || childCount <= 1,
+          `${pattern}:${variant} has a block() with ${childCount} children and layout props ` +
+            `[${offenders.join(', ')}] set directly on the block's own style. This does nothing: the ` +
+            'render driver\'s Block component always wraps a block\'s children in an MUI <Grid container> ' +
+            'one level below the div that carries this style, so any flex property here applies to a ' +
+            'wrapper holding exactly one child (the Grid) and never reaches the block\'s real children. ' +
+            'Move the layout onto a col(): block([col(kids, { <these props> }, justify)], blockStyle, justify).',
+        );
+      }
+      Object.values(n).forEach((v) => { if (v && typeof v === 'object') walk(v); });
+    })(section);
+  }
+});
+
+// ── 8. the column-wrap landmine guard ────────────────────────────────────────
+//
+// A SEPARATE trap found while fixing the one above, on sites the block-vs-col
+// guard cannot see because they were already col()-wrapped: a col() whose own
+// style sets `flexDirection: 'column'` while holding MORE THAN ONE col()/
+// block() child (each its own lg:12 MUI Grid item) risks the real renderer
+// wrapping child 2+ into a SECOND COLUMN placed off-canvas to the side,
+// instead of continuing to stack downward -- measured directly: rows landed
+// at x=1334 and x=2540 in a 1440px-wide viewport. MUI's Grid container ships
+// `flex-wrap: wrap` in its own baseline CSS with no lever page-kit can pull to
+// turn it off, so an explicit column direction plus that always-on wrap is
+// what triggers it once the stacked content is tall enough.
+//
+// The safe shape (used throughout this file after the fix): leave
+// flexDirection unset, let the container's default row+wrap do the stacking
+// (each lg:12 child is 100% wide, so wrap puts one per line), and pass `gap`
+// alone if inter-row spacing is needed -- gap reaches the real Grid container
+// independently of flexDirection and works between wrapped lines too.
+//
+// This guard cannot safely be fully automatic: a col() of LEAF children
+// (text/heading/button, never Grid items) legitimately uses
+// flexDirection:'column' throughout this file (problemHead, solutionHead,
+// every hero copy stack) and is not at risk, only col()/block() CHILDREN are.
+test('a col() with flexDirection:column never stacks more than one col()/block() child (column-wrap landmine)', () => {
+  for (const { pattern, variant } of landingVariantPairs()) {
+    const { section } = composeLandingSection(pattern, copyFor(pattern), PALETTE, { variant });
+    (function walk(n) {
+      if (Array.isArray(n)) return n.forEach(walk);
+      if (!n || typeof n !== 'object') return;
+      if (n.type === 'col') {
+        const style = (n.props && n.props.style) || {};
+        const isColumn = typeof style.flexDirection === 'string' && style.flexDirection.indexOf('column') === 0;
+        const gridItemChildren = (Array.isArray(n.children) ? n.children : []).filter(
+          (c) => c && typeof c === 'object' && (c.type === 'col' || c.type === 'block'),
+        );
+        assert.ok(
+          !isColumn || gridItemChildren.length <= 1,
+          `${pattern}:${variant} has a col() with flexDirection:'column' holding ${gridItemChildren.length} ` +
+            'col()/block() children (each its own lg:12 Grid item). MUI\'s Grid container always ships ' +
+            'flex-wrap:wrap in its own CSS, so an explicit column direction here risks the real renderer ' +
+            'wrapping child 2+ into a second column off-canvas instead of stacking it further down -- ' +
+            'measured directly on the render-site service. Drop flexDirection (default row+wrap plus each ' +
+            'child\'s own 100% width already stacks them) and pass `gap` alone if spacing is needed.',
+        );
+      }
+      Object.values(n).forEach((v) => { if (v && typeof v === 'object') walk(v); });
+    })(section);
+  }
+});

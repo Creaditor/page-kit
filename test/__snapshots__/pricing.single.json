@@ -321,14 +321,48 @@
                       }
                     }
                   }
+                },
+                {
+                  "type": "button",
+                  "children": [],
+                  "props": {
+                    "text": "רוצים לראות דוגמה?",
+                    "style": {
+                      "height": "auto",
+                      "width": "auto",
+                      "maxWidth": "100%",
+                      "minWidth": "30px",
+                      "background": "#0f1c30",
+                      "color": "#ffffff",
+                      "borderRadius": "0px",
+                      "fontFamily": "'Heebo', sans-serif",
+                      "fontSize": "17px",
+                      "direction": "rtl",
+                      "paddingTop": "14px",
+                      "paddingBottom": "14px",
+                      "paddingLeft": "32px",
+                      "paddingRight": "32px"
+                    },
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true,
+                    "onClick": {
+                      "link": {
+                        "href": "#",
+                        "target": "_blank"
+                      }
+                    }
+                  }
                 }
               ],
               "props": {
                 "style": {
                   "display": "flex",
                   "flexDirection": "column",
-                  "gap": "8px",
-                  "flex": "0 0 280px",
+                  "gap": "14px",
+                  "alignItems": "flex-start",
+                  "flex": "1 1 300px",
                   "direction": "rtl",
                   "textAlign": "right"
                 },
@@ -480,55 +514,9 @@
                   "display": "flex",
                   "flexDirection": "column",
                   "gap": "10px",
-                  "flex": "1 1 auto",
+                  "flex": "1 1 300px",
                   "direction": "rtl",
                   "textAlign": "right"
-                },
-                "lg": 12,
-                "justify": "flex-start"
-              }
-            },
-            {
-              "type": "col",
-              "children": [
-                {
-                  "type": "button",
-                  "children": [],
-                  "props": {
-                    "text": "רוצים לראות דוגמה?",
-                    "style": {
-                      "height": "auto",
-                      "width": "auto",
-                      "maxWidth": "100%",
-                      "minWidth": "30px",
-                      "background": "#0f1c30",
-                      "color": "#ffffff",
-                      "borderRadius": "0px",
-                      "fontFamily": "'Heebo', sans-serif",
-                      "fontSize": "17px",
-                      "direction": "rtl",
-                      "paddingTop": "14px",
-                      "paddingBottom": "14px",
-                      "paddingLeft": "32px",
-                      "paddingRight": "32px"
-                    },
-                    "interactions": [],
-                    "show_on_desktop": true,
-                    "show_on_tablet": true,
-                    "show_on_mobile": true,
-                    "onClick": {
-                      "link": {
-                        "href": "#",
-                        "target": "_blank"
-                      }
-                    }
-                  }
-                }
-              ],
-              "props": {
-                "style": {
-                  "display": "flex",
-                  "flex": "0 0 auto"
                 },
                 "lg": 12,
                 "justify": "flex-start"

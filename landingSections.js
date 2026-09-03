@@ -236,13 +236,19 @@ function photo(src, w, h) {
 // and a null landing in a children array is not a rendering bug, it is a crash
 // in every consumer that walks the tree.
 const kept = (xs) => (Array.isArray(xs) ? xs : [xs]).filter(Boolean);
-// `lg` is the col's width in twelfths, and it is the ONLY lever that actually
-// narrows a col. The driver turns a col into an MUI Grid item and derives its
-// `flex` from lg, and that flex beats everything you might reach for in the
-// style: `width`, `maxWidth`, `alignSelf` and a parent's `justifyContent` were
-// each measured on the real renderer doing nothing at all (chat bubbles asked
-// for maxWidth 86% and rendered at 100% for months because of this). So a
-// sub-full-width col is `lg: 9`, never `width: '75%'`.
+// `lg` is the col's width in twelfths. The driver turns a col into an MUI Grid
+// item and derives its `flex` from lg, so lg is what sizes a col by default.
+//
+// Measured on the real renderer, what does and does not reach a col:
+//   works:        `lg`, and an explicit `flex` in the style (pricing's
+//                 `flex: '0 0 280px'` renders at exactly 280px)
+//   does nothing: `width`, `maxWidth`, `alignSelf`, and a parent's
+//                 `justifyContent` (chat bubbles asked for maxWidth 86% and
+//                 rendered at 100% for months because of this)
+//
+// So narrow a col with `lg` or `flex`, never `width`. And since `alignSelf` is
+// inert, a col cannot push ITSELF to one side of its row: that needs a spacer
+// sibling, which is what bubbleRow does.
 const col = (children, style = {}, justify = 'center', lg = 12) => ({ id: cid(), type: 'col', children: kept(children), props: { style, lg, justify } });
 const block = (cols, style = {}, justify = 'flex-start') => ({ id: cid(), type: 'block', children: kept(cols), props: { style: { width: `${CONTENT_WIDTH}px`, marginLeft: 'auto', marginRight: 'auto', paddingLeft: '28px', paddingRight: '28px', ...style }, justify } });
 const section = (blocks, style = {}) => ({ id: cid(), type: 'section', layer: '1', children: kept(blocks), props: { opacity: 1, classList: [], style: { width: '100%', paddingTop: '80px', paddingBottom: '80px', ...style } } });
@@ -1165,16 +1171,28 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         // tier looks like once the other two are gone.
         block([
           col([
+            // The offer and its action are ONE column. They used to be the
+            // first and third of three, with the feature list between them on
+            // `flex: '1 1 auto'`, so the list absorbed the row and shoved the
+            // button to the opposite edge: measured on a live render with the
+            // button alone at the far left, 700px from the price it belongs
+            // to, reading as an unrelated stray control.
+            //
+            // The price also sat on a fixed `flex: '0 0 280px'`. A price is
+            // not always "89 x" wide: this tenant's real generation put
+            // "30 x" worth of free-trial phrase in the field, which at 66px
+            // wrapped to one word per line down a narrow column. Both columns
+            // now share the row on an equal, shrinkable basis instead.
             col([
               data(copy.price, INK, 'right', '66px'),
               copy.planName ? T(copy.planName, MUTED, 'right') : null,
               copy.regularNote ? T(copy.regularNote, MUTED, 'right') : null,
-            ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '8px', flex: '0 0 280px', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
+              copy.cta ? button(copy.cta, INK, '#ffffff') : null,
+            ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-start', flex: '1 1 300px', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
             col([
               bullets(copy.features, BODY, S),
               copy.urgency ? T(copy.urgency, S, 'right') : null,
-            ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '10px', flex: '1 1 auto', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
-            ...(copy.cta ? [col([button(copy.cta, INK, '#ffffff')], { display: 'flex', flex: '0 0 auto' }, 'flex-start')] : []),
+            ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '10px', flex: '1 1 300px', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
           ], { display: 'flex', gap: '48px', direction: 'rtl', alignItems: 'flex-start' }, 'flex-start'),
         ], { borderTop: `1px solid ${INK}`, paddingTop: '40px' }, 'flex-start'),
       ], { background: LIGHT }) };

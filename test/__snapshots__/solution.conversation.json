@@ -323,99 +323,112 @@
               "type": "col",
               "children": [
                 {
-                  "type": "text",
-                  "children": [],
-                  "props": {
-                    "style": {
-                      "fontFamily": "'Heebo', sans-serif"
-                    },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1.6",
-                              "direction": "rtl",
-                              "textAlign": "right"
-                            },
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Heebo', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
                             "content": [
                               {
-                                "marks": [
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.6",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
                                   {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "'Heebo', sans-serif",
-                                      "fontSize": "17px",
-                                      "color": "#091e2f"
-                                    }
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Heebo', sans-serif",
+                                          "fontSize": "17px",
+                                          "color": "#091e2f"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "היי, נכנס משהו חדש. רוצים הצצה?"
                                   }
-                                ],
-                                "type": "text",
-                                "text": "היי, נכנס משהו חדש. רוצים הצצה?"
+                                ]
                               }
                             ]
                           }
-                        ]
+                        }
                       }
-                    }
-                  }
-                },
-                {
-                  "type": "text",
-                  "children": [],
-                  "props": {
-                    "style": {
-                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
                     },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1.2",
-                              "direction": "rtl",
-                              "textAlign": "left"
-                            },
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
                             "content": [
                               {
-                                "marks": [
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.2",
+                                  "direction": "rtl",
+                                  "textAlign": "left"
+                                },
+                                "content": [
                                   {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
-                                      "fontSize": "13px",
-                                      "color": "#5d3653"
-                                    }
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                          "fontSize": "13px",
+                                          "color": "#5d3653"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "09:41"
                                   }
-                                ],
-                                "type": "text",
-                                "text": "09:41"
+                                ]
                               }
                             ]
                           }
-                        ]
+                        }
                       }
                     }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flexDirection": "column",
+                      "gap": "6px",
+                      "background": "#dc5a8a",
+                      "borderRadius": "18px 18px 4px 18px",
+                      "padding": "14px 17px",
+                      "boxSizing": "border-box",
+                      "direction": "rtl",
+                      "textAlign": "right"
+                    },
+                    "lg": 9,
+                    "justify": "flex-start"
                   }
                 }
               ],
               "props": {
                 "style": {
                   "display": "flex",
-                  "flexDirection": "column",
-                  "gap": "6px",
-                  "background": "#dc5a8a",
-                  "borderRadius": "18px 18px 4px 18px",
-                  "padding": "14px 17px",
-                  "maxWidth": "70%",
-                  "boxSizing": "border-box",
-                  "alignSelf": "flex-start",
+                  "flexWrap": "wrap",
                   "direction": "rtl",
-                  "textAlign": "right"
+                  "width": "100%"
                 },
                 "lg": 12,
                 "justify": "flex-start"
@@ -425,99 +438,121 @@
               "type": "col",
               "children": [
                 {
-                  "type": "text",
+                  "type": "col",
                   "children": [],
                   "props": {
-                    "style": {
-                      "fontFamily": "'Heebo', sans-serif"
-                    },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1.6",
-                              "direction": "rtl",
-                              "textAlign": "right"
-                            },
-                            "content": [
-                              {
-                                "marks": [
-                                  {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "'Heebo', sans-serif",
-                                      "fontSize": "17px",
-                                      "color": "#ffffff"
-                                    }
-                                  }
-                                ],
-                                "type": "text",
-                                "text": "כן, תשלחו לי"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    }
+                    "style": {},
+                    "lg": 3,
+                    "justify": "flex-start"
                   }
                 },
                 {
-                  "type": "text",
-                  "children": [],
-                  "props": {
-                    "style": {
-                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
-                    },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1.2",
-                              "direction": "rtl",
-                              "textAlign": "left"
-                            },
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Heebo', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
                             "content": [
                               {
-                                "marks": [
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.6",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
                                   {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
-                                      "fontSize": "13px",
-                                      "color": "#9eabb5"
-                                    }
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Heebo', sans-serif",
+                                          "fontSize": "17px",
+                                          "color": "#ffffff"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "כן, תשלחו לי"
                                   }
-                                ],
-                                "type": "text",
-                                "text": "09:44"
+                                ]
                               }
                             ]
                           }
-                        ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
+                            "content": [
+                              {
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.2",
+                                  "direction": "rtl",
+                                  "textAlign": "left"
+                                },
+                                "content": [
+                                  {
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                          "fontSize": "13px",
+                                          "color": "#9eabb5"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "09:44"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
                       }
                     }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flexDirection": "column",
+                      "gap": "6px",
+                      "background": "#0d2c45",
+                      "borderRadius": "18px 18px 18px 4px",
+                      "padding": "14px 17px",
+                      "boxSizing": "border-box",
+                      "direction": "rtl",
+                      "textAlign": "right"
+                    },
+                    "lg": 9,
+                    "justify": "flex-start"
                   }
                 }
               ],
               "props": {
                 "style": {
                   "display": "flex",
-                  "flexDirection": "column",
-                  "gap": "6px",
-                  "background": "#0d2c45",
-                  "borderRadius": "18px 18px 18px 4px",
-                  "padding": "14px 17px",
-                  "maxWidth": "70%",
-                  "boxSizing": "border-box",
-                  "alignSelf": "flex-end",
+                  "flexWrap": "wrap",
                   "direction": "rtl",
-                  "textAlign": "right"
+                  "width": "100%"
                 },
                 "lg": 12,
                 "justify": "flex-start"

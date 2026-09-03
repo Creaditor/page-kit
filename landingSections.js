@@ -236,7 +236,14 @@ function photo(src, w, h) {
 // and a null landing in a children array is not a rendering bug, it is a crash
 // in every consumer that walks the tree.
 const kept = (xs) => (Array.isArray(xs) ? xs : [xs]).filter(Boolean);
-const col = (children, style = {}, justify = 'center') => ({ id: cid(), type: 'col', children: kept(children), props: { style, lg: 12, justify } });
+// `lg` is the col's width in twelfths, and it is the ONLY lever that actually
+// narrows a col. The driver turns a col into an MUI Grid item and derives its
+// `flex` from lg, and that flex beats everything you might reach for in the
+// style: `width`, `maxWidth`, `alignSelf` and a parent's `justifyContent` were
+// each measured on the real renderer doing nothing at all (chat bubbles asked
+// for maxWidth 86% and rendered at 100% for months because of this). So a
+// sub-full-width col is `lg: 9`, never `width: '75%'`.
+const col = (children, style = {}, justify = 'center', lg = 12) => ({ id: cid(), type: 'col', children: kept(children), props: { style, lg, justify } });
 const block = (cols, style = {}, justify = 'flex-start') => ({ id: cid(), type: 'block', children: kept(cols), props: { style: { width: `${CONTENT_WIDTH}px`, marginLeft: 'auto', marginRight: 'auto', paddingLeft: '28px', paddingRight: '28px', ...style }, justify } });
 const section = (blocks, style = {}) => ({ id: cid(), type: 'section', layer: '1', children: kept(blocks), props: { opacity: 1, classList: [], style: { width: '100%', paddingTop: '80px', paddingBottom: '80px', ...style } } });
 
@@ -376,6 +383,36 @@ function ruledRows(items, palette = {}, opts = {}) {
  * which is flex-start under direction: rtl. Getting this backwards is the same
  * class of bug as the cardsRow one shipped in 2026-08.
  */
+/** A chat bubble's width, in twelfths. See the note on col(): lg is the only
+ *  lever that narrows a col, because the driver derives the Grid item's flex
+ *  from it and that flex beats width/maxWidth/alignSelf. */
+const BUBBLE_LG = 9;
+
+/**
+ * Dock one bubble to its speaker's side of the thread.
+ *
+ * `alignSelf` cannot do this and never could: the driver makes every col a
+ * Grid item whose flex comes from `lg`, so alignSelf and maxWidth are both
+ * inert. Two separate bubble builders carried that dead pair, one of them with
+ * a comment conceding alignSelf made no measured difference, and the result on
+ * the real renderer was a stack of full-width slabs that did not read as an
+ * exchange at all.
+ *
+ * The working shape is grid-native. Each message is its own full-width row.
+ * The bubble takes BUBBLE_LG twelfths, and the remainder is an empty spacer
+ * col placed BEFORE the bubble when it should sit on the far side. Under
+ * `direction: rtl` a row fills from the right, so the tenant's own messages
+ * need no spacer and the customer's need one.
+ *
+ * No flexDirection here (column-wrap landmine): the row's children are cols,
+ * and each row is lg 12, so the default row-plus-wrap stacking is what keeps
+ * the messages in sequence.
+ */
+function bubbleRow(bubble, mine) {
+  const kids = mine ? [bubble] : [col([], {}, 'flex-start', 12 - BUBBLE_LG), bubble];
+  return col(kids, { display: 'flex', flexWrap: 'wrap', direction: 'rtl', width: '100%' }, 'flex-start');
+}
+
 function threadBubbles(thread, palette = {}) {
   const { INK, LINE, MUTED } = neutrals(palette);
   const P = palette.primary || '#1b65a0';
@@ -383,15 +420,14 @@ function threadBubbles(thread, palette = {}) {
     const mine = (m && m.from) !== 'customer';
     const kids = [para(String((m && m.text) || ''), mine ? '#ffffff' : INK, 'right', palette)];
     if (m && m.time) kids.push(data(String(m.time), mine ? mix(P, '#ffffff', 0.78) : MUTED, 'left', '13px'));
-    return col(kids, {
+    return bubbleRow(col(kids, {
       display: 'flex', flexDirection: 'column', gap: '4px',
       background: mine ? P : '#ffffff', borderRadius: '22px',
       [mine ? 'borderBottomRightRadius' : 'borderBottomLeftRadius']: '6px',
-      padding: '14px 18px', maxWidth: '86%', boxSizing: 'border-box',
+      padding: '14px 18px', boxSizing: 'border-box',
       border: mine ? 'none' : `1px solid ${LINE}`,
-      alignSelf: mine ? 'flex-start' : 'flex-end',
       direction: 'rtl', textAlign: 'right',
-    }, 'flex-start');
+    }, 'flex-start', BUBBLE_LG), mine);
   });
 }
 
@@ -1000,16 +1036,21 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           // every other respect (order, color, corner radii, alignment
           // marker) rather than papered over with a technique already
           // proven not to survive contact with the real renderer.
-          return col(kids, {
+          // Docked through bubbleRow, not alignSelf. The KNOWN LIMITATION note
+          // that used to sit here was right that alignSelf made no measured
+          // difference, and wrong about it being unfixable: alignSelf and
+          // maxWidth are both inert against the flex the driver derives from
+          // a col's `lg`, so the width has to come from lg instead.
+          return bubbleRow(col(kids, {
             display: 'flex', flexDirection: 'column', gap: '6px', background: bg,
             // Chat-bubble corner radii are a deliberate, sketch-exact exception
             // to the page's square-corner rule: hero.conversation's own
             // threadBubbles already ships rounded bubbles today. Messaging
             // bubbles are the one established genre exception on this page.
             borderRadius: mine ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-            padding: '14px 17px', maxWidth: '70%', boxSizing: 'border-box',
-            alignSelf: mine ? 'flex-start' : 'flex-end', direction: 'rtl', textAlign: 'right',
-          }, 'flex-start');
+            padding: '14px 17px', boxSizing: 'border-box',
+            direction: 'rtl', textAlign: 'right',
+          }, 'flex-start', BUBBLE_LG), mine);
         });
         // Same fix as capsBlock above: its own top-level block, not a col
         // sharing a row with capsBlock. `alignItems: 'flex-start'` is set

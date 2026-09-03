@@ -192,101 +192,114 @@
                   "type": "col",
                   "children": [
                     {
-                      "type": "text",
-                      "children": [],
-                      "props": {
-                        "style": {
-                          "fontFamily": "'Heebo', sans-serif"
-                        },
-                        "text": {
-                          "childNodes": {
-                            "type": "doc",
-                            "content": [
-                              {
-                                "type": "paragraph",
-                                "attrs": {
-                                  "lineHeight": "1.6",
-                                  "direction": "rtl",
-                                  "textAlign": "right"
-                                },
+                      "type": "col",
+                      "children": [
+                        {
+                          "type": "text",
+                          "children": [],
+                          "props": {
+                            "style": {
+                              "fontFamily": "'Heebo', sans-serif"
+                            },
+                            "text": {
+                              "childNodes": {
+                                "type": "doc",
                                 "content": [
                                   {
-                                    "marks": [
+                                    "type": "paragraph",
+                                    "attrs": {
+                                      "lineHeight": "1.6",
+                                      "direction": "rtl",
+                                      "textAlign": "right"
+                                    },
+                                    "content": [
                                       {
-                                        "type": "textStyle",
-                                        "attrs": {
-                                          "fontFamily": "'Heebo', sans-serif",
-                                          "fontSize": "17px",
-                                          "color": "#ffffff"
-                                        }
+                                        "marks": [
+                                          {
+                                            "type": "textStyle",
+                                            "attrs": {
+                                              "fontFamily": "'Heebo', sans-serif",
+                                              "fontSize": "17px",
+                                              "color": "#ffffff"
+                                            }
+                                          }
+                                        ],
+                                        "type": "text",
+                                        "text": "היי, נכנס משהו חדש. רוצים הצצה?"
                                       }
-                                    ],
-                                    "type": "text",
-                                    "text": "היי, נכנס משהו חדש. רוצים הצצה?"
+                                    ]
                                   }
                                 ]
                               }
-                            ]
+                            }
                           }
-                        }
-                      }
-                    },
-                    {
-                      "type": "text",
-                      "children": [],
-                      "props": {
-                        "style": {
-                          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
                         },
-                        "text": {
-                          "childNodes": {
-                            "type": "doc",
-                            "content": [
-                              {
-                                "type": "paragraph",
-                                "attrs": {
-                                  "lineHeight": "1.2",
-                                  "direction": "rtl",
-                                  "textAlign": "left"
-                                },
+                        {
+                          "type": "text",
+                          "children": [],
+                          "props": {
+                            "style": {
+                              "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                            },
+                            "text": {
+                              "childNodes": {
+                                "type": "doc",
                                 "content": [
                                   {
-                                    "marks": [
+                                    "type": "paragraph",
+                                    "attrs": {
+                                      "lineHeight": "1.2",
+                                      "direction": "rtl",
+                                      "textAlign": "left"
+                                    },
+                                    "content": [
                                       {
-                                        "type": "textStyle",
-                                        "attrs": {
-                                          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
-                                          "fontSize": "13px",
-                                          "color": "#cdddea"
-                                        }
+                                        "marks": [
+                                          {
+                                            "type": "textStyle",
+                                            "attrs": {
+                                              "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                              "fontSize": "13px",
+                                              "color": "#cdddea"
+                                            }
+                                          }
+                                        ],
+                                        "type": "text",
+                                        "text": "09:41"
                                       }
-                                    ],
-                                    "type": "text",
-                                    "text": "09:41"
+                                    ]
                                   }
                                 ]
                               }
-                            ]
+                            }
                           }
                         }
+                      ],
+                      "props": {
+                        "style": {
+                          "display": "flex",
+                          "flexDirection": "column",
+                          "gap": "4px",
+                          "background": "#1b65a0",
+                          "borderRadius": "22px",
+                          "borderBottomRightRadius": "6px",
+                          "padding": "14px 18px",
+                          "boxSizing": "border-box",
+                          "border": "none",
+                          "direction": "rtl",
+                          "textAlign": "right"
+                        },
+                        "lg": 9,
+                        "justify": "flex-start"
                       }
                     }
                   ],
                   "props": {
                     "style": {
                       "display": "flex",
-                      "flexDirection": "column",
-                      "gap": "4px",
-                      "background": "#1b65a0",
-                      "borderRadius": "22px",
-                      "borderBottomRightRadius": "6px",
-                      "padding": "14px 18px",
-                      "maxWidth": "86%",
-                      "boxSizing": "border-box",
-                      "border": "none",
-                      "alignSelf": "flex-start",
+                      "flexWrap": "wrap",
                       "direction": "rtl",
-                      "textAlign": "right"
+                      "width": "100%"
                     },
                     "lg": 12,
                     "justify": "flex-start"
@@ -296,101 +309,123 @@
                   "type": "col",
                   "children": [
                     {
-                      "type": "text",
+                      "type": "col",
                       "children": [],
                       "props": {
-                        "style": {
-                          "fontFamily": "'Heebo', sans-serif"
-                        },
-                        "text": {
-                          "childNodes": {
-                            "type": "doc",
-                            "content": [
-                              {
-                                "type": "paragraph",
-                                "attrs": {
-                                  "lineHeight": "1.6",
-                                  "direction": "rtl",
-                                  "textAlign": "right"
-                                },
-                                "content": [
-                                  {
-                                    "marks": [
-                                      {
-                                        "type": "textStyle",
-                                        "attrs": {
-                                          "fontFamily": "'Heebo', sans-serif",
-                                          "fontSize": "17px",
-                                          "color": "#0f1c30"
-                                        }
-                                      }
-                                    ],
-                                    "type": "text",
-                                    "text": "כן, תשלחו לי"
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        }
+                        "style": {},
+                        "lg": 3,
+                        "justify": "flex-start"
                       }
                     },
                     {
-                      "type": "text",
-                      "children": [],
-                      "props": {
-                        "style": {
-                          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
-                        },
-                        "text": {
-                          "childNodes": {
-                            "type": "doc",
-                            "content": [
-                              {
-                                "type": "paragraph",
-                                "attrs": {
-                                  "lineHeight": "1.2",
-                                  "direction": "rtl",
-                                  "textAlign": "left"
-                                },
+                      "type": "col",
+                      "children": [
+                        {
+                          "type": "text",
+                          "children": [],
+                          "props": {
+                            "style": {
+                              "fontFamily": "'Heebo', sans-serif"
+                            },
+                            "text": {
+                              "childNodes": {
+                                "type": "doc",
                                 "content": [
                                   {
-                                    "marks": [
+                                    "type": "paragraph",
+                                    "attrs": {
+                                      "lineHeight": "1.6",
+                                      "direction": "rtl",
+                                      "textAlign": "right"
+                                    },
+                                    "content": [
                                       {
-                                        "type": "textStyle",
-                                        "attrs": {
-                                          "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
-                                          "fontSize": "13px",
-                                          "color": "#506f92"
-                                        }
+                                        "marks": [
+                                          {
+                                            "type": "textStyle",
+                                            "attrs": {
+                                              "fontFamily": "'Heebo', sans-serif",
+                                              "fontSize": "17px",
+                                              "color": "#0f1c30"
+                                            }
+                                          }
+                                        ],
+                                        "type": "text",
+                                        "text": "כן, תשלחו לי"
                                       }
-                                    ],
-                                    "type": "text",
-                                    "text": "09:44"
+                                    ]
                                   }
                                 ]
                               }
-                            ]
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "children": [],
+                          "props": {
+                            "style": {
+                              "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                            },
+                            "text": {
+                              "childNodes": {
+                                "type": "doc",
+                                "content": [
+                                  {
+                                    "type": "paragraph",
+                                    "attrs": {
+                                      "lineHeight": "1.2",
+                                      "direction": "rtl",
+                                      "textAlign": "left"
+                                    },
+                                    "content": [
+                                      {
+                                        "marks": [
+                                          {
+                                            "type": "textStyle",
+                                            "attrs": {
+                                              "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                              "fontSize": "13px",
+                                              "color": "#506f92"
+                                            }
+                                          }
+                                        ],
+                                        "type": "text",
+                                        "text": "09:44"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
                           }
                         }
+                      ],
+                      "props": {
+                        "style": {
+                          "display": "flex",
+                          "flexDirection": "column",
+                          "gap": "4px",
+                          "background": "#ffffff",
+                          "borderRadius": "22px",
+                          "borderBottomLeftRadius": "6px",
+                          "padding": "14px 18px",
+                          "boxSizing": "border-box",
+                          "border": "1px solid #e8f0f6",
+                          "direction": "rtl",
+                          "textAlign": "right"
+                        },
+                        "lg": 9,
+                        "justify": "flex-start"
                       }
                     }
                   ],
                   "props": {
                     "style": {
                       "display": "flex",
-                      "flexDirection": "column",
-                      "gap": "4px",
-                      "background": "#ffffff",
-                      "borderRadius": "22px",
-                      "borderBottomLeftRadius": "6px",
-                      "padding": "14px 18px",
-                      "maxWidth": "86%",
-                      "boxSizing": "border-box",
-                      "border": "1px solid #e8f0f6",
-                      "alignSelf": "flex-end",
+                      "flexWrap": "wrap",
                       "direction": "rtl",
-                      "textAlign": "right"
+                      "width": "100%"
                     },
                     "lg": 12,
                     "justify": "flex-start"

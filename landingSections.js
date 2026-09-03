@@ -290,7 +290,21 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
     }, 'flex-start'));
   }
   if (title) {
-    kids.push(block([
+    // A col() here, not a block(), for the same reason as the eyebrow row
+    // above, and this row was missed when that one was fixed. A nested
+    // block's OWN wrapper carries the driver's forced `margin: auto`, and its
+    // `width: '100%'` does not survive, so the row collapsed to the 42ch
+    // measure and CENTRED itself: measured on the real renderer at x=533
+    // w=374 inside a 1184px content column, with the section's body copy
+    // still right-aligned underneath it. Every pattern that heads itself
+    // through hb() had a centred, narrowly wrapped heading over right-aligned
+    // prose because of this one node type.
+    //
+    // The block-vs-col guard (§7 of test/landing.test.js) does not catch it:
+    // it exempts blocks with a single child on the reasoning that the child
+    // does the layout. That reasoning covers dead layout props, not wrapper
+    // collapse, which no styling on the child can undo.
+    kids.push(col([
       col([heading(title, titleSize, onDark ? '#ffffff' : INK, 'right', DISPLAY)],
         { display: 'flex', flex: '0 1 42ch', textAlign: 'right', direction: 'rtl' }, 'flex-start'),
     ], { display: 'flex', direction: 'rtl', paddingLeft: '0px', paddingRight: '0px', width: '100%' }, 'flex-start'));

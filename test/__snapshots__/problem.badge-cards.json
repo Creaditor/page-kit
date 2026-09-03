@@ -98,7 +98,7 @@
               }
             },
             {
-              "type": "block",
+              "type": "col",
               "children": [
                 {
                   "type": "col",
@@ -161,14 +161,13 @@
               ],
               "props": {
                 "style": {
-                  "width": "100%",
-                  "marginLeft": "auto",
-                  "marginRight": "auto",
+                  "display": "flex",
+                  "direction": "rtl",
                   "paddingLeft": "0px",
                   "paddingRight": "0px",
-                  "display": "flex",
-                  "direction": "rtl"
+                  "width": "100%"
                 },
+                "lg": 12,
                 "justify": "flex-start"
               }
             }

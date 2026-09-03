@@ -237,7 +237,7 @@ function photo(src, w, h) {
 // in every consumer that walks the tree.
 const kept = (xs) => (Array.isArray(xs) ? xs : [xs]).filter(Boolean);
 const col = (children, style = {}, justify = 'center') => ({ id: cid(), type: 'col', children: kept(children), props: { style, lg: 12, justify } });
-const block = (cols, style = {}) => ({ id: cid(), type: 'block', children: kept(cols), props: { style: { width: `${CONTENT_WIDTH}px`, marginLeft: 'auto', marginRight: 'auto', paddingLeft: '28px', paddingRight: '28px', ...style } } });
+const block = (cols, style = {}, justify = 'flex-start') => ({ id: cid(), type: 'block', children: kept(cols), props: { style: { width: `${CONTENT_WIDTH}px`, marginLeft: 'auto', marginRight: 'auto', paddingLeft: '28px', paddingRight: '28px', ...style }, justify } });
 const section = (blocks, style = {}) => ({ id: cid(), type: 'section', layer: '1', children: kept(blocks), props: { opacity: 1, classList: [], style: { width: '100%', paddingTop: '80px', paddingBottom: '80px', ...style } } });
 
 /**
@@ -404,7 +404,7 @@ const card = (extra = {}, palette = {}) => ({
 });
 // Set on the ROW as well as the card: the row-level value orders the cards
 // (first item on the right), the card-level value aligns each card's contents.
-const cardsRow = (cards, palette = {}) => block(cards.map((kids) => col(kids, card({}, palette), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch', direction: 'rtl' });
+const cardsRow = (cards, palette = {}) => block(cards.map((kids) => col(kids, card({}, palette), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch', direction: 'rtl' }, 'center');
 
 /**
  * @param {string} pattern
@@ -487,7 +487,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         ].filter(Boolean);
 
         const goldBlocks = [
-          block([col(goldCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl' }, 'flex-start')]),
+          block([col(goldCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'),
         ];
         if (cells.length) {
           goldBlocks.push(block(cells, { display: 'flex', flexWrap: 'wrap', direction: 'rtl', marginTop: '62px', borderTop: `1px solid ${theme.ON_DARK}` }));
@@ -590,7 +590,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       }
 
       return { section: section([
-        block([col(heroCopy('center'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })]),
+        block([col(heroCopy('center'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })], {}, 'center'),
       ], { background: FIELD, paddingTop: '96px', paddingBottom: '96px' }) };
     }
 
@@ -614,14 +614,14 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           kids.push(block([col([makeText(copy.eyebrow, {
             fontSize: '14px', color: eyebrowColor, align: 'right',
             fontFamily: BODY_FONT, bold: false, lineHeight: '1',
-          })], { display: 'flex' }, 'flex-start')]));
+          })], { display: 'flex' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'));
         }
         if (copy.heading) {
           kids.push(block([col([H(copy.heading, '44px', headingColor, 'right')],
-            { display: 'flex', flex: '0 1 20ch', direction: 'rtl' }, 'flex-start')]));
+            { display: 'flex', flex: '0 1 20ch', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'));
         }
         if (!kids.length) return null;
-        return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: '54px' });
+        return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: '54px' }, 'flex-start');
       };
 
       // ── CONTINUOUS ─────────────────────────────────────────────────────
@@ -751,18 +751,18 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           kids.push(block([col([makeText(copy.eyebrow, {
             fontSize: '13px', color: g.ACC, align: 'right',
             fontFamily: BODY_FONT, bold: false, lineHeight: '1',
-          })], { display: 'flex' }, 'flex-start')]));
+          })], { display: 'flex' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'));
         }
         if (copy.heading) {
           kids.push(block([col([H(copy.heading, '42px', g.INK, 'right')],
-            { display: 'flex', flex: '0 1 20ch', direction: 'rtl' }, 'flex-start')]));
+            { display: 'flex', flex: '0 1 20ch', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'));
         }
         if (copy.paragraph) {
           kids.push(block([col([T(copy.paragraph, g.BODY, 'right')],
-            { display: 'flex', flex: '0 1 46ch', direction: 'rtl' }, 'flex-start')]));
+            { display: 'flex', flex: '0 1 46ch', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'));
         }
         if (!kids.length) return null;
-        return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: '52px' });
+        return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: '52px' }, 'flex-start');
       };
 
       // ── TILES ────────────────────────────────────────────────────────
@@ -979,7 +979,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       const bar = block(cols, {
         display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl',
         borderTop: `1px solid ${FIELD_LINE}`,
-      });
+      }, 'center');
       return { section: section([bar], {
         background: FIELD,
         paddingTop: '0px',
@@ -995,7 +995,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       return { section: section([
         block([col([T(copy.text || '', mix(P, '#ffffff', 0.86), 'center')], {
           display: 'flex', justifyContent: 'center', textAlign: 'center',
-        }, 'center')]),
+        }, 'center')], {}, 'center'),
       ], { background: FIELD, paddingTop: '13px', paddingBottom: '13px' }) };
 
     // ── STICKY CTA (new) ───────────────────────────────────────────────────────
@@ -1010,7 +1010,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           copy.cta ? button(copy.cta, '#ffffff', P) : null,
         ].filter(Boolean), {
           display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center', textAlign: 'center',
-        }, 'center')]),
+        }, 'center')], {}, 'center'),
       ], { background: FIELD, paddingTop: '44px', paddingBottom: '44px' }) };
 
     // ── §11 GUARANTEE ──────────────────────────────────────────────────────────
@@ -1057,7 +1057,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             buildElement({ type: 'accordion', props: { items: (copy.items || []).map((it) => ({ title: it.q || it.title || '', content: it.a || it.content || '' })) }, style: { fontFamily: BODY_FONT } }, palette),
             BODY_FONT,
           ),
-        ], { display: 'flex', flexDirection: 'column', margin: '0 auto', flex: '0 1 720px' })], { display: 'flex', justifyContent: 'center' }),
+        ], { display: 'flex', flexDirection: 'column', margin: '0 auto', flex: '0 1 720px' })], { display: 'flex', justifyContent: 'center' }, 'center'),
       ], { background: '#ffffff' }) };
 
     // ── final CTA (dark band) ──────────────────────────────────────────────────
@@ -1067,7 +1067,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           H(copy.heading, '44px', '#ffffff', 'right'),
           copy.subheading ? T(copy.subheading, mix(P, '#ffffff', 0.72), 'right') : null,
           copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,
-        ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '0 1 46ch' }, 'flex-start')], { display: 'flex', direction: 'rtl' }),
+        ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '0 1 46ch' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
       ], { background: FIELD, paddingTop: '92px', paddingBottom: '92px' }) };
 
     default:

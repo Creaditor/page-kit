@@ -9,7 +9,7 @@
           "type": "col",
           "children": [
             {
-              "type": "block",
+              "type": "col",
               "children": [
                 {
                   "type": "col",
@@ -84,19 +84,16 @@
               ],
               "props": {
                 "style": {
-                  "width": "100%",
-                  "marginLeft": "auto",
-                  "marginRight": "auto",
-                  "paddingLeft": "0px",
-                  "paddingRight": "0px",
                   "display": "flex",
                   "gap": "14px",
                   "alignItems": "center",
                   "direction": "rtl",
+                  "width": "100%",
                   "paddingBottom": "14px",
                   "borderBottom": "1px solid #444e5e",
                   "marginBottom": "26px"
                 },
+                "lg": 12,
                 "justify": "flex-start"
               }
             },
@@ -178,8 +175,6 @@
           ],
           "props": {
             "style": {
-              "display": "flex",
-              "flexDirection": "column",
               "width": "100%"
             },
             "lg": 12,

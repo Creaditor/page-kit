@@ -9,7 +9,7 @@
           "type": "col",
           "children": [
             {
-              "type": "block",
+              "type": "col",
               "children": [
                 {
                   "type": "col",
@@ -84,19 +84,16 @@
               ],
               "props": {
                 "style": {
-                  "width": "100%",
-                  "marginLeft": "auto",
-                  "marginRight": "auto",
-                  "paddingLeft": "0px",
-                  "paddingRight": "0px",
                   "display": "flex",
                   "gap": "14px",
                   "alignItems": "center",
                   "direction": "rtl",
+                  "width": "100%",
                   "paddingBottom": "14px",
                   "borderBottom": "1px solid #0f1c30",
                   "marginBottom": "26px"
                 },
+                "lg": 12,
                 "justify": "flex-start"
               }
             },
@@ -178,8 +175,6 @@
           ],
           "props": {
             "style": {
-              "display": "flex",
-              "flexDirection": "column",
               "width": "100%"
             },
             "lg": 12,
@@ -206,332 +201,347 @@
           "type": "col",
           "children": [
             {
-              "type": "text",
-              "children": [],
-              "props": {
-                "style": {
-                  "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
-                },
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.2",
-                          "direction": "rtl",
-                          "textAlign": "right"
-                        },
+              "type": "col",
+              "children": [
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
                         "content": [
                           {
-                            "marks": [
-                              {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
-                                  "fontSize": "66px",
-                                  "color": "#0f1c30"
-                                }
-                              }
-                            ],
-                            "type": "text",
-                            "text": "99"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              }
-            },
-            {
-              "type": "text",
-              "children": [],
-              "props": {
-                "style": {
-                  "fontFamily": "'Heebo', sans-serif"
-                },
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.6",
-                          "direction": "rtl",
-                          "textAlign": "right"
-                        },
-                        "content": [
-                          {
-                            "marks": [
-                              {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "'Heebo', sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#506f92"
-                                }
-                              }
-                            ],
-                            "type": "text",
-                            "text": "חבילה לעסקים"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              }
-            },
-            {
-              "type": "text",
-              "children": [],
-              "props": {
-                "style": {
-                  "fontFamily": "'Heebo', sans-serif"
-                },
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.6",
-                          "direction": "rtl",
-                          "textAlign": "right"
-                        },
-                        "content": [
-                          {
-                            "marks": [
-                              {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "'Heebo', sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#506f92"
-                                }
-                              }
-                            ],
-                            "type": "text",
-                            "text": "במקום 149"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "props": {
-            "style": {
-              "display": "flex",
-              "flexDirection": "column",
-              "gap": "8px",
-              "flex": "0 0 280px",
-              "direction": "rtl",
-              "textAlign": "right"
-            },
-            "lg": 12,
-            "justify": "flex-start"
-          }
-        },
-        {
-          "type": "col",
-          "children": [
-            {
-              "type": "text",
-              "children": [],
-              "props": {
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "customBulletList",
-                        "attrs": {
-                          "lineHeight": "1.5",
-                          "direction": "rtl",
-                          "textAlign": "right"
-                        },
-                        "content": [
-                          {
-                            "type": "customBulletItem",
+                            "type": "paragraph",
                             "attrs": {
-                              "svgIcon": "https://img.creaditor.ai/icons/serve/System/check-fill.png?width=24&height=24&color=964462",
-                              "width": 24,
-                              "height": 24,
-                              "mt": 0,
-                              "fill": "#964462"
+                              "lineHeight": "1.2",
+                              "direction": "rtl",
+                              "textAlign": "right"
                             },
                             "content": [
                               {
-                                "type": "paragraph",
-                                "attrs": {
-                                  "lineHeight": "1.5",
-                                  "direction": "rtl",
-                                  "textAlign": "right"
-                                },
-                                "content": [
+                                "marks": [
                                   {
-                                    "type": "text",
-                                    "text": "תכונה א",
-                                    "marks": [
-                                      {
-                                        "type": "textStyle",
-                                        "attrs": {
-                                          "fontSize": "17px",
-                                          "fontFamily": "'Heebo', sans-serif",
-                                          "color": "#243d5c"
-                                        }
-                                      }
-                                    ]
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                      "fontSize": "66px",
+                                      "color": "#0f1c30"
+                                    }
                                   }
-                                ]
-                              }
-                            ]
-                          },
-                          {
-                            "type": "customBulletItem",
-                            "attrs": {
-                              "svgIcon": "https://img.creaditor.ai/icons/serve/System/check-fill.png?width=24&height=24&color=964462",
-                              "width": 24,
-                              "height": 24,
-                              "mt": 0,
-                              "fill": "#964462"
-                            },
-                            "content": [
-                              {
-                                "type": "paragraph",
-                                "attrs": {
-                                  "lineHeight": "1.5",
-                                  "direction": "rtl",
-                                  "textAlign": "right"
-                                },
-                                "content": [
-                                  {
-                                    "type": "text",
-                                    "text": "תכונה ב",
-                                    "marks": [
-                                      {
-                                        "type": "textStyle",
-                                        "attrs": {
-                                          "fontSize": "17px",
-                                          "fontFamily": "'Heebo', sans-serif",
-                                          "color": "#243d5c"
-                                        }
-                                      }
-                                    ]
-                                  }
-                                ]
+                                ],
+                                "type": "text",
+                                "text": "99"
                               }
                             ]
                           }
                         ]
                       }
-                    ]
+                    }
                   }
-                }
-              }
-            },
-            {
-              "type": "text",
-              "children": [],
-              "props": {
-                "style": {
-                  "fontFamily": "'Heebo', sans-serif"
                 },
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.6",
-                          "direction": "rtl",
-                          "textAlign": "right"
-                        },
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "'Heebo', sans-serif"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
                         "content": [
                           {
-                            "marks": [
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.6",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
                               {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "'Heebo', sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#964462"
-                                }
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "'Heebo', sans-serif",
+                                      "fontSize": "17px",
+                                      "color": "#506f92"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "חבילה לעסקים"
                               }
-                            ],
-                            "type": "text",
-                            "text": "עד סוף החודש"
+                            ]
                           }
                         ]
                       }
-                    ]
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "'Heebo', sans-serif"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.6",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "'Heebo', sans-serif",
+                                      "fontSize": "17px",
+                                      "color": "#506f92"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "במקום 149"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
                   }
                 }
-              }
-            }
-          ],
-          "props": {
-            "style": {
-              "display": "flex",
-              "flexDirection": "column",
-              "gap": "10px",
-              "flex": "1 1 auto",
-              "direction": "rtl",
-              "textAlign": "right"
-            },
-            "lg": 12,
-            "justify": "flex-start"
-          }
-        },
-        {
-          "type": "col",
-          "children": [
-            {
-              "type": "button",
-              "children": [],
+              ],
               "props": {
-                "text": "רוצים לראות דוגמה?",
                 "style": {
-                  "height": "auto",
-                  "width": "auto",
-                  "maxWidth": "100%",
-                  "minWidth": "30px",
-                  "background": "#0f1c30",
-                  "color": "#ffffff",
-                  "borderRadius": "0px",
-                  "fontFamily": "'Heebo', sans-serif",
-                  "fontSize": "17px",
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "gap": "8px",
+                  "flex": "0 0 280px",
                   "direction": "rtl",
-                  "paddingTop": "14px",
-                  "paddingBottom": "14px",
-                  "paddingLeft": "32px",
-                  "paddingRight": "32px"
+                  "textAlign": "right"
                 },
-                "interactions": [],
-                "show_on_desktop": true,
-                "show_on_tablet": true,
-                "show_on_mobile": true,
-                "onClick": {
-                  "link": {
-                    "href": "#",
-                    "target": "_blank"
+                "lg": 12,
+                "justify": "flex-start"
+              }
+            },
+            {
+              "type": "col",
+              "children": [
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "customBulletList",
+                            "attrs": {
+                              "lineHeight": "1.5",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "type": "customBulletItem",
+                                "attrs": {
+                                  "svgIcon": "https://img.creaditor.ai/icons/serve/System/check-fill.png?width=24&height=24&color=964462",
+                                  "width": 24,
+                                  "height": 24,
+                                  "mt": 0,
+                                  "fill": "#964462"
+                                },
+                                "content": [
+                                  {
+                                    "type": "paragraph",
+                                    "attrs": {
+                                      "lineHeight": "1.5",
+                                      "direction": "rtl",
+                                      "textAlign": "right"
+                                    },
+                                    "content": [
+                                      {
+                                        "type": "text",
+                                        "text": "תכונה א",
+                                        "marks": [
+                                          {
+                                            "type": "textStyle",
+                                            "attrs": {
+                                              "fontSize": "17px",
+                                              "fontFamily": "'Heebo', sans-serif",
+                                              "color": "#243d5c"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "customBulletItem",
+                                "attrs": {
+                                  "svgIcon": "https://img.creaditor.ai/icons/serve/System/check-fill.png?width=24&height=24&color=964462",
+                                  "width": 24,
+                                  "height": 24,
+                                  "mt": 0,
+                                  "fill": "#964462"
+                                },
+                                "content": [
+                                  {
+                                    "type": "paragraph",
+                                    "attrs": {
+                                      "lineHeight": "1.5",
+                                      "direction": "rtl",
+                                      "textAlign": "right"
+                                    },
+                                    "content": [
+                                      {
+                                        "type": "text",
+                                        "text": "תכונה ב",
+                                        "marks": [
+                                          {
+                                            "type": "textStyle",
+                                            "attrs": {
+                                              "fontSize": "17px",
+                                              "fontFamily": "'Heebo', sans-serif",
+                                              "color": "#243d5c"
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "'Heebo', sans-serif"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.6",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "'Heebo', sans-serif",
+                                      "fontSize": "17px",
+                                      "color": "#964462"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "עד סוף החודש"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
                   }
                 }
+              ],
+              "props": {
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "gap": "10px",
+                  "flex": "1 1 auto",
+                  "direction": "rtl",
+                  "textAlign": "right"
+                },
+                "lg": 12,
+                "justify": "flex-start"
+              }
+            },
+            {
+              "type": "col",
+              "children": [
+                {
+                  "type": "button",
+                  "children": [],
+                  "props": {
+                    "text": "רוצים לראות דוגמה?",
+                    "style": {
+                      "height": "auto",
+                      "width": "auto",
+                      "maxWidth": "100%",
+                      "minWidth": "30px",
+                      "background": "#0f1c30",
+                      "color": "#ffffff",
+                      "borderRadius": "0px",
+                      "fontFamily": "'Heebo', sans-serif",
+                      "fontSize": "17px",
+                      "direction": "rtl",
+                      "paddingTop": "14px",
+                      "paddingBottom": "14px",
+                      "paddingLeft": "32px",
+                      "paddingRight": "32px"
+                    },
+                    "interactions": [],
+                    "show_on_desktop": true,
+                    "show_on_tablet": true,
+                    "show_on_mobile": true,
+                    "onClick": {
+                      "link": {
+                        "href": "#",
+                        "target": "_blank"
+                      }
+                    }
+                  }
+                }
+              ],
+              "props": {
+                "style": {
+                  "display": "flex",
+                  "flex": "0 0 auto"
+                },
+                "lg": 12,
+                "justify": "flex-start"
               }
             }
           ],
           "props": {
             "style": {
               "display": "flex",
-              "flex": "0 0 auto"
+              "gap": "48px",
+              "direction": "rtl",
+              "alignItems": "flex-start"
             },
             "lg": 12,
             "justify": "flex-start"
@@ -545,10 +555,6 @@
           "marginRight": "auto",
           "paddingLeft": "28px",
           "paddingRight": "28px",
-          "display": "flex",
-          "gap": "48px",
-          "direction": "rtl",
-          "alignItems": "flex-start",
           "borderTop": "1px solid #0f1c30",
           "paddingTop": "40px"
         },

@@ -169,106 +169,123 @@
               "type": "col",
               "children": [
                 {
-                  "type": "text",
-                  "children": [],
-                  "props": {
-                    "style": {
-                      "fontFamily": "'Assistant', sans-serif"
-                    },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1.18",
-                              "direction": "rtl",
-                              "textAlign": "right"
-                            },
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Assistant', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
                             "content": [
                               {
-                                "marks": [
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.18",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
                                   {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "'Assistant', sans-serif",
-                                      "fontSize": "40px",
-                                      "color": "#dc5a8a"
-                                    }
-                                  },
-                                  {
-                                    "type": "bold"
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Assistant', sans-serif",
+                                          "fontSize": "40px",
+                                          "color": "#dc5a8a"
+                                        }
+                                      },
+                                      {
+                                        "type": "bold"
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "כותרת פריט"
                                   }
-                                ],
-                                "type": "text",
-                                "text": "כותרת פריט"
+                                ]
                               }
                             ]
                           }
-                        ]
+                        }
                       }
                     }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "0 0 auto"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
                   }
-                }
-              ],
-              "props": {
-                "style": {
-                  "display": "flex",
-                  "flex": "0 0 auto"
                 },
-                "lg": 12,
-                "justify": "flex-start"
-              }
-            },
-            {
-              "type": "col",
-              "children": [
                 {
-                  "type": "text",
-                  "children": [],
-                  "props": {
-                    "style": {
-                      "fontFamily": "'Heebo', sans-serif"
-                    },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1.6",
-                              "direction": "rtl",
-                              "textAlign": "right"
-                            },
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Heebo', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
                             "content": [
                               {
-                                "marks": [
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.6",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
                                   {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "'Heebo', sans-serif",
-                                      "fontSize": "17px",
-                                      "color": "#95aabb"
-                                    }
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Heebo', sans-serif",
+                                          "fontSize": "17px",
+                                          "color": "#95aabb"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "טקסט פריט"
                                   }
-                                ],
-                                "type": "text",
-                                "text": "טקסט פריט"
+                                ]
                               }
                             ]
                           }
-                        ]
+                        }
                       }
                     }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "1 1 300px"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
                   }
                 }
               ],
               "props": {
                 "style": {
                   "display": "flex",
-                  "flex": "1 1 300px"
+                  "gap": "20px",
+                  "direction": "rtl",
+                  "alignItems": "baseline",
+                  "flexWrap": "wrap",
+                  "width": "100%"
                 },
                 "lg": 12,
                 "justify": "flex-start"
@@ -277,11 +294,7 @@
           ],
           "props": {
             "style": {
-              "display": "flex",
-              "gap": "20px",
-              "direction": "rtl",
-              "alignItems": "baseline",
-              "flexWrap": "wrap",
+              "gap": "22px",
               "width": "100%"
             },
             "lg": 12,
@@ -291,14 +304,11 @@
       ],
       "props": {
         "style": {
-          "width": "100%",
+          "width": "1240px",
           "marginLeft": "auto",
           "marginRight": "auto",
           "paddingLeft": "28px",
-          "paddingRight": "28px",
-          "display": "flex",
-          "flexDirection": "column",
-          "gap": "22px"
+          "paddingRight": "28px"
         },
         "justify": "flex-start"
       }

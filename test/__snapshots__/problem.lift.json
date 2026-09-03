@@ -129,159 +129,176 @@
               "type": "col",
               "children": [
                 {
-                  "type": "text",
-                  "children": [],
-                  "props": {
-                    "style": {
-                      "fontFamily": "'Secular One', sans-serif"
-                    },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1",
-                              "direction": "rtl",
-                              "textAlign": "right"
-                            },
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Secular One', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
                             "content": [
                               {
-                                "marks": [
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
                                   {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "'Secular One', sans-serif",
-                                      "fontSize": "54px",
-                                      "color": "#964462"
-                                    }
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Secular One', sans-serif",
+                                          "fontSize": "54px",
+                                          "color": "#964462"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "01"
                                   }
-                                ],
-                                "type": "text",
-                                "text": "01"
+                                ]
                               }
                             ]
                           }
-                        ]
+                        }
                       }
                     }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "0 0 86px"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
                   }
-                }
-              ],
-              "props": {
-                "style": {
-                  "display": "flex",
-                  "flex": "0 0 86px"
                 },
-                "lg": 12,
-                "justify": "flex-start"
-              }
-            },
-            {
-              "type": "col",
-              "children": [
                 {
-                  "type": "text",
-                  "children": [],
-                  "props": {
-                    "style": {
-                      "fontFamily": "'Assistant', sans-serif"
-                    },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1.3",
-                              "direction": "rtl",
-                              "textAlign": "right"
-                            },
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Assistant', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
                             "content": [
                               {
-                                "marks": [
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.3",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
                                   {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "'Assistant', sans-serif",
-                                      "fontSize": "22px",
-                                      "color": "#17222b"
-                                    }
-                                  },
-                                  {
-                                    "type": "bold"
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Assistant', sans-serif",
+                                          "fontSize": "22px",
+                                          "color": "#17222b"
+                                        }
+                                      },
+                                      {
+                                        "type": "bold"
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "כותרת פריט"
                                   }
-                                ],
-                                "type": "text",
-                                "text": "כותרת פריט"
+                                ]
                               }
                             ]
                           }
-                        ]
+                        }
                       }
                     }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "0 0 250px"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
                   }
-                }
-              ],
-              "props": {
-                "style": {
-                  "display": "flex",
-                  "flex": "0 0 250px"
                 },
-                "lg": 12,
-                "justify": "flex-start"
-              }
-            },
-            {
-              "type": "col",
-              "children": [
                 {
-                  "type": "text",
-                  "children": [],
-                  "props": {
-                    "style": {
-                      "fontFamily": "'Heebo', sans-serif"
-                    },
-                    "text": {
-                      "childNodes": {
-                        "type": "doc",
-                        "content": [
-                          {
-                            "type": "paragraph",
-                            "attrs": {
-                              "lineHeight": "1.6",
-                              "direction": "rtl",
-                              "textAlign": "right"
-                            },
+                  "type": "col",
+                  "children": [
+                    {
+                      "type": "text",
+                      "children": [],
+                      "props": {
+                        "style": {
+                          "fontFamily": "'Heebo', sans-serif"
+                        },
+                        "text": {
+                          "childNodes": {
+                            "type": "doc",
                             "content": [
                               {
-                                "marks": [
+                                "type": "paragraph",
+                                "attrs": {
+                                  "lineHeight": "1.6",
+                                  "direction": "rtl",
+                                  "textAlign": "right"
+                                },
+                                "content": [
                                   {
-                                    "type": "textStyle",
-                                    "attrs": {
-                                      "fontFamily": "'Heebo', sans-serif",
-                                      "fontSize": "17px",
-                                      "color": "#53626e"
-                                    }
+                                    "marks": [
+                                      {
+                                        "type": "textStyle",
+                                        "attrs": {
+                                          "fontFamily": "'Heebo', sans-serif",
+                                          "fontSize": "17px",
+                                          "color": "#53626e"
+                                        }
+                                      }
+                                    ],
+                                    "type": "text",
+                                    "text": "טקסט פריט"
                                   }
-                                ],
-                                "type": "text",
-                                "text": "טקסט פריט"
+                                ]
                               }
                             ]
                           }
-                        ]
+                        }
                       }
                     }
+                  ],
+                  "props": {
+                    "style": {
+                      "display": "flex",
+                      "flex": "1 1 320px"
+                    },
+                    "lg": 12,
+                    "justify": "flex-start"
                   }
                 }
               ],
               "props": {
                 "style": {
                   "display": "flex",
-                  "flex": "1 1 320px"
+                  "gap": "38px",
+                  "direction": "rtl",
+                  "width": "100%",
+                  "paddingTop": "34px",
+                  "paddingBottom": "34px"
                 },
                 "lg": 12,
                 "justify": "flex-start"
@@ -290,12 +307,7 @@
           ],
           "props": {
             "style": {
-              "display": "flex",
-              "gap": "38px",
-              "direction": "rtl",
-              "width": "100%",
-              "paddingTop": "34px",
-              "paddingBottom": "34px"
+              "width": "100%"
             },
             "lg": 12,
             "justify": "flex-start"
@@ -304,13 +316,11 @@
       ],
       "props": {
         "style": {
-          "width": "100%",
+          "width": "1240px",
           "marginLeft": "auto",
           "marginRight": "auto",
           "paddingLeft": "28px",
-          "paddingRight": "28px",
-          "display": "flex",
-          "flexDirection": "column"
+          "paddingRight": "28px"
         },
         "justify": "flex-start"
       }

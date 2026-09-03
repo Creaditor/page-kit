@@ -268,13 +268,24 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
     // The label and the hairline share a row: the label is measured by its own
     // width and the rule takes whatever is left, which is what makes the head
     // read as ruled rather than as a centered caption.
-    kids.push(block([
+    //
+    // A col() here, not a block(): this row is nested one level inside the
+    // outer col below (kids), and a nested block's OWN wrapper carries the
+    // render driver's forced `margin: auto` with no width, which collapses
+    // it to its content width instead of filling the row -- measured on the
+    // real renderer as the rule-line col shrinking to nothing and the whole
+    // row centering under the eyebrow label instead of reading as ruled. A
+    // col's own wrapper is a real Grid item (no such collapse), and its
+    // display/gap/alignItems reach the Grid container holding these two
+    // actual cols, which a block's never do (see block-vs-col guard, §7 of
+    // test/landing.test.js).
+    kids.push(col([
       col([data(eyebrow, onDark ? mix(S, '#ffffff', 0.55) : S, 'right', '13px', DISPLAY)],
         { display: 'flex', flex: '0 0 auto' }, 'flex-start'),
       col([], { display: 'flex', flex: '1 1 auto', borderBottom: `1px solid ${hairline}`, marginBottom: '7px' }, 'flex-start'),
     ], {
       display: 'flex', gap: '14px', alignItems: 'center', direction: 'rtl',
-      paddingLeft: '0px', paddingRight: '0px', width: '100%',
+      width: '100%',
       paddingBottom: '14px', borderBottom: `1px solid ${ruleColor}`, marginBottom: '26px',
     }, 'flex-start'));
   }
@@ -285,7 +296,13 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
     ], { display: 'flex', direction: 'rtl', paddingLeft: '0px', paddingRight: '0px', width: '100%' }, 'flex-start'));
   }
   if (!kids.length) return null;
-  return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: mb }, 'flex-start');
+  // No flexDirection:'column' (column-wrap landmine, see rowsBlock in the
+  // solution/problem cases below): `kids` holds col()/block() elements, not
+  // leaf text, so each is its own lg:12 Grid item and an explicit column
+  // direction risks MUI's always-on flex-wrap pushing the title row into a
+  // second column instead of under the eyebrow row. The default row+wrap
+  // direction plus each kid's own 100% width already stacks them.
+  return block([col(kids, { width: '100%' }, 'flex-start')], { marginBottom: mb }, 'flex-start');
 }
 
 /**
@@ -323,7 +340,13 @@ function ruledRows(items, palette = {}, opts = {}) {
       ...(i === 0 ? {} : { borderTop: `1px solid ${LINE}` }),
     }, 'flex-start');
   });
-  return block([col(rows, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], {}, 'flex-start');
+  // No flexDirection:'column' (column-wrap landmine): `rows` are col()
+  // elements (each its own lg:12 Grid item), and an explicit column
+  // direction on their container risks MUI's always-on flex-wrap pushing
+  // row 2+ into a second column off-canvas instead of further down --
+  // measured on the real renderer at four rows. Default row+wrap, relying
+  // on each row's own 100% width, is what actually stacks them.
+  return block([col(rows, { width: '100%' }, 'flex-start')], {}, 'flex-start');
 }
 /**
  * Message bubbles for the `conversation` variants.
@@ -404,7 +427,11 @@ const card = (extra = {}, palette = {}) => ({
 });
 // Set on the ROW as well as the card: the row-level value orders the cards
 // (first item on the right), the card-level value aligns each card's contents.
-const cardsRow = (cards, palette = {}) => block(cards.map((kids) => col(kids, card({}, palette), 'flex-start')), { display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', alignItems: 'stretch', direction: 'rtl' }, 'center');
+const cardsRow = (cards, palette = {}) => block([
+  col(cards.map((kids) => col(kids, card({}, palette), 'flex-start')), {
+    display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'stretch', direction: 'rtl',
+  }, 'center'),
+], {}, 'center');
 
 /**
  * @param {string} pattern
@@ -490,7 +517,13 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           block([col(goldCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'),
         ];
         if (cells.length) {
-          goldBlocks.push(block(cells, { display: 'flex', flexWrap: 'wrap', direction: 'rtl', marginTop: '62px', borderTop: `1px solid ${theme.ON_DARK}` }, 'flex-start'));
+          // Layout on a col, not on this block's own style (block-vs-col
+          // guard): marginTop/borderTop stay on the block itself, they are
+          // box-model on the wrapper and unaffected by the Grid
+          // interposition, only the arrangement of the cells moves.
+          goldBlocks.push(block([
+            col(cells, { display: 'flex', flexWrap: 'wrap', direction: 'rtl' }, 'flex-start'),
+          ], { marginTop: '62px', borderTop: `1px solid ${theme.ON_DARK}` }, 'flex-start'));
         }
         return { section: section(goldBlocks, { background: theme.FIELD, paddingTop: '92px', paddingBottom: '84px' }) };
       }
@@ -521,21 +554,31 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           ...(i === stats.length - 1 ? {} : { borderBottom: `1px solid ${mix(theme.ON_DARK, '#ffffff', 0.18)}` }),
         }, 'flex-start'));
 
+        // Two cols side by side: the row-arranging props (display/flexWrap/
+        // direction) go on an outer col wrapping both, not on this block's
+        // own style, per the block-vs-col guard -- a block's style is dead
+        // for more than one child (Grid interposition).
         return { section: section([
           block([
-            col(coralCopy, {
-              display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start',
-              textAlign: 'right', direction: 'rtl', flex: '1 1 720px', background: theme.FIELD,
-              boxSizing: 'border-box', paddingTop: '84px', paddingBottom: '88px', paddingLeft: '56px', paddingRight: '56px',
+            col([
+              col(coralCopy, {
+                display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start',
+                textAlign: 'right', direction: 'rtl', flex: '1 1 720px', background: theme.FIELD,
+                boxSizing: 'border-box', paddingTop: '84px', paddingBottom: '88px', paddingLeft: '56px', paddingRight: '56px',
+              }, 'flex-start'),
+              // No flexDirection:'column' (column-wrap landmine): statRows
+              // are col() elements, each its own lg:12 Grid item, and each
+              // already carries its own top/bottom padding and a border for
+              // separation, so the default row+wrap stack (each row 100%
+              // wide) loses nothing by not forcing column direction.
+              col(statRows, {
+                flex: '0 1 380px', minWidth: '300px',
+                background: theme.ON_DARK, boxSizing: 'border-box', paddingTop: '56px', paddingBottom: '56px', paddingLeft: '44px', paddingRight: '44px',
+              }, 'center'),
+            ], {
+              display: 'flex', flexWrap: 'wrap', direction: 'rtl', width: '100%',
             }, 'flex-start'),
-            col(statRows, {
-              display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: '0 1 380px', minWidth: '300px',
-              background: theme.ON_DARK, boxSizing: 'border-box', paddingTop: '56px', paddingBottom: '56px', paddingLeft: '44px', paddingRight: '44px',
-            }, 'center'),
-          ], {
-            display: 'flex', flexWrap: 'wrap', direction: 'rtl',
-            width: '100%', marginLeft: '0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px',
-          }, 'flex-start'),
+          ], { width: '100%', marginLeft: '0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px' }, 'flex-start'),
         ], { paddingTop: '0px', paddingBottom: '0px' }) };
       }
 
@@ -565,27 +608,36 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
 
         return { section: section([
           block([
-            col(cinemaCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '1 1 700px' }, 'flex-start'),
-            col([cinemaImg], { display: 'flex', flex: '0 1 440px', minWidth: '260px', background: theme.FIELD }, 'center'),
-          ], { display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl' }, 'flex-start'),
+            col([
+              col(cinemaCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '1 1 700px' }, 'flex-start'),
+              col([cinemaImg], { display: 'flex', flex: '0 1 440px', minWidth: '260px', background: theme.FIELD }, 'center'),
+            ], { display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl' }, 'flex-start'),
+          ], {}, 'flex-start'),
         ], { background: theme.FIELD, paddingTop: '84px', paddingBottom: '84px' }) };
       }
 
       if (variant === 'asymmetric' && copy.image) {
         return { section: section([
           block([
-            col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
-            col([photo(copy.image, 620, 420)], { display: 'flex', flex: '1 1 380px', margin: '12px' }, 'center'),
-          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
+            col([
+              col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
+              col([photo(copy.image, 620, 420)], { display: 'flex', flex: '1 1 380px', margin: '12px' }, 'center'),
+            ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
+          ], {}, 'flex-start'),
         ], { background: FIELD, paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
       if (variant === 'conversation' && Array.isArray(copy.thread) && copy.thread.length) {
         return { section: section([
           block([
-            col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
-            col(threadBubbles(copy.thread, palette), { display: 'flex', flexDirection: 'column', gap: '14px', flex: '1 1 340px', margin: '12px', direction: 'rtl' }, 'flex-start'),
-          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
+            col([
+              col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
+              // No flexDirection:'column' (column-wrap landmine): each
+              // bubble is its own col()/Grid item; `gap` alone still reaches
+              // the real container and keeps the 14px bubble spacing.
+              col(threadBubbles(copy.thread, palette), { gap: '14px', flex: '1 1 340px', margin: '12px', direction: 'rtl' }, 'flex-start'),
+            ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
+          ], {}, 'flex-start'),
         ], { background: FIELD, paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
@@ -659,7 +711,17 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           paddingTop: '34px', paddingBottom: '34px',
           ...(i === 0 ? {} : { borderTop: `1px solid ${theme.LINE}` }),
         }, 'flex-start'));
-        const rowsBlock = block(rows, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start');
+        // NOT flexDirection:'column' here: MUI's Grid container always ships
+        // flex-wrap:wrap in its own baseline CSS (page-kit has no lever to
+        // turn it off), so an explicit column direction on a Grid container
+        // holding lg:12 items wraps into ADDITIONAL COLUMNS once it runs out
+        // of vertical room instead of growing downward -- measured on the
+        // real renderer as rows 2 and 3 landing off-canvas to the right of
+        // row 1. Leaving flexDirection unset keeps the container's default
+        // row+wrap, and each row col()'s own lg:12 (100% width) already
+        // forces one row per wrapped line, which is what actually stacks
+        // them; this rests on that default rather than fighting it.
+        const rowsBlock = block([col(rows, { width: '100%' }, 'flex-start')], {}, 'flex-start');
         return { section: section([headBlock, rowsBlock], { background: theme.FIELD }) };
       }
 
@@ -731,7 +793,17 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           paddingTop: '34px', paddingBottom: '34px',
           ...(i === 0 ? {} : { borderTop: `1px solid ${theme.LIFT_LINE}` }),
         }, 'flex-start'));
-        const rowsBlock = block(rows, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start');
+        // NOT flexDirection:'column' here: MUI's Grid container always ships
+        // flex-wrap:wrap in its own baseline CSS (page-kit has no lever to
+        // turn it off), so an explicit column direction on a Grid container
+        // holding lg:12 items wraps into ADDITIONAL COLUMNS once it runs out
+        // of vertical room instead of growing downward -- measured on the
+        // real renderer as rows 2 and 3 landing off-canvas to the right of
+        // row 1. Leaving flexDirection unset keeps the container's default
+        // row+wrap, and each row col()'s own lg:12 (100% width) already
+        // forces one row per wrapped line, which is what actually stacks
+        // them; this rests on that default rather than fighting it.
+        const rowsBlock = block([col(rows, { width: '100%' }, 'flex-start')], {}, 'flex-start');
         return { section: section([headBlock, rowsBlock], { background: theme.LIFT }) };
       }
 
@@ -847,7 +919,13 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           col([H(it.title, '40px', g.ACC, 'right')], { display: 'flex', flex: '0 0 auto' }, 'flex-start'),
           col([T(it.text, g.BODY, 'right')], { display: 'flex', flex: '1 1 300px' }, 'flex-start'),
         ], { display: 'flex', gap: '20px', direction: 'rtl', alignItems: 'baseline', flexWrap: 'wrap', width: '100%' }, 'flex-start'));
-        const stackBlock = block(rows, { display: 'flex', flexDirection: 'column', gap: '22px', width: '100%' }, 'flex-start');
+        // Same as rowsBlock above: no flexDirection:'column' (column-wrap
+        // landmine, see there). `gap` alone still reaches this col's real
+        // Grid container -- gap is copied to innerLayout independently of
+        // flexDirection, and CSS gap inserts space between WRAPPED LINES in
+        // a row+wrap container too, so the 22px lands correctly between the
+        // stacked rows without needing column direction at all.
+        const stackBlock = block([col(rows, { gap: '22px', width: '100%' }, 'flex-start')], {}, 'flex-start');
         return { section: section([headBlock, stackBlock], { background: g.BG }) };
       }
 
@@ -879,7 +957,8 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         // thread, as two of its own top-level blocks -- a real
         // simplification from the sketch, but the sketch's version does not
         // survive the real renderer at all, and this does.
-        const capsBlock = block(capRows, { display: 'flex', flexDirection: 'column', width: '100%', direction: 'rtl' }, 'flex-start');
+        // No flexDirection:'column' (column-wrap landmine, see rowsBlock).
+        const capsBlock = block([col(capRows, { width: '100%', direction: 'rtl' }, 'flex-start')], {}, 'flex-start');
 
         // On the light ground, ON_LIGHT renders a dark brown "mine" bubble:
         // legible but the least lovely thing in the sketch. A bubble is a
@@ -922,9 +1001,15 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         // sharing a row with capsBlock. `alignItems: 'flex-start'` is set
         // explicitly too, though measured to make no visible difference on
         // its own -- see the KNOWN LIMITATION note on each bubble above.
-        const bubblesBlock = block(bubbles, {
-          display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '10px', direction: 'rtl', marginTop: '36px',
-        }, 'flex-start');
+        // No flexDirection:'column' (column-wrap landmine, see rowsBlock):
+        // with six bubbles this is exactly the content height that tips a
+        // column-direction Grid container into wrapping bubbles 4-6 into a
+        // second column off-canvas instead of continuing to stack them.
+        const bubblesBlock = block([
+          col(bubbles, {
+            alignItems: 'flex-start', width: '100%', gap: '10px', direction: 'rtl',
+          }, 'flex-start'),
+        ], { marginTop: '36px' }, 'flex-start');
 
         return { section: section([headBlock, capsBlock, bubblesBlock], { background: g.BG }) };
       }
@@ -932,9 +1017,11 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         hb(copy.eyebrow, copy.heading),
         copy.paragraph ? centeredProse([T(copy.paragraph, MUTED, 'right')]) : null,
         block([
-          col([bullets(copy.bullets, BODY, S)], { display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: '1 1 320px', margin: '12px' }, 'flex-start'),
-          copy.image ? col([photo(copy.image, 720, 360)], { display: 'flex', flex: '1 1 320px', margin: '12px' }, 'center') : null,
-        ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center' }, 'flex-start'),
+          col([
+            col([bullets(copy.bullets, BODY, S)], { display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: '1 1 320px', margin: '12px' }, 'flex-start'),
+            copy.image ? col([photo(copy.image, 720, 360)], { display: 'flex', flex: '1 1 320px', margin: '12px' }, 'center') : null,
+          ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center' }, 'flex-start'),
+        ], {}, 'flex-start'),
       ].filter(Boolean), { background: '#ffffff' }) };
     }
 
@@ -1023,19 +1110,18 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         // tier looks like once the other two are gone.
         block([
           col([
-            data(copy.price, INK, 'right', '66px'),
-            copy.planName ? T(copy.planName, MUTED, 'right') : null,
-            copy.regularNote ? T(copy.regularNote, MUTED, 'right') : null,
-          ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '8px', flex: '0 0 280px', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
-          col([
-            bullets(copy.features, BODY, S),
-            copy.urgency ? T(copy.urgency, S, 'right') : null,
-          ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '10px', flex: '1 1 auto', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
-          ...(copy.cta ? [col([button(copy.cta, INK, '#ffffff')], { display: 'flex', flex: '0 0 auto' }, 'flex-start')] : []),
-        ], {
-          display: 'flex', gap: '48px', direction: 'rtl', alignItems: 'flex-start',
-          borderTop: `1px solid ${INK}`, paddingTop: '40px',
-        }, 'flex-start'),
+            col([
+              data(copy.price, INK, 'right', '66px'),
+              copy.planName ? T(copy.planName, MUTED, 'right') : null,
+              copy.regularNote ? T(copy.regularNote, MUTED, 'right') : null,
+            ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '8px', flex: '0 0 280px', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
+            col([
+              bullets(copy.features, BODY, S),
+              copy.urgency ? T(copy.urgency, S, 'right') : null,
+            ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '10px', flex: '1 1 auto', direction: 'rtl', textAlign: 'right' }, 'flex-start'),
+            ...(copy.cta ? [col([button(copy.cta, INK, '#ffffff')], { display: 'flex', flex: '0 0 auto' }, 'flex-start')] : []),
+          ], { display: 'flex', gap: '48px', direction: 'rtl', alignItems: 'flex-start' }, 'flex-start'),
+        ], { borderTop: `1px solid ${INK}`, paddingTop: '40px' }, 'flex-start'),
       ], { background: LIGHT }) };
 
     // ── STAT BAR (new) ─────────────────────────────────────────────────────────
@@ -1062,10 +1148,9 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // dropped over the hero; it now means the row continues the same ground,
       // divided by hairlines, which is what makes the numbers read as part of
       // the masthead instead of as a widget.
-      const bar = block(cols, {
-        display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl',
-        borderTop: `1px solid ${FIELD_LINE}`,
-      }, 'center');
+      const bar = block([
+        col(cols, { display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl' }, 'center'),
+      ], { borderTop: `1px solid ${FIELD_LINE}` }, 'center');
       return { section: section([bar], {
         background: FIELD,
         paddingTop: '0px',
@@ -1128,10 +1213,12 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       return { section: section([
         hb(copy.eyebrow, copy.heading),
         block([
-          copy.image ? col([photo(copy.image, 560, 340)], { display: 'flex', flex: '1 1 300px', margin: '12px' }, 'center') : null,
-          col((copy.paragraphs || [copy.paragraph]).filter(Boolean).map((p, i) => T(p, i === 0 ? BODY : MUTED, 'right')),
-            { display: 'flex', flexDirection: 'column', gap: '14px', justifyContent: 'center', flex: '1 1 340px', margin: '12px' }, 'flex-start'),
-        ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '28px', alignItems: 'center' }, 'flex-start'),
+          col([
+            copy.image ? col([photo(copy.image, 560, 340)], { display: 'flex', flex: '1 1 300px', margin: '12px' }, 'center') : null,
+            col((copy.paragraphs || [copy.paragraph]).filter(Boolean).map((p, i) => T(p, i === 0 ? BODY : MUTED, 'right')),
+              { display: 'flex', flexDirection: 'column', gap: '14px', justifyContent: 'center', flex: '1 1 340px', margin: '12px' }, 'flex-start'),
+          ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '28px', alignItems: 'center' }, 'flex-start'),
+        ], {}, 'flex-start'),
       ], { background: LIGHT }) };
 
     // ── §14 FAQ (accordion) ────────────────────────────────────────────────────

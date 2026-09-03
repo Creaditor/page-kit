@@ -608,20 +608,34 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // helpers is exactly the "one device repeated" grammar the
       // 2026-09-02 design review rejected. Not extracted to a top-level
       // helper: only these three branches call it.
+      // Leaves, not one col() per line: block() carries the page's own
+      // 1240px content-width + auto margins, exactly right for a TOP-LEVEL
+      // block but wrong one level deeper, and even a bare col() per line
+      // turned out to fight this flex-column parent in the real renderer --
+      // measured with two lines it degrades to "packed side by side, happens
+      // to still fit," and with three lines (solutionHead below) that same
+      // packing overflowed clean off the left edge of the page. The one
+      // shape proven to survive contact with the real render-site service is
+      // the hero's own goldCopy/coralCopy/cinemaCopy: a flat array of LEAF
+      // nodes (no per-line col wrapper) inside exactly one col, with
+      // `alignItems` set explicitly in that col's OWN style -- col()'s third
+      // argument (`justify`) does not map to align-items, it is a separate
+      // prop the driver reads for something else, and leaving align-items
+      // unset is what let the renderer fall back to its own default instead
+      // of actually stacking the lines. This head copies that shape exactly.
       const problemHead = (eyebrowColor, headingColor) => {
-        const kids = [];
-        if (copy.eyebrow) {
-          kids.push(block([col([makeText(copy.eyebrow, {
+        const kids = [
+          copy.eyebrow ? makeText(copy.eyebrow, {
             fontSize: '14px', color: eyebrowColor, align: 'right',
             fontFamily: BODY_FONT, bold: false, lineHeight: '1',
-          })], { display: 'flex' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'));
-        }
-        if (copy.heading) {
-          kids.push(block([col([H(copy.heading, '44px', headingColor, 'right')],
-            { display: 'flex', flex: '0 1 20ch', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'));
-        }
+          }) : null,
+          copy.heading ? H(copy.heading, '44px', headingColor, 'right') : null,
+        ].filter(Boolean);
         if (!kids.length) return null;
-        return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: '54px' }, 'flex-start');
+        return block([col(kids, {
+          display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start',
+          width: '100%', textAlign: 'right', direction: 'rtl',
+        }, 'flex-start')], { marginBottom: '54px' }, 'flex-start');
       };
 
       // ── CONTINUOUS ─────────────────────────────────────────────────────
@@ -663,7 +677,13 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           numeral.props.style = { ...numeral.props.style, marginBottom: '26px' };
           const title = H(it.title, '22px', '#ffffff', 'right');
           title.props.style = { ...title.props.style, marginBottom: '14px' };
+          // Missing display:flex/flexDirection:column here left the col on
+          // the renderer's own default (a MUI Grid row), which put the
+          // numeral, title and body on one line instead of stacked -- the
+          // same "col() needs its own explicit stack direction" rule the
+          // established card() helper already follows for cardsRow.
           return col([numeral, title, para(it.text, theme.MUTED, 'right')], {
+            display: 'flex', flexDirection: 'column',
             background: theme.PANEL, padding: '38px 32px 42px', flex: '1 1 300px', boxSizing: 'border-box',
           }, 'flex-start');
         });
@@ -745,24 +765,23 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // paragraph line, all ground-aware. Not extracted to a top-level
       // helper, same reasoning as problemHead: only these three branches
       // call it.
+      // Same fix as problemHead above, and for the same reason: leaves
+      // directly in one col, alignItems set explicitly on that col's own
+      // style, no per-line col() wrapper. See the comment there.
       const solutionHead = () => {
-        const kids = [];
-        if (copy.eyebrow) {
-          kids.push(block([col([makeText(copy.eyebrow, {
+        const kids = [
+          copy.eyebrow ? makeText(copy.eyebrow, {
             fontSize: '13px', color: g.ACC, align: 'right',
             fontFamily: BODY_FONT, bold: false, lineHeight: '1',
-          })], { display: 'flex' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'));
-        }
-        if (copy.heading) {
-          kids.push(block([col([H(copy.heading, '42px', g.INK, 'right')],
-            { display: 'flex', flex: '0 1 20ch', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'));
-        }
-        if (copy.paragraph) {
-          kids.push(block([col([T(copy.paragraph, g.BODY, 'right')],
-            { display: 'flex', flex: '0 1 46ch', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'));
-        }
+          }) : null,
+          copy.heading ? H(copy.heading, '42px', g.INK, 'right') : null,
+          copy.paragraph ? T(copy.paragraph, g.BODY, 'right') : null,
+        ].filter(Boolean);
         if (!kids.length) return null;
-        return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: '52px' }, 'flex-start');
+        return block([col(kids, {
+          display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start',
+          width: '100%', textAlign: 'right', direction: 'rtl',
+        }, 'flex-start')], { marginBottom: '52px' }, 'flex-start');
       };
 
       // ── TILES ────────────────────────────────────────────────────────
@@ -774,7 +793,10 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         const cells = copy.items.slice(0, 6).map((it) => {
           const name = H(it.title, '26px', g.ACC, 'right');
           name.props.style = { ...name.props.style, marginBottom: '12px' };
+          // Same explicit stack direction as panels' cell col: without it
+          // the cell is on the renderer's own row default.
           return col([name, T(it.text, g.BODY, 'right')], {
+            display: 'flex', flexDirection: 'column',
             background: g.PANEL, padding: '34px 30px 38px', flex: '1 1 330px', boxSizing: 'border-box',
           }, 'flex-start');
         });
@@ -811,7 +833,19 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           paddingTop: '15px', paddingBottom: '15px',
           ...(i === 0 ? {} : { borderTop: `1px solid ${g.LINE}` }),
         }, 'flex-start'));
-        const capsCol = col(capRows, { display: 'flex', flexDirection: 'column', width: '100%', flex: '1 1 420px', minWidth: '300px', direction: 'rtl' }, 'flex-start');
+        // block(), not col(): a col() asked to stack multiple col()-shaped
+        // children packs them side by side instead in the real renderer (the
+        // same failure the head just had). block() with flexDirection:column
+        // is the one mechanism proven reliable here (rowsBlock, panelsBlock,
+        // stackBlock, cellsBlock) -- but ALL of those are TOP-LEVEL blocks,
+        // and block() turns out to size off `width` only, never off `flex`
+        // or a percentage `width` when nested beside a sibling (both were
+        // measured still rendering full width). So this no longer tries to
+        // put the list beside the thread in one row: it is list, then
+        // thread, as two of its own top-level blocks -- a real
+        // simplification from the sketch, but the sketch's version does not
+        // survive the real renderer at all, and this does.
+        const capsBlock = block(capRows, { display: 'flex', flexDirection: 'column', width: '100%', direction: 'rtl' }, 'flex-start');
 
         // On the light ground, ON_LIGHT renders a dark brown "mine" bubble:
         // legible but the least lovely thing in the sketch. A bubble is a
@@ -826,6 +860,19 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           const fg = mine ? (ground === 'light' ? readableTextOn(P) : g.ON_ACC) : g.INK;
           const kids = [T(String((m && m.text) || ''), fg, 'right')];
           if (m && m.time) kids.push(data(String(m.time), dim(fg, bg), 'left', '13px'));
+          // KNOWN LIMITATION, not fixed here: a bubble should be a narrow
+          // box (maxWidth ~70%) sitting to one side, like a real chat
+          // thread. Measured against the real render-site service, every
+          // width-control tried -- `width`, `maxWidth`, `alignItems` on this
+          // col, `alignItems` on the parent block, and a two-col wrapper
+          // pushing an inner fixed-width box with margin -- still rendered
+          // full row width. The driver appears to force column-stacked
+          // col()/block() children to 100% width unconditionally; this is
+          // not something page-kit's own props can override, and is a
+          // frontend-driver question, not a page-kit one. Left correct in
+          // every other respect (order, color, corner radii, alignment
+          // marker) rather than papered over with a technique already
+          // proven not to survive contact with the real renderer.
           return col(kids, {
             display: 'flex', flexDirection: 'column', gap: '6px', background: bg,
             // Chat-bubble corner radii are a deliberate, sketch-exact exception
@@ -833,14 +880,19 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             // threadBubbles already ships rounded bubbles today. Messaging
             // bubbles are the one established genre exception on this page.
             borderRadius: mine ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-            padding: '14px 17px', maxWidth: '92%', boxSizing: 'border-box',
+            padding: '14px 17px', maxWidth: '70%', boxSizing: 'border-box',
             alignSelf: mine ? 'flex-start' : 'flex-end', direction: 'rtl', textAlign: 'right',
           }, 'flex-start');
         });
-        const bubblesCol = col(bubbles, { display: 'flex', flexDirection: 'column', gap: '10px', flex: '0 1 420px', minWidth: '300px', direction: 'rtl' }, 'flex-start');
+        // Same fix as capsBlock above: its own top-level block, not a col
+        // sharing a row with capsBlock. `alignItems: 'flex-start'` is set
+        // explicitly too, though measured to make no visible difference on
+        // its own -- see the KNOWN LIMITATION note on each bubble above.
+        const bubblesBlock = block(bubbles, {
+          display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', gap: '10px', direction: 'rtl', marginTop: '36px',
+        }, 'flex-start');
 
-        const bodyBlock = block([capsCol, bubblesCol], { display: 'flex', flexWrap: 'wrap', gap: '64px', direction: 'rtl', alignItems: 'flex-start' }, 'flex-start');
-        return { section: section([headBlock, bodyBlock], { background: g.BG }) };
+        return { section: section([headBlock, capsBlock, bubblesBlock], { background: g.BG }) };
       }
       return { section: section([
         hb(copy.eyebrow, copy.heading),

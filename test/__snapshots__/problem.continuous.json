@@ -70,8 +70,11 @@
                   "marginLeft": "auto",
                   "marginRight": "auto",
                   "paddingLeft": "28px",
-                  "paddingRight": "28px"
-                }
+                  "paddingRight": "28px",
+                  "display": "flex",
+                  "direction": "rtl"
+                },
+                "justify": "flex-start"
               }
             },
             {
@@ -141,8 +144,10 @@
                   "marginLeft": "auto",
                   "marginRight": "auto",
                   "paddingLeft": "28px",
-                  "paddingRight": "28px"
-                }
+                  "paddingRight": "28px",
+                  "direction": "rtl"
+                },
+                "justify": "flex-start"
               }
             }
           ],
@@ -165,7 +170,8 @@
           "paddingLeft": "28px",
           "paddingRight": "28px",
           "marginBottom": "54px"
-        }
+        },
+        "justify": "flex-start"
       }
     },
     {
@@ -360,7 +366,8 @@
           "paddingRight": "28px",
           "display": "flex",
           "flexDirection": "column"
-        }
+        },
+        "justify": "flex-start"
       }
     }
   ],

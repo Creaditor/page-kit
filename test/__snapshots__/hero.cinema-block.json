@@ -225,7 +225,8 @@
           "flexWrap": "wrap",
           "alignItems": "stretch",
           "direction": "rtl"
-        }
+        },
+        "justify": "flex-start"
       }
     }
   ],

@@ -424,7 +424,8 @@
           "display": "flex",
           "flexWrap": "wrap",
           "direction": "rtl"
-        }
+        },
+        "justify": "flex-start"
       }
     }
   ],

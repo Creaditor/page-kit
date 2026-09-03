@@ -352,3 +352,30 @@ test('display type is set tighter than body type', () => {
   assert.ok(Math.min(...heights) < 1.2, 'the display line must be set tight, not at the 1.4 body default');
   assert.ok(Math.max(...heights) >= 1.4, 'body copy must stay loose enough to read');
 });
+
+// ── 6. the driver-default regression guard ───────────────────────────────────
+//
+// Neither the editor's live-canvas driver nor the standalone render-site
+// service reads block() defaults, only the props.justify field on the
+// composed JSON node. If a block ever ships without one, both renderers fall
+// back to "center", which is the exact defect this file's `block()` change
+// fixes. This does not assert which value is correct per site, only that one
+// was consciously set, so it also catches a future block node built by hand
+// outside the block() helper.
+
+test('every block carries an explicit justify, so the driver never falls back to centering it', () => {
+  for (const { pattern, variant } of landingVariantPairs()) {
+    const { section } = composeLandingSection(pattern, copyFor(pattern), PALETTE, { variant });
+    (function walk(n) {
+      if (Array.isArray(n)) return n.forEach(walk);
+      if (!n || typeof n !== 'object') return;
+      if (n.type === 'block') {
+        assert.ok(
+          n.props && typeof n.props.justify === 'string' && n.props.justify.length > 0,
+          `${pattern}:${variant} has a block with no explicit justify — the editor driver and render-site both default this to "center".`,
+        );
+      }
+      Object.values(n).forEach((v) => { if (v && typeof v === 'object') walk(v); });
+    })(section);
+  }
+});

@@ -225,7 +225,8 @@
           "alignItems": "stretch",
           "direction": "rtl",
           "borderTop": "1px solid #245278"
-        }
+        },
+        "justify": "center"
       }
     }
   ],

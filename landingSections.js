@@ -276,16 +276,16 @@ function headingBlock(eyebrow, title, opts = {}, palette) {
       display: 'flex', gap: '14px', alignItems: 'center', direction: 'rtl',
       paddingLeft: '0px', paddingRight: '0px', width: '100%',
       paddingBottom: '14px', borderBottom: `1px solid ${ruleColor}`, marginBottom: '26px',
-    }));
+    }, 'flex-start'));
   }
   if (title) {
     kids.push(block([
       col([heading(title, titleSize, onDark ? '#ffffff' : INK, 'right', DISPLAY)],
         { display: 'flex', flex: '0 1 42ch', textAlign: 'right', direction: 'rtl' }, 'flex-start'),
-    ], { display: 'flex', direction: 'rtl', paddingLeft: '0px', paddingRight: '0px', width: '100%' }));
+    ], { display: 'flex', direction: 'rtl', paddingLeft: '0px', paddingRight: '0px', width: '100%' }, 'flex-start'));
   }
   if (!kids.length) return null;
-  return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: mb });
+  return block([col(kids, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], { marginBottom: mb }, 'flex-start');
 }
 
 /**
@@ -323,7 +323,7 @@ function ruledRows(items, palette = {}, opts = {}) {
       ...(i === 0 ? {} : { borderTop: `1px solid ${LINE}` }),
     }, 'flex-start');
   });
-  return block([col(rows, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')]);
+  return block([col(rows, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start')], {}, 'flex-start');
 }
 /**
  * Message bubbles for the `conversation` variants.
@@ -382,7 +382,7 @@ function badge(label, palette = {}) {
 const centeredProse = (kids) => block([col(kids, {
   display: 'flex', flexDirection: 'column', gap: '14px',
   alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '0 1 62ch',
-}, 'flex-start')], { display: 'flex', direction: 'rtl' });
+}, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start');
 
 // card style for multi-item rows
 //
@@ -490,7 +490,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           block([col(goldCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl' }, 'flex-start')], { direction: 'rtl' }, 'flex-start'),
         ];
         if (cells.length) {
-          goldBlocks.push(block(cells, { display: 'flex', flexWrap: 'wrap', direction: 'rtl', marginTop: '62px', borderTop: `1px solid ${theme.ON_DARK}` }));
+          goldBlocks.push(block(cells, { display: 'flex', flexWrap: 'wrap', direction: 'rtl', marginTop: '62px', borderTop: `1px solid ${theme.ON_DARK}` }, 'flex-start'));
         }
         return { section: section(goldBlocks, { background: theme.FIELD, paddingTop: '92px', paddingBottom: '84px' }) };
       }
@@ -535,7 +535,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           ], {
             display: 'flex', flexWrap: 'wrap', direction: 'rtl',
             width: '100%', marginLeft: '0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px',
-          }),
+          }, 'flex-start'),
         ], { paddingTop: '0px', paddingBottom: '0px' }) };
       }
 
@@ -567,7 +567,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           block([
             col(cinemaCopy, { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '1 1 700px' }, 'flex-start'),
             col([cinemaImg], { display: 'flex', flex: '0 1 440px', minWidth: '260px', background: theme.FIELD }, 'center'),
-          ], { display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl' }),
+          ], { display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl' }, 'flex-start'),
         ], { background: theme.FIELD, paddingTop: '84px', paddingBottom: '84px' }) };
       }
 
@@ -576,7 +576,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           block([
             col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
             col([photo(copy.image, 620, 420)], { display: 'flex', flex: '1 1 380px', margin: '12px' }, 'center'),
-          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }),
+          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
         ], { background: FIELD, paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
@@ -585,7 +585,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           block([
             col(heroCopy('right'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', flex: '1 1 380px', margin: '12px' }, 'flex-start'),
             col(threadBubbles(copy.thread, palette), { display: 'flex', flexDirection: 'column', gap: '14px', flex: '1 1 340px', margin: '12px', direction: 'rtl' }, 'flex-start'),
-          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }),
+          ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
         ], { background: FIELD, paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
@@ -645,7 +645,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           paddingTop: '34px', paddingBottom: '34px',
           ...(i === 0 ? {} : { borderTop: `1px solid ${theme.LINE}` }),
         }, 'flex-start'));
-        const rowsBlock = block(rows, { display: 'flex', flexDirection: 'column', width: '100%' });
+        const rowsBlock = block(rows, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start');
         return { section: section([headBlock, rowsBlock], { background: theme.FIELD }) };
       }
 
@@ -667,7 +667,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             background: theme.PANEL, padding: '38px 32px 42px', flex: '1 1 300px', boxSizing: 'border-box',
           }, 'flex-start');
         });
-        const panelsBlock = block(panelCols, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl' });
+        const panelsBlock = block(panelCols, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl' }, 'flex-start');
         return { section: section([headBlock, panelsBlock], { background: theme.FIELD }) };
       }
 
@@ -691,7 +691,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           paddingTop: '34px', paddingBottom: '34px',
           ...(i === 0 ? {} : { borderTop: `1px solid ${theme.LIFT_LINE}` }),
         }, 'flex-start'));
-        const rowsBlock = block(rows, { display: 'flex', flexDirection: 'column', width: '100%' });
+        const rowsBlock = block(rows, { display: 'flex', flexDirection: 'column', width: '100%' }, 'flex-start');
         return { section: section([headBlock, rowsBlock], { background: theme.LIFT }) };
       }
 
@@ -778,7 +778,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             background: g.PANEL, padding: '34px 30px 38px', flex: '1 1 330px', boxSizing: 'border-box',
           }, 'flex-start');
         });
-        const cellsBlock = block(cells, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl' });
+        const cellsBlock = block(cells, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl' }, 'flex-start');
         return { section: section([headBlock, cellsBlock], { background: g.BG }) };
       }
 
@@ -791,7 +791,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           col([H(it.title, '40px', g.ACC, 'right')], { display: 'flex', flex: '0 0 auto' }, 'flex-start'),
           col([T(it.text, g.BODY, 'right')], { display: 'flex', flex: '1 1 300px' }, 'flex-start'),
         ], { display: 'flex', gap: '20px', direction: 'rtl', alignItems: 'baseline', flexWrap: 'wrap', width: '100%' }, 'flex-start'));
-        const stackBlock = block(rows, { display: 'flex', flexDirection: 'column', gap: '22px', width: '100%' });
+        const stackBlock = block(rows, { display: 'flex', flexDirection: 'column', gap: '22px', width: '100%' }, 'flex-start');
         return { section: section([headBlock, stackBlock], { background: g.BG }) };
       }
 
@@ -839,7 +839,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         });
         const bubblesCol = col(bubbles, { display: 'flex', flexDirection: 'column', gap: '10px', flex: '0 1 420px', minWidth: '300px', direction: 'rtl' }, 'flex-start');
 
-        const bodyBlock = block([capsCol, bubblesCol], { display: 'flex', flexWrap: 'wrap', gap: '64px', direction: 'rtl', alignItems: 'flex-start' });
+        const bodyBlock = block([capsCol, bubblesCol], { display: 'flex', flexWrap: 'wrap', gap: '64px', direction: 'rtl', alignItems: 'flex-start' }, 'flex-start');
         return { section: section([headBlock, bodyBlock], { background: g.BG }) };
       }
       return { section: section([
@@ -848,7 +848,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         block([
           col([bullets(copy.bullets, BODY, S)], { display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: '1 1 320px', margin: '12px' }, 'flex-start'),
           copy.image ? col([photo(copy.image, 720, 360)], { display: 'flex', flex: '1 1 320px', margin: '12px' }, 'center') : null,
-        ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center' }),
+        ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center' }, 'flex-start'),
       ].filter(Boolean), { background: '#ffffff' }) };
     }
 
@@ -949,7 +949,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         ], {
           display: 'flex', gap: '48px', direction: 'rtl', alignItems: 'flex-start',
           borderTop: `1px solid ${INK}`, paddingTop: '40px',
-        }),
+        }, 'flex-start'),
       ], { background: LIGHT }) };
 
     // ── STAT BAR (new) ─────────────────────────────────────────────────────────
@@ -1033,7 +1033,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         // The form sits on the field itself. A white rounded card with a 60px
         // shadow dropped onto a dark band is the same floating-panel device the
         // rest of the page just lost.
-        block([col([form], { display: 'flex', flexDirection: 'column', flex: '0 1 560px', direction: 'rtl' }, 'flex-start')], { display: 'flex', direction: 'rtl' }),
+        block([col([form], { display: 'flex', flexDirection: 'column', flex: '0 1 560px', direction: 'rtl' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
       ], { background: FIELD, paddingTop: '86px', paddingBottom: '86px' }) };
     }
 
@@ -1045,7 +1045,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           copy.image ? col([photo(copy.image, 560, 340)], { display: 'flex', flex: '1 1 300px', margin: '12px' }, 'center') : null,
           col((copy.paragraphs || [copy.paragraph]).filter(Boolean).map((p, i) => T(p, i === 0 ? BODY : MUTED, 'right')),
             { display: 'flex', flexDirection: 'column', gap: '14px', justifyContent: 'center', flex: '1 1 340px', margin: '12px' }, 'flex-start'),
-        ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '28px', alignItems: 'center' }),
+        ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '28px', alignItems: 'center' }, 'flex-start'),
       ], { background: LIGHT }) };
 
     // ── §14 FAQ (accordion) ────────────────────────────────────────────────────

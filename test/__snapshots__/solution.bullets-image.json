@@ -96,7 +96,8 @@
                   "paddingBottom": "14px",
                   "borderBottom": "1px solid #0f1c30",
                   "marginBottom": "26px"
-                }
+                },
+                "justify": "flex-start"
               }
             },
             {
@@ -170,7 +171,8 @@
                   "paddingRight": "0px",
                   "display": "flex",
                   "direction": "rtl"
-                }
+                },
+                "justify": "flex-start"
               }
             }
           ],
@@ -193,7 +195,8 @@
           "paddingLeft": "28px",
           "paddingRight": "28px",
           "marginBottom": "44px"
-        }
+        },
+        "justify": "flex-start"
       }
     },
     {
@@ -267,7 +270,8 @@
           "paddingRight": "28px",
           "display": "flex",
           "direction": "rtl"
-        }
+        },
+        "justify": "flex-start"
       }
     },
     {
@@ -464,7 +468,8 @@
           "flexWrap": "wrap",
           "gap": "24px",
           "alignItems": "center"
-        }
+        },
+        "justify": "flex-start"
       }
     }
   ],

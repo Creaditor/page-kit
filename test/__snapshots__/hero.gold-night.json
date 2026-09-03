@@ -182,8 +182,10 @@
           "marginLeft": "auto",
           "marginRight": "auto",
           "paddingLeft": "28px",
-          "paddingRight": "28px"
-        }
+          "paddingRight": "28px",
+          "direction": "rtl"
+        },
+        "justify": "flex-start"
       }
     },
     {
@@ -409,7 +411,8 @@
           "direction": "rtl",
           "marginTop": "62px",
           "borderTop": "1px solid #dc5a8a"
-        }
+        },
+        "justify": "flex-start"
       }
     }
   ],

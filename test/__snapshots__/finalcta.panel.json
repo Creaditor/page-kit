@@ -149,7 +149,8 @@
           "paddingRight": "28px",
           "display": "flex",
           "direction": "rtl"
-        }
+        },
+        "justify": "flex-start"
       }
     }
   ],

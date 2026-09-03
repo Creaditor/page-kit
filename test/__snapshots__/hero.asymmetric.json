@@ -227,7 +227,8 @@
           "gap": "32px",
           "alignItems": "center",
           "direction": "rtl"
-        }
+        },
+        "justify": "flex-start"
       }
     }
   ],

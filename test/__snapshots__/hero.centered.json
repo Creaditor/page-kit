@@ -188,7 +188,8 @@
           "marginRight": "auto",
           "paddingLeft": "28px",
           "paddingRight": "28px"
-        }
+        },
+        "justify": "center"
       }
     }
   ],

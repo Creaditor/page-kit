@@ -220,6 +220,19 @@ const LANDING_VOCABULARY = {
     },
   },
 
+  tip: {
+    description:
+      'One genuinely useful piece of advice the reader can act on whether or not they buy. Earns trust by giving something away. Use at most once on a page, and only when there is a real, specific tip to give; a vague platitude here is worse than no tip.',
+    default: 'panel',
+    variants: {
+      panel: {
+        description: 'A white panel with an accent edge and a lightbulb, on the light band.',
+        needs: ['heading'],
+        optional: ['eyebrow', 'paragraph'],
+      },
+    },
+  },
+
   leadform: {
     description: 'The conversion point. Every page needs one.',
     default: 'panel',

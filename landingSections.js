@@ -306,6 +306,7 @@ const PATTERN_ICON = {
   bonuses: 'Finance/gift-fill',
   guarantee: 'System/shield-check-fill',
   faq: 'System/question-fill',
+  tip: 'Others/lightbulb-flash-fill',
 };
 
 // Thumbnail for a card inside a row, as opposed to `photo` which is a
@@ -1378,6 +1379,42 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         hb(copy.eyebrow, copy.heading),
         centeredProse([T(copy.paragraph, BODY, 'right')]),
       ], { background: '#ffffff' }) };
+
+    // ── TIP (one useful thing, said plainly) ───────────────────────────────────
+    //
+    // Not a section of the sales argument: an aside that gives the reader
+    // something they can use whether or not they buy. That is the whole design
+    // constraint, and it is why this does not reuse guarantee's shape even
+    // though both are one panel holding one idea. Guarantee is a claim ABOUT the
+    // offer and sits centred in the reading column with the page's own
+    // typography, so it reads as more of the pitch. A tip has to read as an
+    // interruption of the pitch, so it gets a container the page uses nowhere
+    // else: a white panel on the light band with a thick accent edge on the
+    // reading side, and the lightbulb.
+    //
+    // borderRight, not borderLeft: these pages are RTL, so the reading edge a
+    // Hebrew eye lands on first is the right one. An accent rule on the left is
+    // an accent rule at the END of every line.
+    case 'tip': {
+      const kids = [
+        sectionIcon(PATTERN_ICON.tip, PALE_ACCENT, 34),
+        copy.eyebrow ? data(copy.eyebrow, PALE_ACCENT, 'right', '13px', DISPLAY) : null,
+        copy.heading ? H(copy.heading, '28px', INK, 'right') : null,
+        copy.paragraph ? T(copy.paragraph, BODY, 'right') : null,
+      ].filter(Boolean);
+      return { section: section([
+        // Layout on the col, never on the block: the driver interposes a Grid
+        // container, so a flex/gap set on the block() reaches nothing.
+        block([col(kids, {
+          display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-start',
+          background: '#ffffff', borderRight: `4px solid ${PALE_ACCENT}`,
+          border: `1px solid ${mix(P, '#ffffff', 0.76)}`,
+          borderRightWidth: '4px', borderRightColor: PALE_ACCENT,
+          padding: '32px 34px 36px', boxSizing: 'border-box',
+          textAlign: 'right', direction: 'rtl', flex: '0 1 74ch',
+        }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
+      ], { background: LIGHT, paddingTop: '64px', paddingBottom: '64px' }) };
+    }
 
     // ── §12 LEAD FORM ──────────────────────────────────────────────────────────
     case 'leadform': {

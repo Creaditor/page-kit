@@ -1,0 +1,202 @@
+{
+  "type": "section",
+  "layer": "1",
+  "children": [
+    {
+      "type": "block",
+      "children": [
+        {
+          "type": "col",
+          "children": [
+            {
+              "type": "image",
+              "children": [],
+              "props": {
+                "src": "https://img.creaditor.ai/icons/serve/Others/lightbulb-flash-fill.png?width=68&height=68&color=964462",
+                "alt": "",
+                "width": 34,
+                "height": 34,
+                "style": {
+                  "width": "34px",
+                  "height": "34px",
+                  "maxWidth": "34px",
+                  "borderRadius": "0px",
+                  "objectFit": "contain",
+                  "marginBottom": "4px"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "style": {
+                  "fontFamily": "'Assistant', sans-serif"
+                },
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.2",
+                          "direction": "rtl",
+                          "textAlign": "right"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "'Assistant', sans-serif",
+                                  "fontSize": "13px",
+                                  "color": "#964462"
+                                }
+                              },
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "type": "text",
+                            "text": "לפני הכל"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "style": {
+                  "fontFamily": "'Assistant', sans-serif"
+                },
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.18",
+                          "direction": "rtl",
+                          "textAlign": "right"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "'Assistant', sans-serif",
+                                  "fontSize": "28px",
+                                  "color": "#0f1c30"
+                                }
+                              },
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "type": "text",
+                            "text": "כותרת ראשית לבדיקה"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "style": {
+                  "fontFamily": "'Heebo', sans-serif"
+                },
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.6",
+                          "direction": "rtl",
+                          "textAlign": "right"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "'Heebo', sans-serif",
+                                  "fontSize": "17px",
+                                  "color": "#243d5c"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "פסקה קצרה שמסבירה את ההקשר בלי למכור."
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "display": "flex",
+              "flexDirection": "column",
+              "gap": "12px",
+              "alignItems": "flex-start",
+              "background": "#ffffff",
+              "borderRight": "4px solid #964462",
+              "border": "1px solid #c8dae8",
+              "borderRightWidth": "4px",
+              "borderRightColor": "#964462",
+              "padding": "32px 34px 36px",
+              "boxSizing": "border-box",
+              "textAlign": "right",
+              "direction": "rtl",
+              "flex": "0 1 74ch"
+            },
+            "lg": 12,
+            "justify": "flex-start"
+          }
+        }
+      ],
+      "props": {
+        "style": {
+          "width": "1240px",
+          "marginLeft": "auto",
+          "marginRight": "auto",
+          "paddingLeft": "28px",
+          "paddingRight": "28px",
+          "display": "flex",
+          "direction": "rtl"
+        },
+        "justify": "flex-start"
+      }
+    }
+  ],
+  "props": {
+    "opacity": 1,
+    "classList": [],
+    "style": {
+      "width": "100%",
+      "paddingTop": "64px",
+      "paddingBottom": "64px",
+      "background": "#eff4f8"
+    }
+  }
+}

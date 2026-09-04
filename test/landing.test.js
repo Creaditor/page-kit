@@ -487,3 +487,61 @@ test('a col() with flexDirection:column never stacks more than one col()/block()
     })(section);
   }
 });
+
+// ── the photographic ground ──────────────────────────────────────────────────
+//
+// A band photo is a ground, not a subject: it goes under a scrim of the same
+// colour the band already had, so the copy stays legible and a photo that fails
+// to load degrades to the flat band rather than to white.
+
+const PAL = { primary: '#1b65a0', secondary: '#e2a13b' };
+const IMG = 'https://images.example.com/ground.jpg';
+const groundOf = (pattern, opts) =>
+  (composeLandingSection(pattern, { heading: 'כותרת', subheading: 'תת כותרת', cta: 'לחצו' }, PAL, opts)
+    .section.props.style) || {};
+
+test('a band given a background photo scrims it and keeps the flat ground as the fallback', () => {
+  for (const pattern of ['hero', 'leadform']) {
+    const style = groundOf(pattern, { backgroundImage: IMG });
+    assert.ok(style.background, `${pattern} dropped its solid ground, so a failed photo would render white`);
+    assert.match(style.backgroundImage, /^linear-gradient\(to bottom, rgba\(/,
+      `${pattern} put the photo down without a scrim in front of it`);
+    assert.ok(style.backgroundImage.includes(`url("${IMG}")`), `${pattern} did not reference the photo`);
+    assert.strictEqual(style.backgroundSize, 'cover');
+  }
+});
+
+test('a band given no background photo is byte-identical to the flat band it always was', () => {
+  for (const pattern of ['hero', 'leadform']) {
+    for (const opts of [{}, { backgroundImage: '' }, { backgroundImage: null }]) {
+      const style = groundOf(pattern, opts);
+      assert.ok(style.background, `${pattern} lost its ground`);
+      assert.strictEqual(style.backgroundImage, undefined,
+        `${pattern} invented a backgroundImage with no photo to put in it`);
+    }
+  }
+});
+
+test('a band already carrying a foreground photo never takes a second one behind it', () => {
+  // hero:asymmetric renders a feature photo beside the copy. A ground photo as
+  // well is two photos competing in one band, which is the failure mode the
+  // whole scrim exists to avoid.
+  const { section } = composeLandingSection(
+    'hero',
+    { heading: 'כותרת', image: 'https://images.example.com/feature.jpg' },
+    PAL,
+    { variant: 'asymmetric', backgroundImage: IMG },
+  );
+  assert.strictEqual(section.props.style.backgroundImage, undefined);
+});
+
+test('the scrim is built from the band own colour, not from a fixed black', () => {
+  // A grey scrim over a blue band reads as dirt on the brand. The rgba must
+  // carry the ground colour it is sitting on.
+  const style = groundOf('hero', { backgroundImage: IMG });
+  const flat = groundOf('hero', {});
+  const hex = String(flat.background).replace('#', '');
+  const rgb = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(', ');
+  assert.ok(style.backgroundImage.includes(`rgba(${rgb},`),
+    `scrim ${style.backgroundImage.slice(0, 60)} does not carry the band colour ${flat.background}`);
+});

@@ -47,6 +47,46 @@ const mix = (a, bColor, t) => {
 };
 
 /**
+ * A photographic ground for a full-bleed band.
+ *
+ * The renderer passes a section's `style` through verbatim (render's
+ * `components/section/index.js` spreads `sectionProps.style` onto the
+ * `<section>`), so plain CSS is all this needs. The separate
+ * `sectionProps.background` preset slot loads a web component and is a
+ * different, richer mechanism; it is deliberately not used here.
+ *
+ * Three shapes were measured on the real renderer 2026-09-04. A bare cover
+ * image leaves the text fighting the photo. A flat scrim is readable. This is
+ * the third and most controlled: the solid ground stays underneath as the
+ * fallback, and a vertical scrim of that same colour sits in the SAME
+ * `backgroundImage` value as the photo, which is what keeps the copy legible
+ * over any frame. A photo that fails to load therefore degrades to the flat
+ * band the page would have rendered anyway, never to white.
+ *
+ * The scrim runs 0.72 to 0.97, not the 0.55 to 0.95 that was measured. 0.55 was
+ * read off a 525px hero, where the exposed top is a thin strip. The leadform
+ * band is 862px tall, and at that height the same ramp leaves most of the
+ * section showing the photo at near full strength: it stopped reading as a
+ * designed ground and started reading as a photo with a form dropped on it.
+ * 0.72 holds the photo to texture at both heights.
+ *
+ * Returns the plain `{ background }` unchanged when there is no image, so
+ * every call site can pass this through without branching.
+ */
+const photoGround = (bg, img) => {
+  if (!img || typeof img !== 'string') return { background: bg };
+  const c = parseColor(bg) || { r: 0, g: 0, b: 0 };
+  const scrim = (a) => `rgba(${c.r}, ${c.g}, ${c.b}, ${a})`;
+  return {
+    background: bg,
+    backgroundImage: `linear-gradient(to bottom, ${scrim(0.72)}, ${scrim(0.97)}), url("${img}")`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+  };
+};
+
+/**
  * Build the neutral ramp for one palette. Ratios are tuned so the resulting
  * contrasts match what the old fixed constants delivered, which is why the
  * snapshot diff for this change is colour-only and never structural.
@@ -503,6 +543,12 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
   // is called inside a try/catch that skips the whole section on error, and
   // losing a section to a typo is a worse outcome than rendering the default.
   const variant = typeof opts.variant === 'string' ? opts.variant : null;
+  // A photographic ground for the bands that earn one. The caller passes it for
+  // every pattern and only the bands below spend it: a photo behind every
+  // section is worse than a photo behind none, and a band that already carries
+  // a foreground photo (hero:asymmetric, hero:cinema-block) must not carry a
+  // second one behind it.
+  const bgPhoto = typeof opts.backgroundImage === 'string' ? opts.backgroundImage : '';
   const P = palette.primary || '#6328A7';
   const S = palette.secondary || palette.accent || P;
   // GRAD was a 135deg two-colour diagonal behind the hero and every CTA band.
@@ -581,7 +627,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             col(cells, { display: 'flex', flexWrap: 'wrap', direction: 'rtl' }, 'flex-start'),
           ], { marginTop: '62px', borderTop: `1px solid ${theme.ON_DARK}` }, 'flex-start'));
         }
-        return { section: section(goldBlocks, { background: theme.FIELD, paddingTop: '92px', paddingBottom: '84px' }) };
+        return { section: section(goldBlocks, { ...photoGround(theme.FIELD, bgPhoto), paddingTop: '92px', paddingBottom: '84px' }) };
       }
 
       // ── CORAL CUT ────────────────────────────────────────────────────────
@@ -669,7 +715,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
               col([cinemaImg], { display: 'flex', flex: '0 1 440px', minWidth: '260px', background: theme.FIELD }, 'center'),
             ], { display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl' }, 'flex-start'),
           ], {}, 'flex-start'),
-        ], { background: theme.FIELD, paddingTop: '84px', paddingBottom: '84px' }) };
+        ], { ...photoGround(theme.FIELD, bgPhoto), paddingTop: '84px', paddingBottom: '84px' }) };
       }
 
       if (variant === 'asymmetric' && copy.image) {
@@ -694,12 +740,12 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
               col(threadBubbles(copy.thread, palette), { gap: '14px', flex: '1 1 340px', margin: '12px', direction: 'rtl' }, 'flex-start'),
             ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
           ], {}, 'flex-start'),
-        ], { background: FIELD, paddingTop: '84px', paddingBottom: '76px' }) };
+        ], { ...photoGround(FIELD, bgPhoto), paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
       return { section: section([
         block([col(heroCopy('center'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })], {}, 'center'),
-      ], { background: FIELD, paddingTop: '96px', paddingBottom: '96px' }) };
+      ], { ...photoGround(FIELD, bgPhoto), paddingTop: '96px', paddingBottom: '96px' }) };
     }
 
     // ── §2 PROBLEM / identification (editorial) ────────────────────────────────
@@ -1308,7 +1354,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           display: 'flex', flexDirection: 'column', flex: '0 1 560px', direction: 'rtl',
           background: theme.PANEL, padding: '38px 34px 42px', boxSizing: 'border-box',
         }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
-      ], { background: theme.FIELD, paddingTop: '86px', paddingBottom: '86px' }) };
+      ], { ...photoGround(theme.FIELD, bgPhoto), paddingTop: '86px', paddingBottom: '86px' }) };
     }
 
     // ── §13 ABOUT (paragraph(s) + professional photo) ──────────────────────────

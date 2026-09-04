@@ -211,12 +211,22 @@
                       "type": "text",
                       "label_field": {
                         "props": {
-                          "text": "שם מלא"
+                          "text": "שם מלא",
+                          "style": {
+                            "color": "#ffffff",
+                            "fontFamily": "'Heebo', sans-serif"
+                          }
                         }
                       },
                       "isRequired": true,
                       "style": {
-                        "width": "100%"
+                        "width": "100%",
+                        "minHeight": "52px",
+                        "background": "#ffffff",
+                        "color": "#091e2f",
+                        "border": "1px solid #1d3b54",
+                        "borderRadius": "0px",
+                        "fontFamily": "'Heebo', sans-serif"
                       },
                       "paramName": "name"
                     }
@@ -227,12 +237,22 @@
                       "type": "tel",
                       "label_field": {
                         "props": {
-                          "text": "טלפון"
+                          "text": "טלפון",
+                          "style": {
+                            "color": "#ffffff",
+                            "fontFamily": "'Heebo', sans-serif"
+                          }
                         }
                       },
                       "isRequired": true,
                       "style": {
-                        "width": "100%"
+                        "width": "100%",
+                        "minHeight": "52px",
+                        "background": "#ffffff",
+                        "color": "#091e2f",
+                        "border": "1px solid #1d3b54",
+                        "borderRadius": "0px",
+                        "fontFamily": "'Heebo', sans-serif"
                       },
                       "paramName": "phone"
                     }
@@ -243,12 +263,22 @@
                       "type": "email",
                       "label_field": {
                         "props": {
-                          "text": "אימייל"
+                          "text": "אימייל",
+                          "style": {
+                            "color": "#ffffff",
+                            "fontFamily": "'Heebo', sans-serif"
+                          }
                         }
                       },
                       "isRequired": false,
                       "style": {
-                        "width": "100%"
+                        "width": "100%",
+                        "minHeight": "52px",
+                        "background": "#ffffff",
+                        "color": "#091e2f",
+                        "border": "1px solid #1d3b54",
+                        "borderRadius": "0px",
+                        "fontFamily": "'Heebo', sans-serif"
                       },
                       "paramName": "email"
                     }
@@ -260,8 +290,8 @@
                       "style": {
                         "minHeight": "52px",
                         "width": "100%",
-                        "background": "#ffffff",
-                        "color": "#09263e",
+                        "background": "#dc5a8a",
+                        "color": "#091e2f",
                         "fontSize": "17px",
                         "borderRadius": "0px",
                         "fontFamily": "'Heebo', sans-serif"
@@ -277,7 +307,10 @@
               "display": "flex",
               "flexDirection": "column",
               "flex": "0 1 560px",
-              "direction": "rtl"
+              "direction": "rtl",
+              "background": "#0d2c45",
+              "padding": "38px 34px 42px",
+              "boxSizing": "border-box"
             },
             "lg": 12,
             "justify": "flex-start"
@@ -305,7 +338,7 @@
       "width": "100%",
       "paddingTop": "86px",
       "paddingBottom": "86px",
-      "background": "#09263e"
+      "background": "#091e2f"
     }
   }
 }

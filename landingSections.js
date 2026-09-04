@@ -1266,19 +1266,49 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
 
     // ── §12 LEAD FORM ──────────────────────────────────────────────────────────
     case 'leadform': {
+      const theme = deriveTheme(palette.primary, palette.secondary);
+      // The fields have to read as fields. They used to inherit the dark ground
+      // and rendered near-invisible: a dark input on a dark band, with only a
+      // faint border to say it was an input at all.
+      const inputStyle = {
+        width: '100%', minHeight: '52px', background: '#ffffff', color: theme.FIELD,
+        border: `1px solid ${theme.LINE}`, borderRadius: '0px', fontFamily: UI_FONT,
+      };
+      // The label colour is set explicitly rather than inherited. The renderer
+      // puts the label in its own Typography that reads `label_field.props.style`
+      // (see render's form factory), so an unstyled label takes whatever it
+      // inherits, and on the PANEL card that came out near-black on dark.
+      const labelStyle = { color: '#ffffff', fontFamily: UI_FONT };
+      const field = (id, type, label, isRequired) => ({
+        type: 'input', id,
+        props: { type, label_field: { props: { text: label, style: labelStyle } }, isRequired, style: inputStyle, paramName: id },
+      });
       const form = buildElement({ type: 'form', props: { items: [
-        { type: 'input', id: 'name', props: { type: 'text', label_field: { props: { text: 'שם מלא' } }, isRequired: true, style: { width: '100%' }, paramName: 'name' } },
-        { type: 'input', id: 'phone', props: { type: 'tel', label_field: { props: { text: 'טלפון' } }, isRequired: true, style: { width: '100%' }, paramName: 'phone' } },
-        { type: 'input', id: 'email', props: { type: 'email', label_field: { props: { text: 'אימייל' } }, isRequired: false, style: { width: '100%' }, paramName: 'email' } },
-        { type: 'button', id: 'submit', props: { text: copy.submit || 'שליחה', style: { minHeight: '52px', width: '100%', background: '#ffffff', color: FIELD, fontSize: '17px', borderRadius: '0px', fontFamily: UI_FONT } } },
+        field('name', 'text', 'שם מלא', true),
+        field('phone', 'tel', 'טלפון', true),
+        field('email', 'email', 'אימייל', false),
+        // The accent, not another white slab. With white inputs above it, a
+        // white button would be the fourth identical rectangle in the stack and
+        // would read as one more field rather than as the action.
+        { type: 'button', id: 'submit', props: { text: copy.submit || 'שליחה', style: { minHeight: '52px', width: '100%', background: theme.ON_DARK, color: theme.onAccentDark, fontSize: '17px', borderRadius: '0px', fontFamily: UI_FONT } } },
       ] } }, palette);
       return { section: section([
         hb(copy.eyebrow, copy.heading, { onDark: true }),
-        // The form sits on the field itself. A white rounded card with a 60px
-        // shadow dropped onto a dark band is the same floating-panel device the
-        // rest of the page just lost.
-        block([col([form], { display: 'flex', flexDirection: 'column', flex: '0 1 560px', direction: 'rtl' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
-      ], { background: FIELD, paddingTop: '86px', paddingBottom: '86px' }) };
+        // The form sits on a PANEL card: the ground one shade off, which is the
+        // same device problem:panels and solution:tiles already use for their
+        // cells, so the card belongs to the page's own vocabulary.
+        //
+        // Square corners and no shadow, deliberately. The note that used to be
+        // here rejected "a white rounded card with a 60px shadow dropped onto a
+        // dark band" as the floating-panel device the rest of the page had just
+        // lost, and it was right about that. It was wrong to conclude that the
+        // form therefore needed no container at all: with nothing behind them
+        // the inputs had no ground to contrast against.
+        block([col([form], {
+          display: 'flex', flexDirection: 'column', flex: '0 1 560px', direction: 'rtl',
+          background: theme.PANEL, padding: '38px 34px 42px', boxSizing: 'border-box',
+        }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
+      ], { background: theme.FIELD, paddingTop: '86px', paddingBottom: '86px' }) };
     }
 
     // ── §13 ABOUT (paragraph(s) + professional photo) ──────────────────────────

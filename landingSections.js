@@ -98,7 +98,15 @@ function neutrals(palette = {}) {
     BODY: mix(brand, '#2a2532', 0.62),  // body copy
     MUTED: mix(brand, '#7b7787', 0.55), // secondary copy
     LINE: mix(brand, '#ffffff', 0.90),  // hairlines and card borders
-    LIGHT: mix(brand, '#ffffff', 0.965), // tinted section bands
+    // 0.93, not 0.965. At 0.965 the tinted band differs from white by about 3
+    // percent, which is not a band, it is white with a rumour of one. On the
+    // 14-section render the six-section middle of the page (testimonials,
+    // whyBuy, offer, bonuses, pricing, guarantee) alternated white and LIGHT
+    // exactly as designed and read as one continuous undifferentiated stretch,
+    // because the alternation was invisible. 0.93 is still unmistakably a light
+    // band, it is just one the eye can find. It also gives the white cards that
+    // sit ON this band a ground to separate from.
+    LIGHT: mix(brand, '#ffffff', 0.93), // tinted section bands
     // The page's one dark ground. The brand deepened rather than a new colour,
     // which is what keeps a dark band reading as the tenant's rather than as a
     // theme borrowed from somewhere else.
@@ -1451,7 +1459,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           copy.subheading ? T(copy.subheading, mix(P, '#ffffff', 0.72), 'right') : null,
           copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,
         ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '0 1 46ch' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
-      ], { background: FIELD, paddingTop: '92px', paddingBottom: '92px' }) };
+      ], { ...photoGround(FIELD, bgPhoto), paddingTop: '92px', paddingBottom: '92px' }) };
 
     default:
       throw new Error(`Unknown landing pattern "${pattern}".`);

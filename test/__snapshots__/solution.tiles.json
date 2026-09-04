@@ -169,6 +169,24 @@
               "type": "col",
               "children": [
                 {
+                  "type": "image",
+                  "children": [],
+                  "props": {
+                    "src": "https://img.creaditor.ai/icons/serve/System/checkbox-circle-fill.png?width=60&height=60&color=dc5a8a",
+                    "alt": "",
+                    "width": 30,
+                    "height": 30,
+                    "style": {
+                      "width": "30px",
+                      "height": "30px",
+                      "maxWidth": "30px",
+                      "borderRadius": "0px",
+                      "objectFit": "contain",
+                      "marginBottom": "4px"
+                    }
+                  }
+                },
+                {
                   "type": "text",
                   "children": [],
                   "props": {

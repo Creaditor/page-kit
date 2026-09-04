@@ -256,6 +256,50 @@ const button = (text, background, color, href) => {
 };
 const bullets = (items, color, iconColor) =>
   makeList(Array.isArray(items) ? items : [], { icon: 'check', iconColor, color, fontSize: '17px', fontFamily: BODY_FONT });
+/**
+ * A section icon: one tinted glyph from the platform icon set.
+ *
+ * builder.js already has `iconUrl`, but it is hard-wired to the `System/`
+ * category at 24px because it exists to serve bullet-list markers. A card icon
+ * is a different job: it wants 40px and the best glyph for the section, which
+ * for gift, quote and team lives in Finance, Editor and User & Faces. So the
+ * path is passed whole here and the size is a parameter.
+ *
+ * Every path below was checked against the live service (it 404s on a name it
+ * does not have, and a 404 renders as a broken image, not as nothing). The
+ * colour is baked into the URL, which is what lets one glyph carry the tenant's
+ * accent instead of shipping a grey PNG on every brand.
+ */
+const ICON_BASE = 'https://img.creaditor.ai/icons/serve';
+function sectionIcon(path, color, size = 40) {
+  const hex = String(color || '#000000').replace('#', '');
+  const src = `${ICON_BASE}/${path.split('/').map(encodeURIComponent).join('/')}.png?width=${size * 2}&height=${size * 2}&color=${hex}`;
+  const img = makeImage(src, { alt: '', width: size, height: size });
+  img.props.style = {
+    ...img.props.style,
+    width: `${size}px`, height: `${size}px`, borderRadius: '0px',
+    objectFit: 'contain', marginBottom: '4px',
+  };
+  return img;
+}
+
+// One glyph per pattern. Fixed rather than model-chosen: the model naming an
+// icon per item would be richer, but the service 404s on a name it does not
+// have and a 404 renders as a broken image on the tenant's page. A fixed map
+// cannot miss. Model-chosen icons are a later move, gated on validating the
+// name against the service before it ships.
+const PATTERN_ICON = {
+  solution: 'System/checkbox-circle-fill',
+  problem: 'System/error-warning-fill',
+  audience: 'User & Faces/team-fill',
+  testimonials: 'Editor/double-quotes-r',
+  whyBuy: 'System/checkbox-circle-fill',
+  offer: 'System/checkbox-circle-fill',
+  bonuses: 'Finance/gift-fill',
+  guarantee: 'System/shield-check-fill',
+  faq: 'System/question-fill',
+};
+
 // Thumbnail for a card inside a row, as opposed to `photo` which is a
 // full-width feature image. Shorter, and a smaller radius so it sits INSIDE
 // the card's 22px corners instead of fighting them.
@@ -516,15 +560,26 @@ const centeredProse = (kids) => block([col(kids, {
 // carried a 40px drop shadow and a 22px radius, and with the gradient behind
 // them that combination is the generated look in one line of CSS. Border does
 // the separating now.
+//
+// The border is mixed at 0.76 rather than reusing `LINE` (0.90). LINE is a
+// hairline for ruled rows on white, and a white card carrying it on the LIGHT
+// band is a white rectangle on an almost-white rectangle: measured on the
+// 13-section render, card edge and ground differed by about 4%, so the
+// testimonial cards read as floating text with no container at all. 0.76 is
+// still a hairline, it is just one you can see. No shadow: that decision above
+// stands, the border does the separating.
 const card = (extra = {}, palette = {}) => ({
   display: 'flex', flexDirection: 'column', gap: '10px', background: '#ffffff', borderRadius: '4px',
-  padding: '26px 24px', border: `1px solid ${neutrals(palette).LINE}`,
+  padding: '26px 24px', border: `1px solid ${mix(palette.primary || '#1b65a0', '#ffffff', 0.76)}`,
   boxSizing: 'border-box', direction: 'rtl', textAlign: 'right', flex: '1 1 240px', margin: '10px', ...extra,
 });
 // Set on the ROW as well as the card: the row-level value orders the cards
 // (first item on the right), the card-level value aligns each card's contents.
-const cardsRow = (cards, palette = {}) => block([
-  col(cards.map((kids) => col(kids, card({}, palette), 'flex-start')), {
+// `icon`, when given, is prepended to every card in the row. One glyph per card
+// rather than one per row: the row is a set of peers, and a single icon over
+// the group would label the section, which the eyebrow already does.
+const cardsRow = (cards, palette = {}, icon = null) => block([
+  col(cards.map((kids) => col(icon ? [icon(), ...kids] : kids, card({}, palette), 'flex-start')), {
     display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'stretch', direction: 'rtl',
   }, 'center'),
 ], {}, 'center');
@@ -551,6 +606,12 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
   const bgPhoto = typeof opts.backgroundImage === 'string' ? opts.backgroundImage : '';
   const P = palette.primary || '#6328A7';
   const S = palette.secondary || palette.accent || P;
+  // The accent that clears a PALE ground, for the section icons on the white
+  // and LIGHT bands. Read off deriveTheme (pure, and already called by half the
+  // branches below) rather than using `S` raw: a tenant secondary is picked to
+  // sit on the dark field and can land at 2:1 on white, which is exactly the
+  // mistake solution's `groundOf` bundle exists to prevent.
+  const PALE_ACCENT = deriveTheme(P, palette.secondary).ON_LIGHT;
   // GRAD was a 135deg two-colour diagonal behind the hero and every CTA band.
   // It is the single most dated thing a generated page can carry and it was on
   // four sections at once. Kept as a name so nothing downstream breaks, but it
@@ -591,7 +652,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // gold-night and coral-cut share one derived theme, computed once here
       // rather than per branch: both variants read from it, and cinema-block
       // (below) reuses the same local.
-      const theme = deriveTheme(palette.primary, palette.secondary);
+      const theme = deriveTheme(P, palette.secondary);
 
       // ── GOLD NIGHT ───────────────────────────────────────────────────────
       // Deep ink ground, one gold accent, numerals on their own ruled row
@@ -753,7 +814,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // continuous, panels and lift share one derived theme, computed once
       // here rather than per branch (mirrors how the hero case above shares
       // its own `theme` local across gold-night/coral-cut/cinema-block).
-      const theme = deriveTheme(palette.primary, palette.secondary);
+      const theme = deriveTheme(P, palette.secondary);
 
       // A bespoke head for continuous/panels/lift: an eyebrow line directly
       // above an H, no ruled top bar. `headingBlock`'s full-width ruled line
@@ -943,7 +1004,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // and one ground bundle, mirroring how problem's three dark/light
       // variants share `theme` above. bullets-image, the original default,
       // needs neither: it has no ground concept and stays on '#ffffff'.
-      const theme = deriveTheme(palette.primary, palette.secondary);
+      const theme = deriveTheme(P, palette.secondary);
       // A ground is a bundle: background, ink, body, line, and the accent
       // that belongs to THAT ground, so no variant can accidentally put the
       // dark accent on the light background (the failure sketch 005
@@ -989,7 +1050,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           name.props.style = { ...name.props.style, marginBottom: '12px' };
           // Same explicit stack direction as panels' cell col: without it
           // the cell is on the renderer's own row default.
-          return col([name, T(it.text, g.BODY, 'right')], {
+          return col([sectionIcon(PATTERN_ICON.solution, g.ACC, 30), name, T(it.text, g.BODY, 'right')], {
             display: 'flex', flexDirection: 'column',
             background: g.PANEL, padding: '34px 30px 38px', flex: '1 1 330px', boxSizing: 'border-box',
           }, 'flex-start');
@@ -1140,7 +1201,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           T(`"${it.quote || ''}"`, BODY, 'right'),
           H(it.name || '', '17px', INK, 'right'),
           it.role ? T(it.role, MUTED, 'right') : null,
-        ].filter(Boolean))),
+        ].filter(Boolean)), palette, () => sectionIcon(PATTERN_ICON.testimonials, PALE_ACCENT, 30)),
       ], { background: LIGHT }) };
 
     // ── §6 WHY BUY (persuasive paragraph) ──────────────────────────────────────
@@ -1169,7 +1230,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         cardsRow((copy.items || []).map((it) => [
           H(it.title || '', '20px', INK, 'right'),
           it.text ? T(it.text, BODY, 'right') : null,
-        ].filter(Boolean))),
+        ].filter(Boolean)), palette, () => sectionIcon(PATTERN_ICON.bonuses, PALE_ACCENT, 34)),
       ], { background: '#ffffff' }) };
 
     // ── ARTICLES (linked cards: image + headline + excerpt + its OWN button) ───
@@ -1312,7 +1373,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
 
     // ── §12 LEAD FORM ──────────────────────────────────────────────────────────
     case 'leadform': {
-      const theme = deriveTheme(palette.primary, palette.secondary);
+      const theme = deriveTheme(P, palette.secondary);
       // The fields have to read as fields. They used to inherit the dark ground
       // and rendered near-invisible: a dark input on a dark band, with only a
       // faint border to say it was an input at all.

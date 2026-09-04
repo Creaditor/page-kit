@@ -203,6 +203,24 @@
               "type": "col",
               "children": [
                 {
+                  "type": "image",
+                  "children": [],
+                  "props": {
+                    "src": "https://img.creaditor.ai/icons/serve/Finance/gift-fill.png?width=68&height=68&color=964462",
+                    "alt": "",
+                    "width": 34,
+                    "height": 34,
+                    "style": {
+                      "width": "34px",
+                      "height": "34px",
+                      "maxWidth": "34px",
+                      "borderRadius": "0px",
+                      "objectFit": "contain",
+                      "marginBottom": "4px"
+                    }
+                  }
+                },
+                {
                   "type": "text",
                   "children": [],
                   "props": {
@@ -294,7 +312,7 @@
                   "background": "#ffffff",
                   "borderRadius": "4px",
                   "padding": "26px 24px",
-                  "border": "1px solid #e8f0f6",
+                  "border": "1px solid #c8dae8",
                   "boxSizing": "border-box",
                   "direction": "rtl",
                   "textAlign": "right",

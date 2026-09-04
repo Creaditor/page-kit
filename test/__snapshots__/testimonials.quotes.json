@@ -203,6 +203,24 @@
               "type": "col",
               "children": [
                 {
+                  "type": "image",
+                  "children": [],
+                  "props": {
+                    "src": "https://img.creaditor.ai/icons/serve/Editor/double-quotes-r.png?width=60&height=60&color=964462",
+                    "alt": "",
+                    "width": 30,
+                    "height": 30,
+                    "style": {
+                      "width": "30px",
+                      "height": "30px",
+                      "maxWidth": "30px",
+                      "borderRadius": "0px",
+                      "objectFit": "contain",
+                      "marginBottom": "4px"
+                    }
+                  }
+                },
+                {
                   "type": "text",
                   "children": [],
                   "props": {
@@ -334,7 +352,7 @@
                   "background": "#ffffff",
                   "borderRadius": "4px",
                   "padding": "26px 24px",
-                  "border": "1px solid #e8f0f6",
+                  "border": "1px solid #c8dae8",
                   "boxSizing": "border-box",
                   "direction": "rtl",
                   "textAlign": "right",

@@ -20,6 +20,10 @@
 const b = require('./builder.js');
 const { cid, makeText, makeButton, makeImage, makeList, buildElement, readableTextOn, parseColor, toHex } = b;
 const { deriveTheme } = require('./landingTheme.js');
+// One fact, one home: `display`'s guard in landingVocabulary.js and this type
+// scale are both answering "is this heading short", and duplicating the number
+// would let them drift into disagreeing.
+const { DISPLAY_MAX_HEADING } = require('./landingVocabulary.js');
 
 const CONTENT_WIDTH = 1240; // px content width (width only; block max-width left to the editor)
 
@@ -289,7 +293,7 @@ function displayScale(heading) {
   // of this table assumed one line and cut anything past 14 characters to 88px,
   // which would have shrunk the reference's own main-page headline: 22
   // characters, set at roughly 110px over two lines.
-  if (n <= 24) return '118px';
+  if (n <= DISPLAY_MAX_HEADING) return '118px';
   if (n <= 42) return '88px';
   if (n <= 64) return '66px';
   return '50px';

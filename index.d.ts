@@ -84,6 +84,9 @@ declare namespace pageKit {
     variant: string;
     /** The requested variant, when it could not be used. Null when honoured. */
     fellBackFrom: string | null;
+    /** Who decided. 'model' means it named a variant the copy could support;
+     *  'code' means the preference order picked the best supported one. */
+    chosenBy: 'model' | 'code';
   }
 
   export interface PageKit {

@@ -24,17 +24,37 @@
  */
 
 /**
+ * The longest heading that still renders at the display size. Lives here rather
+ * than in landingSections.js because both the type scale and `display`'s guard
+ * are the same fact, and duplicating it would let them drift into disagreeing
+ * about which headings are short.
+ */
+const DISPLAY_MAX_HEADING = 24;
+
+/**
  * @typedef {object} VariantSpec
  * @property {string} description  what this variant is for, written for the model
  * @property {string[]} needs      copy fields without which this variant cannot render
  * @property {string[]} [optional] copy fields it will use if present
+ * @property {(copy: object) => boolean} [guard]
+ *   Presence is not suitability. `needs` asks whether a field is there at all;
+ *   a guard asks whether there is enough of it for this variant to be the right
+ *   choice. Every guard below restates a condition the variant's own
+ *   description already gives, so none of them invents a rule the model was not
+ *   told about.
  */
 
 /**
  * @typedef {object} PatternSpec
  * @property {string} description
- * @property {string} default      variant used when none is given, or when the
- *                                 requested one is unknown or unsatisfiable
+ * @property {string} default
+ * @property {string[]} [preference]
+ *   Variants best-first. `resolveLandingVariant` walks this and takes the first
+ *   the copy can actually support, which is how a strong variant gets chosen
+ *   without the model having to ask for it. A pattern with no preference list
+ *   keeps the old behaviour exactly (default, then declaration order), which is
+ *   the same thing here because every pattern's default is also its first
+ *   declared variant.
  * @property {Record<string, VariantSpec>} variants
  */
 
@@ -43,6 +63,10 @@ const LANDING_VOCABULARY = {
   hero: {
     description: 'The opening statement. Every page has exactly one, first.',
     default: 'centered',
+    // Best first. `centered` is last on purpose: its own description calls it
+    // the safe default and the only one that works with nothing but a headline,
+    // which makes it the floor rather than a choice.
+    preference: ['display', 'coral-cut', 'gold-night', 'cinema-block', 'asymmetric', 'conversation', 'centered'],
     variants: {
       centered: {
         description: 'Headline, subheading and CTA stacked and centered on a brand gradient. The safe default, and the only one that works with nothing but a headline.',
@@ -63,16 +87,43 @@ const LANDING_VOCABULARY = {
         description: 'Deep ink ground, a single gold accent, and a ruled row of numbers under the headline. Use when the business has round numbers worth leading with (a price, a count, a duration) and no photograph or second colour worth featuring.',
         needs: ['heading'],
         optional: ['eyebrow', 'subheading', 'cta', 'stats'],
+        // `stats` is optional because the variant RENDERS without them. It is
+        // only worth CHOOSING with them: the ruled numeral row is the whole
+        // device, and empty it is a plain dark hero.
+        guard: (copy) => Array.isArray(copy.stats) && copy.stats.length >= 2,
       },
       'coral-cut': {
         description: 'Copy on one side, three numbers in their own accent-coloured field on the other. Use when the business has three short stats worth foregrounding and wants the most colour-forward opening.',
         needs: ['heading', 'stats'],
         optional: ['eyebrow', 'subheading', 'cta'],
+        // "three numbers in their own accent-coloured field", per its own
+        // description. With one or two the field renders half empty.
+        guard: (copy) => Array.isArray(copy.stats) && copy.stats.length >= 3,
       },
       display: {
         description: 'The biggest opening we have: the heading alone at display size on a ground shown at nearly full strength. Use when the page opens on a NAME or a short claim, never on a sentence. The size is computed from the heading length, so a long headline quietly renders small and the variant is wasted; aim for under 24 characters. `facts` is optional and holds 2 or 3 short strings, normally a date and a venue for an event, rendered on their own line under the heading. `headingAccent` may name ONE word inside `heading` to set in the brand accent while the rest stays white; it must appear in the heading word for word and be at most half of it, or it is ignored.',
         needs: ['heading'],
         optional: ['eyebrow', 'subheading', 'cta', 'facts', 'headingAccent'],
+        // Two conditions, and the second one is the ordering rule of this whole
+        // list: prefer the variant that uses the MOST of what the tenant
+        // actually has.
+        //
+        // The heading must be short enough to set at display size. `facts`
+        // became optional when the variant was renamed, leaving it needing
+        // nothing but a heading, and a 60-character headline at the smallest
+        // step on a loud ground is not this variant, it is `centered` wearing
+        // its background.
+        //
+        // And it must not be throwing away numbers. Sitting at the top of the
+        // preference list, this variant would otherwise win on a business with
+        // a price, a trial length and a tool count and then show none of them,
+        // while `coral-cut` two places down exists to put exactly those three
+        // on the page. Measured on a real render: a SaaS tenant with three
+        // stats got a beautiful hero that said nothing. So it yields whenever
+        // there are three stats and no facts of its own to lead with.
+        guard: (copy) => String(copy.heading || '').trim().length <= DISPLAY_MAX_HEADING
+          && ((Array.isArray(copy.facts) && copy.facts.length >= 2)
+            || !(Array.isArray(copy.stats) && copy.stats.length >= 3)),
       },
       'cinema-block': {
         description: 'Copy beside a tall narrow photograph. Use when the business has a real photograph of its product, place or work, for an opening with more atmosphere than `asymmetric`. The narrow crop asks far less of the image than a full-bleed band, so it tolerates an ordinary tenant photo where other photo variants would not.',
@@ -102,6 +153,14 @@ const LANDING_VOCABULARY = {
   problem: {
     description: 'Name the pain the reader already feels. Do not sell here.',
     default: 'prose',
+    // The dark item variants first: the approved look is a page of saturated
+    // dark grounds, and `continuous` is the one that makes it read as a single
+    // scroll rather than a series of screens. `lift` is kept above the light
+    // card variants because a page that never changes register is monotonous,
+    // but below the dark ones because it is the exception, not the rule.
+    // `prose` last: one paragraph is what you write when there is nothing to
+    // itemise, not what you choose.
+    preference: ['continuous', 'panels', 'lift', 'badge-cards', 'prose'],
     variants: {
       prose: {
         description: 'One empathetic paragraph under a heading. Use when the pain is a single feeling.',
@@ -112,21 +171,33 @@ const LANDING_VOCABULARY = {
         description: 'Two to four obstacles as numbered cards. Use when the reader faces several distinct blockers rather than one feeling. Needs `items`, each { title, text }.',
         needs: ['items'],
         optional: ['eyebrow', 'heading'],
+        // "2 to 4 obstacles", per its own description: one item in a layout
+        // built for a row is a single card in half-empty space.
+        guard: (copy) => Array.isArray(copy.items) && copy.items.length >= 2,
       },
       continuous: {
         description: 'Stays on the same dark ground as the hero, no colour break between the two sections. Each obstacle is a ruled row with an ordinal marker in the accent colour. Use when the page should read as one continuous scroll rather than a series of separate screens. Needs `items`, 2 to 4 obstacles, each { title, text }.',
         needs: ['items'],
         optional: ['eyebrow', 'heading'],
+        // "2 to 4 obstacles", per its own description: one item in a layout
+        // built for a row is a single card in half-empty space.
+        guard: (copy) => Array.isArray(copy.items) && copy.items.length >= 2,
       },
       panels: {
         description: 'Stays dark like continuous, but each obstacle owns a solid block one shade off the ground, flush and touching rather than floating on a shadow. Use when the obstacles need more visual weight than a plain ruled list. Needs `items`, 2 to 4 obstacles, each { title, text }.',
         needs: ['items'],
         optional: ['eyebrow', 'heading'],
+        // "2 to 4 obstacles", per its own description: one item in a layout
+        // built for a row is a single card in half-empty space.
+        guard: (copy) => Array.isArray(copy.items) && copy.items.length >= 2,
       },
       lift: {
         description: 'Comes up to a pale ground tinted from the brand, the one moment on the page that is not near-black. Use for a page that should feel like it takes a breath after a dark hero, or when the reader needs a change of register to keep reading. Needs `items`, 2 to 4 obstacles, each { title, text }.',
         needs: ['items'],
         optional: ['eyebrow', 'heading'],
+        // "2 to 4 obstacles", per its own description: one item in a layout
+        // built for a row is a single card in half-empty space.
+        guard: (copy) => Array.isArray(copy.items) && copy.items.length >= 2,
       },
     },
   },
@@ -146,6 +217,12 @@ const LANDING_VOCABULARY = {
   solution: {
     description: 'What you actually do about the problem.',
     default: 'bullets-image',
+    // `conversation` first because its own description says so: the strongest
+    // option when the capabilities are things the business sends, needing no
+    // photograph and sidestepping the stock-photo problem entirely.
+    // `bullets-image` last because it is the one that DEPENDS on a stock photo,
+    // which is the known weak point of every page we generate.
+    preference: ['conversation', 'tiles', 'stack', 'bullets-image'],
     variants: {
       'bullets-image': {
         description: 'Capability bullets beside a feature image. Needs an image to look right.',
@@ -161,11 +238,19 @@ const LANDING_VOCABULARY = {
         description: 'The capabilities as a tight grid of solid cells with a thin seam between them, the name carrying the weight in the accent colour. Use when there are several distinct capabilities to show at once and none of them should read as more important than the others. Needs `items`, up to 6 capabilities, each { title, text }.',
         needs: ['items'],
         optional: ['eyebrow', 'heading', 'paragraph'],
+        // Worth choosing only with something to arrange. One capability in a
+        // grid or a display list is the layout announcing itself over its
+        // content.
+        guard: (copy) => Array.isArray(copy.items) && copy.items.length >= 2,
       },
       stack: {
         description: 'The capabilities set as one continuous typographic list at display size, no cells and no rules. Use for a shorter, calmer list where each capability name should carry the weight on its own line. Needs `items`, up to 6 capabilities, each { title, text }.',
         needs: ['items'],
         optional: ['eyebrow', 'heading', 'paragraph'],
+        // Worth choosing only with something to arrange. One capability in a
+        // grid or a display list is the layout announcing itself over its
+        // content.
+        guard: (copy) => Array.isArray(copy.items) && copy.items.length >= 2,
       },
     },
   },
@@ -402,23 +487,44 @@ function resolveLandingVariant(pattern, variant, copy = {}) {
   };
   const satisfied = (name) => {
     const vs = spec.variants[name];
-    return !!vs && vs.needs.every(has);
+    if (!vs) return false;
+    if (!vs.needs.every(has)) return false;
+    // Presence is not suitability. A variant whose fields are all there can
+    // still be the wrong choice, and the guard is where that is said.
+    return typeof vs.guard === 'function' ? !!vs.guard(copy) : true;
   };
 
   const requested = typeof variant === 'string' && variant ? variant : null;
+  const known = requested && spec.variants[requested] ? requested : null;
 
-  if (requested && spec.variants[requested]) {
-    if (satisfied(requested)) return { pattern, variant: requested, fellBackFrom: null };
-    const alt = Object.keys(spec.variants).find(satisfied);
-    return { pattern, variant: alt || spec.default, fellBackFrom: requested };
+  // 1. An explicit, satisfiable request from the model wins. Some of these
+  //    calls are genuinely semantic and no rule over the copy can make them:
+  //    `conversation` is right when a message exchange tells the story better,
+  //    and only the model has read the business.
+  if (known && satisfied(known)) {
+    return { pattern, variant: known, fellBackFrom: null, chosenBy: 'model' };
   }
 
-  // Unknown or absent variant: the default, unless its needs are unmet.
-  if (satisfied(spec.default)) {
-    return { pattern, variant: spec.default, fellBackFrom: requested };
-  }
-  const alt = Object.keys(spec.variants).find(satisfied);
-  return { pattern, variant: alt || spec.default, fellBackFrom: requested };
+  // 2. Otherwise CODE picks, best-first, and the model being silent is the
+  //    normal case rather than the exception: two real generations returned
+  //    `variant: ""` for both hero and solution. This used to return
+  //    `spec.default` there, which meant every strong variant in this file was
+  //    unreachable in a real generation, and on an unsatisfiable request it
+  //    scanned declaration order, which is not a quality order.
+  const order = Array.isArray(spec.preference) && spec.preference.length
+    ? spec.preference
+    : Object.keys(spec.variants);
+  const best = order.find(satisfied);
+
+  return {
+    pattern,
+    variant: best || spec.default,
+    // `requested`, not `known`: a model asking for a variant that does not
+    // exist at all is worth reporting too, and it is the loudest signal that
+    // the prompt and this file have drifted apart.
+    fellBackFrom: requested,
+    chosenBy: 'code',
+  };
 }
 
 /**
@@ -444,6 +550,7 @@ function describeLandingVocabulary() {
 
 module.exports = {
   LANDING_VOCABULARY,
+  DISPLAY_MAX_HEADING,
   LANDING_PATTERNS,
   landingVariantPairs,
   resolveLandingVariant,

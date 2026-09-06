@@ -233,10 +233,15 @@ test('an unknown pattern resolves to null so the caller can skip it', () => {
   assert.strictEqual(resolveLandingVariant('no-such-pattern', 'x', COPY), null);
 });
 
-test('an unknown variant falls back to the default and reports it', () => {
+test('an unknown variant falls back to a SUPPORTED variant and reports it', () => {
+  // This used to assert it landed on `spec.default`. It no longer does, and
+  // that is the point of the change: falling back to the plainest variant threw
+  // away everything the copy could have supported. It still reports the miss,
+  // which is the loudest signal that the prompt and this file have drifted.
   const r = resolveLandingVariant('hero', 'does-not-exist', COPY);
-  assert.strictEqual(r.variant, LANDING_VOCABULARY.hero.default);
   assert.strictEqual(r.fellBackFrom, 'does-not-exist');
+  assert.strictEqual(r.chosenBy, 'code');
+  assert.ok(LANDING_VOCABULARY.hero.variants[r.variant], 'landed on a variant that does not exist');
 });
 
 test('a satisfied variant is returned untouched', () => {
@@ -695,4 +700,66 @@ test('the display heading is sized on a two-line budget, not a one-line one', ()
   assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'בינה אנושית כלים חדשים' })), 118);
   assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'א'.repeat(40) })), 88);
   assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'א'.repeat(70) })), 50);
+});
+
+// ── selection: code picks, not the prompt ────────────────────────────────────
+//
+// The failure this replaces, measured 2026-09-06: with the model silent, a hero
+// carrying a short heading, an accent word, facts AND three stats resolved to
+// `centered`. Every strong variant in this file was unreachable in a real
+// generation, because two of them showed the model returns `variant: ""`.
+
+const RICH_HERO = {
+  heading: 'בינה אנושית',
+  headingAccent: 'אנושית',
+  facts: ['11.11.26', 'תל אביב'],
+  subheading: 'שורה קצרה',
+  stats: [{ value: '5,000+', label: 'משתתפים' }, { value: '50', label: 'מרצים' }, { value: '11.11', label: 'תאריך' }],
+};
+
+test('a silent model gets the best variant the copy can support, not the plainest', () => {
+  const r = resolveLandingVariant('hero', '', RICH_HERO);
+  assert.strictEqual(r.variant, 'display');
+  assert.strictEqual(r.chosenBy, 'code');
+});
+
+test('an explicit satisfiable request from the model is still honoured', () => {
+  // Some of these calls are semantic and no rule over the copy can make them.
+  // The observed failure is an EMPTY variant, not a wrong explicit one, so
+  // keeping the escape hatch costs nothing.
+  const r = resolveLandingVariant('hero', 'centered', RICH_HERO);
+  assert.strictEqual(r.variant, 'centered');
+  assert.strictEqual(r.chosenBy, 'model');
+});
+
+test('an unsatisfiable request lands on quality order, not declaration order', () => {
+  // `asymmetric` needs an image and there is none. Declaration order would give
+  // `centered`, the first key in the object.
+  const r = resolveLandingVariant('hero', 'asymmetric', RICH_HERO);
+  assert.strictEqual(r.variant, 'display');
+  assert.strictEqual(r.fellBackFrom, 'asymmetric');
+});
+
+test('a guard excludes a variant whose needs are all met', () => {
+  // Presence is not suitability, and this is the case that proves the two are
+  // different: `display` needs only a heading, so without a guard it would win
+  // every page including one whose headline is a sentence.
+  const long = { ...RICH_HERO, heading: 'כל מה שצריך לדעת על בינה מלאכותית ליוצרים' };
+  assert.ok(resolveLandingVariant('hero', '', long).variant !== 'display');
+
+  // And gold-night renders without stats but is only worth CHOOSING with them.
+  const noStats = { heading: 'כותרת ארוכה למדי שאינה מתאימה לתצוגה', stats: [] };
+  assert.strictEqual(resolveLandingVariant('hero', '', noStats).variant, 'centered');
+});
+
+test('a pattern with no preference list behaves exactly as it did before', () => {
+  // The blast radius is deliberately three patterns. Everything else keeps
+  // default-then-declaration-order, which is the same thing here because every
+  // pattern's default is also its first declared variant.
+  for (const pattern of LANDING_PATTERNS) {
+    const spec = LANDING_VOCABULARY[pattern];
+    if (spec.preference) continue;
+    assert.strictEqual(Object.keys(spec.variants)[0], spec.default,
+      `${pattern} has no preference list and its default is not its first variant, so selection order changed for it silently`);
+  }
 });

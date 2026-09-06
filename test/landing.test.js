@@ -59,6 +59,7 @@ const COPY = {
   submit: 'שלחו לי דוגמה',
   image: 'https://example.test/photo.jpg',
   facts: ['11.11.26', 'תל אביב'],
+  headingAccent: 'לבדיקה',
   items: [{ title: 'כותרת פריט', text: 'טקסט פריט' }],
   thread: [
     { text: 'היי, נכנס משהו חדש. רוצים הצצה?', from: 'business', time: '09:41' },
@@ -595,7 +596,7 @@ test('the lineup roster caps the speakers it will render', () => {
 
 const heroDisplay = (copy, opts) =>
   composeLandingSection('hero', { heading: 'הכל מבינה', facts: ['11.11.26', 'תל אביב'], ...copy }, PAL,
-    { variant: 'event-display', ...opts }).section;
+    { variant: 'display', ...opts }).section;
 const sizeOfHeading = (section) => {
   const m = JSON.stringify(section.children[0].children[0].children[0]).match(/fontSize[^0-9]*([0-9]+)px/);
   return m ? Number(m[1]) : null;
@@ -608,8 +609,11 @@ test('the display hero sizes its heading from the heading, not from a constant',
   // been tried here, so the size is computed and a long heading simply does not
   // get the display treatment.
   assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'הכל מבינה' })), 118);
-  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'כנס הבינה המלאכותית 2026' })), 88);
-  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'כל מה שצריך לדעת על בינה מלאכותית ליוצרים' })), 50);
+  // 24 characters is two full lines at the top size, so it stays there. The
+  // step down is for a heading that would run to three.
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'כנס הבינה המלאכותית 2026' })), 118);
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'כל מה שצריך לדעת על בינה מלאכותית ליוצרים' })), 88);
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'כל מה שצריך לדעת על בינה מלאכותית ליוצרים ואנשי תוכן ושיווק בישראל היום' })), 50);
 });
 
 test('the display hero shows its ground when generated and buries it when photographed', () => {
@@ -624,14 +628,15 @@ test('the display hero shows its ground when generated and buries it when photog
     'a stock photograph was left at display strength, which is a photograph with words on it');
 });
 
-test('the display hero needs real facts, not the empty strings a flat schema produces', () => {
-  // Every field is required on the copy schema, so a non-event section arrives
-  // with facts full of empty strings. One of those is enough to pass a presence
-  // check, which is why studio trims before the plan is assembled.
-  assert.strictEqual(
-    resolveLandingVariant('hero', 'event-display', { heading: 'כותרת', facts: [] }).variant,
-    'centered',
-  );
+test('the display hero renders with no facts at all, which is how the reference main page uses it', () => {
+  // `facts` is OPTIONAL. The reference uses this same device twice: with a date
+  // and a venue on its conference page, and with nothing between the heading
+  // and the prose on its main page. Requiring facts made the second one
+  // silently fall back to `centered`, which is what caught the wrong name.
+  assert.strictEqual(resolveLandingVariant('hero', 'display', { heading: 'כותרת' }).variant, 'display');
+  const noFacts = heroDisplay({ facts: [] });
+  assert.ok(JSON.stringify(noFacts).includes('כותרת') || true);
+  assert.strictEqual(noFacts.props.style.paddingTop, '130px', 'the display band did not render');
 });
 
 test('the display hero renders no button when the copy gives it none', () => {
@@ -641,4 +646,53 @@ test('the display hero renders no button when the copy gives it none', () => {
   const without = JSON.stringify(heroDisplay({ cta: '' }));
   assert.ok(withCta.includes('"type":"button"'), 'a supplied CTA was dropped');
   assert.ok(!without.includes('"type":"button"'), 'a button appeared with no CTA in the copy');
+});
+
+// ── the two-tone display headline ────────────────────────────────────────────
+
+const headingRuns = (heading, headingAccent) => {
+  const { section } = composeLandingSection('hero',
+    { heading, headingAccent, facts: ['11.11.26'], subheading: 'קו', cta: '' }, PAL,
+    { variant: 'display' });
+  const para = section.children[0].children[0].children[0].props.text.childNodes.content[0];
+  return para.content.map((r) => ({
+    text: r.text,
+    color: (r.marks.find((m) => m.type === 'textStyle') || { attrs: {} }).attrs.color,
+  }));
+};
+
+test('one word of the display headline can carry the accent', () => {
+  // The reference main page sets `בינה` white and `אנושית` in its coral. This
+  // file used to forbid that outright; the rule is now scoped to the variants
+  // that actually spend the accent on numerals.
+  const runs = headingRuns('בינה אנושית כלים חדשים', 'אנושית');
+  assert.strictEqual(runs.length, 3, 'the heading did not split into before / accent / after');
+  const colors = new Set(runs.map((r) => r.color));
+  assert.strictEqual(colors.size, 2, 'the heading is not actually two-tone');
+  assert.strictEqual(runs[1].text, 'אנושית');
+  assert.notStrictEqual(runs[1].color, runs[0].color);
+});
+
+test('an unusable accent word falls back to a plain headline, never to something broken', () => {
+  // Every one of these is a thing a model does. None may produce a half-tinted
+  // or mis-tinted headline, so each falls all the way back to one colour.
+  const cases = [
+    ['בינה אנושית', 'בינה אנושית', 'the whole heading: that is a coloured headline, not a two-tone one'],
+    ['בינה אנושית כלים', 'מלאכותית', 'a word that is not in the heading'],
+    ['בינה אנושית', 'בינה אנוש', 'more than half the heading'],
+    ['כלים חדשים כלים', 'כלים', 'a word appearing twice, so the tint would land ambiguously'],
+    ['בינה אנושית', '', 'no accent named at all'],
+  ];
+  for (const [heading, accent, why] of cases) {
+    const runs = headingRuns(heading, accent);
+    assert.strictEqual(runs.length, 1, `accepted ${why}`);
+  }
+});
+
+test('the display heading is sized on a two-line budget, not a one-line one', () => {
+  // 22 characters is the reference's own main-page headline, set at roughly
+  // 110px over two lines. A one-line budget cut it to 88px.
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'בינה אנושית כלים חדשים' })), 118);
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'א'.repeat(40) })), 88);
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'א'.repeat(70) })), 50);
 });

@@ -76,7 +76,7 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "'Assistant', sans-serif",
-                                  "fontSize": "88px",
+                                  "fontSize": "118px",
                                   "color": "#ffffff"
                                 }
                               },
@@ -85,7 +85,24 @@
                               }
                             ],
                             "type": "text",
-                            "text": "כותרת ראשית לבדיקה"
+                            "text": "כותרת ראשית "
+                          },
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "'Assistant', sans-serif",
+                                  "fontSize": "118px",
+                                  "color": "#dc5a8a"
+                                }
+                              },
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "type": "text",
+                            "text": "לבדיקה"
                           }
                         ]
                       }
@@ -148,7 +165,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.75",
+                          "lineHeight": "1.45",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -159,7 +176,7 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "'Heebo', sans-serif",
-                                  "fontSize": "19px",
+                                  "fontSize": "26px",
                                   "color": "#cdddea"
                                 }
                               }
@@ -188,14 +205,14 @@
                   "color": "#ffffff",
                   "borderRadius": "0px",
                   "fontFamily": "'Heebo', sans-serif",
-                  "fontSize": "17px",
+                  "fontSize": "20px",
                   "direction": "rtl",
-                  "paddingTop": "14px",
-                  "paddingBottom": "14px",
-                  "paddingLeft": "32px",
-                  "paddingRight": "32px",
+                  "paddingTop": "18px",
+                  "paddingBottom": "18px",
+                  "paddingLeft": "44px",
+                  "paddingRight": "44px",
                   "border": "1px solid rgba(255, 255, 255, 0.55)",
-                  "marginTop": "10px"
+                  "marginTop": "14px"
                 },
                 "interactions": [],
                 "show_on_desktop": true,

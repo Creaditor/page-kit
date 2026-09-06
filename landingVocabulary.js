@@ -69,10 +69,10 @@ const LANDING_VOCABULARY = {
         needs: ['heading', 'stats'],
         optional: ['eyebrow', 'subheading', 'cta'],
       },
-      'event-display': {
-        description: 'The event opening: the event name alone at display size, the date and place under it as facts, then a paragraph. Use for a conference, a festival, a launch or any dated event, and only then. `heading` must be the event NAME, at most three words, not a sentence: the size is computed from its length, so a headline written as a sentence quietly renders small and the variant is wasted. Needs `facts`: 2 or 3 short strings, the date and the venue, each already stated in the brief.',
-        needs: ['heading', 'facts'],
-        optional: ['eyebrow', 'subheading', 'cta'],
+      display: {
+        description: 'The biggest opening we have: the heading alone at display size on a ground shown at nearly full strength. Use when the page opens on a NAME or a short claim, never on a sentence. The size is computed from the heading length, so a long headline quietly renders small and the variant is wasted; aim for under 24 characters. `facts` is optional and holds 2 or 3 short strings, normally a date and a venue for an event, rendered on their own line under the heading. `headingAccent` may name ONE word inside `heading` to set in the brand accent while the rest stays white; it must appear in the heading word for word and be at most half of it, or it is ignored.',
+        needs: ['heading'],
+        optional: ['eyebrow', 'subheading', 'cta', 'facts', 'headingAccent'],
       },
       'cinema-block': {
         description: 'Copy beside a tall narrow photograph. Use when the business has a real photograph of its product, place or work, for an opening with more atmosphere than `asymmetric`. The narrow crop asks far less of the image than a full-bleed band, so it tolerates an ordinary tenant photo where other photo variants would not.',

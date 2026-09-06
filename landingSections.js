@@ -227,11 +227,71 @@ const heading = (text, fontSize, color, align, family = FALLBACK_DISPLAY, bold =
  * Measured in characters rather than words because Hebrew words are short and a
  * three-word Hebrew heading can be narrower than a two-word English one.
  */
+/**
+ * Two-tone display headline: one word or short phrase in the accent, the rest
+ * in white.
+ *
+ * This file used to forbid it outright, at the hero: "the headline stays ONE
+ * colour, the accent is spent on numerals elsewhere, and a two-tone headline
+ * plus a serif plus a mono row is one idea too many for the same screen". That
+ * reasoning was CONDITIONAL and it still holds for the variants it was written
+ * about. `gold-night` and `coral-cut` really do spend the accent on a row of
+ * numerals, and they keep their single-colour headline. A variant that spends
+ * the accent nowhere else has no such conflict, and there the two-tone headline
+ * is not one idea too many, it is the only accent idea on the screen.
+ *
+ * WHICH word carries it is a semantic judgement, so the model names it. Whether
+ * the named word is usable is not, so code decides that, and every refusal falls
+ * back to a plain single-colour headline rather than to anything broken:
+ *
+ *   - it must appear in the heading verbatim (a model paraphrase tints nothing)
+ *   - it must not be the whole heading (that is a coloured headline, not a
+ *     two-tone one, and it is a worse thing)
+ *   - it must appear exactly once (twice and the tint lands ambiguously)
+ *   - it must be at most half the heading
+ *
+ * The runs go in ONE paragraph rather than three text elements. Three elements
+ * would force a line break wherever the tint starts, and the reference's own
+ * tinted word sits mid-line.
+ */
+function tintHeadingWord(node, heading, accentPhrase, accentColor) {
+  const h = String(heading || '');
+  const a = String(accentPhrase || '').trim();
+  if (!a || a === h) return node;
+  if (a.length > h.length / 2) return node;
+  const at = h.indexOf(a);
+  if (at === -1) return node;
+  if (h.indexOf(a, at + a.length) !== -1) return node;
+
+  const para = node.props && node.props.text && node.props.text.childNodes
+    && node.props.text.childNodes.content && node.props.text.childNodes.content[0];
+  const run = para && para.content && para.content[0];
+  if (!run) return node;
+
+  const plain = run.marks || [];
+  const tinted = plain.map((m) => (m.type === 'textStyle'
+    ? { ...m, attrs: { ...m.attrs, color: accentColor } }
+    : m));
+  const mk = (text, marks) => ({ marks, type: 'text', text });
+  para.content = [
+    h.slice(0, at) ? mk(h.slice(0, at), plain) : null,
+    mk(a, tinted),
+    h.slice(at + a.length) ? mk(h.slice(at + a.length), plain) : null,
+  ].filter(Boolean);
+  return node;
+}
+
 function displayScale(heading) {
   const n = String(heading || '').trim().length;
-  if (n <= 14) return '118px';
-  if (n <= 24) return '88px';
-  if (n <= 38) return '66px';
+  // The budget is TWO LINES at the top size, not one. At the 760px measure a
+  // 118px Hebrew heading fits roughly 11 characters per line, so 24 characters
+  // is two full lines and still reads as a display headline. The first version
+  // of this table assumed one line and cut anything past 14 characters to 88px,
+  // which would have shrunk the reference's own main-page headline: 22
+  // characters, set at roughly 110px over two lines.
+  if (n <= 24) return '118px';
+  if (n <= 42) return '88px';
+  if (n <= 64) return '66px';
   return '50px';
 }
 const para = (text, color, align) =>
@@ -689,9 +749,12 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // The eyebrow and subheading tints used to be literal '#F6D9EE' and
       // '#F3E9FB', pink on every brand. Derived from the gradient now.
       // On the ink field the eyebrow is data-face and the lede is muted. The
-      // headline stays ONE colour: the accent is spent on numerals elsewhere,
-      // and a two-tone headline plus a serif plus a mono row is one idea too
-      // many for the same screen.
+      // headline stays ONE colour HERE: gold-night and coral-cut both spend the
+      // accent on a row of numerals, and a tinted word on top of that is one
+      // idea too many for the same screen. That was written as a blanket rule
+      // and it is not one. A variant that spends the accent nowhere else has no
+      // such conflict, which is why `display` below takes a two-tone
+      // headline through `tintHeadingWord`.
       const onGrad = mix(P, '#ffffff', 0.62);
       const onGradSoft = mix(P, '#ffffff', 0.72);
       const heroCopy = (align) => [
@@ -856,7 +919,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         ], { ...photoGround(FIELD, bgPhoto, bgKind), paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
-      // ── EVENT DISPLAY ────────────────────────────────────────────────────
+      // ── DISPLAY ──────────────────────────────────────────────────────────
       //
       // The event opening: the name alone at display size, the date and the
       // place under it as FACTS rather than as prose, then a paragraph. Three
@@ -876,17 +939,20 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // 3. `facts` is its own register. On an event page the date and the venue
       //    are the two things the reader came for, and today they can only be
       //    smuggled into the subheading, where they render at 17px as prose.
-      if (variant === 'event-display' && Array.isArray(copy.facts) && copy.facts.length) {
+      if (variant === 'display') {
         // Joined into ONE string rather than laid out as a row of cols. Under
         // `direction: rtl` a row of two or three short cols needs its own
         // spacer dance to sit centred (see bubbleRow), and a separator that is
         // a character rather than a border cannot get that wrong in either
         // direction.
-        const factLine = copy.facts.map((f) => String(f || '').trim()).filter(Boolean).join('  |  ');
+        const factLine = (Array.isArray(copy.facts) ? copy.facts : []).map((f) => String(f || '').trim()).filter(Boolean).join('  |  ');
 
         const displayCopy = [
           copy.eyebrow ? D(copy.eyebrow, theme.ON_DARK, 'center', '14px') : null,
-          H(copy.heading, displayScale(copy.heading), '#ffffff', 'center'),
+          tintHeadingWord(
+            H(copy.heading, displayScale(copy.heading), '#ffffff', 'center'),
+            copy.heading, copy.headingAccent, theme.ON_DARK,
+          ),
           factLine
             ? makeText(factLine, { fontSize: '34px', color: '#ffffff', align: 'center', fontFamily: DISPLAY, lineHeight: '1.3' })
             : null,
@@ -896,8 +962,17 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           // because the measure is capped and this is the one block on the page
           // read once at arrival rather than scanned. Capped at 58ch for that
           // reason, and it is the only centred prose in the file.
+          // Sized from the copy, because the reference does BOTH and both are
+          // right. On its conference page this slot is a 90-word paragraph at
+          // ~19px; on its main page it is one short line at ~30px. A short
+          // subheading is a statement and takes the bigger size, a long one is
+          // prose and stays at reading size.
           copy.subheading
-            ? makeText(copy.subheading, { fontSize: '19px', color: mix(P, '#ffffff', 0.78), align: 'center', fontFamily: BODY_FONT, lineHeight: '1.75' })
+            ? makeText(copy.subheading, {
+                fontSize: String(copy.subheading).length <= 60 ? '26px' : '19px',
+                color: mix(P, '#ffffff', 0.78), align: 'center', fontFamily: BODY_FONT,
+                lineHeight: String(copy.subheading).length <= 60 ? '1.45' : '1.75',
+              })
             : null,
           // Rendered only when the copy supplies one. The reference hero has NO
           // button: its track cards carry the ask and a sticky pill follows the
@@ -907,7 +982,16 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           // nothing and the band matches the reference exactly.
           copy.cta ? (() => {
             const el = button(copy.cta, 'transparent', '#ffffff');
-            el.props.style = { ...el.props.style, border: '1px solid rgba(255, 255, 255, 0.55)', marginTop: '10px' };
+            // Scaled up for this band specifically. `button()`'s 17px is right
+            // beside a 44px section heading and reads as an afterthought beside
+            // a 118px one: measured on the real renderer, the control was about
+            // a seventh the height of the type it was asking about.
+            el.props.style = {
+              ...el.props.style,
+              border: '1px solid rgba(255, 255, 255, 0.55)', marginTop: '14px',
+              fontSize: '20px',
+              paddingTop: '18px', paddingBottom: '18px', paddingLeft: '44px', paddingRight: '44px',
+            };
             return el;
           })() : null,
         ].filter(Boolean);

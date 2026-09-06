@@ -250,13 +250,12 @@
                       "alignItems": "center",
                       "textAlign": "center",
                       "direction": "rtl",
-                      "flex": "1 1 200px",
+                      "flex": "0 1 100.000%",
                       "boxSizing": "border-box",
-                      "paddingTop": "24px",
-                      "paddingBottom": "24px",
+                      "paddingTop": "18px",
+                      "paddingBottom": "18px",
                       "paddingLeft": "16px",
-                      "paddingRight": "16px",
-                      "borderTop": "1px solid #1d3b54"
+                      "paddingRight": "16px"
                     },
                     "lg": 12,
                     "justify": "center"
@@ -269,7 +268,10 @@
                   "flexWrap": "wrap",
                   "direction": "rtl",
                   "width": "100%",
-                  "marginTop": "30px"
+                  "rowGap": "14px",
+                  "marginTop": "34px",
+                  "borderTop": "1px solid #1d3b54",
+                  "paddingTop": "30px"
                 },
                 "lg": 12,
                 "justify": "center"

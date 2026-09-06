@@ -923,16 +923,28 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       // size, role muted beneath, ruled off from one another. Photographs wait
       // for a caller-supplied path of the ArticleLink[] shape.
       if (variant === 'roster') {
-        const people = (Array.isArray(copy.items) ? copy.items : []).slice(0, 8).map((it) => col([
+        const speakers = (Array.isArray(copy.items) ? copy.items : []).slice(0, 8);
+        // The column count is DERIVED from how many speakers there are rather
+        // than fixed at three. Measured on the real renderer: at a fixed three
+        // across, a four-speaker lineup renders three and then one alone,
+        // centered in a row of its own, because a lone flex item with room to
+        // grow fills the row. Four reads as two-by-two, and every other count
+        // reads as thirds.
+        const cols = speakers.length <= 3 ? Math.max(speakers.length, 1) : speakers.length === 4 ? 2 : 3;
+        // A fixed basis rather than `1 1 200px` for the same reason: `grow: 1`
+        // is what let the last row stretch itself out of alignment with the
+        // rows above it.
+        const basis = `0 1 ${(100 / cols).toFixed(3)}%`;
+
+        const people = speakers.map((it) => col([
           H(String((it && it.title) || ''), '22px', '#ffffff', 'center'),
           (it && it.text)
             ? makeText(String(it.text), { fontSize: '15px', color: theme.MUTED, align: 'center', fontFamily: BODY_FONT, lineHeight: '1.5' })
             : null,
         ].filter(Boolean), {
           display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center',
-          textAlign: 'center', direction: 'rtl', flex: '1 1 200px', boxSizing: 'border-box',
-          paddingTop: '24px', paddingBottom: '24px', paddingLeft: '16px', paddingRight: '16px',
-          borderTop: `1px solid ${theme.LINE}`,
+          textAlign: 'center', direction: 'rtl', flex: basis, boxSizing: 'border-box',
+          paddingTop: '18px', paddingBottom: '18px', paddingLeft: '16px', paddingRight: '16px',
         }, 'center'));
 
         return { section: section([
@@ -942,7 +954,15 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             // and wrap, the same lever `cardsRow` uses. Without it every col is
             // its own full-width Grid item and eight speakers become eight
             // rows.
-            col(people, { display: 'flex', flexWrap: 'wrap', direction: 'rtl', width: '100%', marginTop: '30px' }, 'center'),
+            // Separated by gap, never by a per-item rule. A `borderTop` on each
+            // person draws a full rule only while the row is full: on the real
+            // renderer a four-speaker lineup put a line across the middle third
+            // of the panel and stopped, which reads as a rendering fault rather
+            // than as a divider.
+            col(people, {
+              display: 'flex', flexWrap: 'wrap', direction: 'rtl', width: '100%',
+              rowGap: '14px', marginTop: '34px', borderTop: `1px solid ${theme.LINE}`, paddingTop: '30px',
+            }, 'center'),
             cta,
           ].filter(Boolean)),
         ], band) };

@@ -77,6 +77,23 @@ const LANDING_VOCABULARY = {
     },
   },
 
+  lineup: {
+    description: 'Who is on the stage. Use for an event, a conference or a workshop, never for a product. It is the section an event page is bought for.',
+    default: 'placeholder',
+    variants: {
+      placeholder: {
+        description: 'The section before the speakers are confirmed: a title, one line saying the lineup is on its way, and an invitation to be told when it lands. Use this whenever the brief does not name real speakers. It is the default because an event page is built and published months before its lineup is signed, so this is the state the section spends most of its life in.',
+        needs: ['heading'],
+        optional: ['eyebrow', 'subheading', 'cta'],
+      },
+      roster: {
+        description: 'The confirmed speakers, each as a name with one line saying who they are or what they will talk about. Use ONLY when the brief names real people. Needs `items`, up to 8, each { title: the name exactly as the brief writes it, text: their role or subject }.',
+        needs: ['items'],
+        optional: ['eyebrow', 'heading', 'subheading', 'cta'],
+      },
+    },
+  },
+
   problem: {
     description: 'Name the pain the reader already feels. Do not sell here.',
     default: 'prose',

@@ -833,6 +833,125 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
       ], { ...photoGround(FIELD, bgPhoto, bgKind), paddingTop: '96px', paddingBottom: '96px' }) };
     }
 
+    // ── LINEUP: who is on the stage ──────────────────────────────────────────
+    //
+    // The first word of an EVENT vocabulary. Every pattern above this one is
+    // product-shaped (a pain, a solution, an offer, a guarantee), and a
+    // conference page is not selling a product: it needs a lineup, a venue,
+    // tracks, past editions. This is the first of those.
+    //
+    // `placeholder` is the default on purpose. An event page is built and
+    // published months before its lineup is signed (the reference page this was
+    // measured from is live in exactly that state today), so the section with no
+    // speakers in it is the state it spends most of its life in, and it has to
+    // be the good-looking one. The default is also what makes "never invent a
+    // speaker" free: the variant that needs no names is the one the model gets
+    // without asking, so fabricating a roster buys it nothing.
+    case 'lineup': {
+      const theme = deriveTheme(P, palette.secondary);
+      const rgba = (hex, a) => {
+        const c = parseColor(hex) || { r: 0, g: 0, b: 0 };
+        return `rgba(${c.r}, ${c.g}, ${c.b}, ${a})`;
+      };
+
+      // Translucent so the ground reads through the panel, but only when there
+      // IS a ground. With no OPENAI_API_KEY the caller falls back to Pexels,
+      // where only the first band gets an image, and a see-through panel over
+      // flat near-black is nothing at all. `bgPhoto` is already the signal for
+      // which case this is.
+      const panelBg = bgPhoto ? rgba(theme.FIELD, 0.55) : theme.PANEL;
+
+      // 24px, against `card()`'s 4px. That rule governs content cards in a row
+      // on a flat band and it stands. This is one lightbox panel floating on a
+      // photograph, where a hard corner reads as a crop artifact rather than as
+      // a container, and `photo()` already carries 20px for the same reason.
+      // No shadow: that half of the rule is untouched, the border separates.
+      //
+      // No flexDirection here (column-wrap landmine): `kids` are col()
+      // elements, each its own lg:12 Grid item, so the default row-plus-wrap
+      // stacking plus each kid's own 100% width is what puts them under one
+      // another.
+      const panel = (kids) => block([col(kids, {
+        display: 'flex', flexWrap: 'wrap', direction: 'rtl',
+        margin: '0 auto', flex: '0 1 880px', boxSizing: 'border-box',
+        background: panelBg, border: `1px solid ${theme.LINE}`, borderRadius: '24px',
+        paddingTop: '58px', paddingBottom: '58px', paddingLeft: '48px', paddingRight: '48px',
+      }, 'center')], { display: 'flex', justifyContent: 'center' }, 'center');
+
+      // Outline, and SQUARE. The reference draws this control as a pill, but
+      // `button()` above is square by a decision this file already made and
+      // states, and a lone pill among square CTAs reads as a mistake rather
+      // than as emphasis. What the panel actually needs from the reference is
+      // the OUTLINE: a filled brand button inside a translucent panel on a lit
+      // ground is three solid layers stacked in the same 200px.
+      const outlineCta = (label) => {
+        const el = button(label, 'transparent', theme.ON_DARK);
+        el.props.style = { ...el.props.style, border: `1px solid ${theme.ON_DARK}` };
+        return el;
+      };
+
+      // Leaves, so an explicit column direction is safe here (the landmine is
+      // col-children only).
+      const head = col([
+        copy.eyebrow ? D(copy.eyebrow, theme.ON_DARK, 'center', '13px') : null,
+        H(copy.heading, '46px', '#ffffff', 'center'),
+        // Centered body copy is unreadable past two lines, which is why
+        // `centeredProse` exists for every prose section on this page. It is
+        // allowed here because the line is ONE line by contract: the slot brief
+        // asks for a single short line and neither variant renders more.
+        copy.subheading ? T(copy.subheading, theme.MUTED, 'center') : null,
+      ].filter(Boolean), {
+        display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center',
+        textAlign: 'center', direction: 'rtl', width: '100%',
+      }, 'center');
+
+      const cta = copy.cta
+        ? col([outlineCta(copy.cta)], {
+            display: 'flex', justifyContent: 'center', direction: 'rtl',
+            width: '100%', marginTop: '26px',
+          }, 'center')
+        : null;
+
+      const band = { ...photoGround(theme.FIELD, bgPhoto, bgKind), paddingTop: '110px', paddingBottom: '110px' };
+
+      // ── ROSTER: the speakers are confirmed ───────────────────────────────
+      //
+      // Text only. The reference carries a photograph per speaker; no
+      // BusinessContext field supplies one and the model must never author an
+      // image URL (the rule the `articles` slot established, where the hrefs
+      // are attached by index after the model has written). Names at display
+      // size, role muted beneath, ruled off from one another. Photographs wait
+      // for a caller-supplied path of the ArticleLink[] shape.
+      if (variant === 'roster') {
+        const people = (Array.isArray(copy.items) ? copy.items : []).slice(0, 8).map((it) => col([
+          H(String((it && it.title) || ''), '22px', '#ffffff', 'center'),
+          (it && it.text)
+            ? makeText(String(it.text), { fontSize: '15px', color: theme.MUTED, align: 'center', fontFamily: BODY_FONT, lineHeight: '1.5' })
+            : null,
+        ].filter(Boolean), {
+          display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center',
+          textAlign: 'center', direction: 'rtl', flex: '1 1 200px', boxSizing: 'border-box',
+          paddingTop: '24px', paddingBottom: '24px', paddingLeft: '16px', paddingRight: '16px',
+          borderTop: `1px solid ${theme.LINE}`,
+        }, 'center'));
+
+        return { section: section([
+          panel([
+            head,
+            // `flex: 1 1 200px` on each person is what lets them share a row
+            // and wrap, the same lever `cardsRow` uses. Without it every col is
+            // its own full-width Grid item and eight speakers become eight
+            // rows.
+            col(people, { display: 'flex', flexWrap: 'wrap', direction: 'rtl', width: '100%', marginTop: '30px' }, 'center'),
+            cta,
+          ].filter(Boolean)),
+        ], band) };
+      }
+
+      // ── PLACEHOLDER: the lineup is not signed yet ─────────────────────────
+      return { section: section([panel([head, cta].filter(Boolean))], band) };
+    }
+
     // ── §2 PROBLEM / identification (editorial) ────────────────────────────────
     case 'problem': {
       // continuous, panels and lift share one derived theme, computed once

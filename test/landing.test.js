@@ -545,3 +545,47 @@ test('the scrim is built from the band own colour, not from a fixed black', () =
   assert.ok(style.backgroundImage.includes(`rgba(${rgb},`),
     `scrim ${style.backgroundImage.slice(0, 60)} does not carry the band colour ${flat.background}`);
 });
+
+// ── lineup: the first event-vocabulary pattern ───────────────────────────────
+//
+// Three properties, and all three are the reason the pattern is shaped the way
+// it is rather than incidental details of it.
+
+const lineupPanel = (copy, opts) =>
+  composeLandingSection('lineup', copy, PAL, opts).section.children[0].children[0];
+
+test('a lineup with no speakers renders the placeholder rather than falling through to nothing', () => {
+  // An event page is published months before its lineup is signed, so this is
+  // the state the section spends most of its life in. `placeholder` is declared
+  // FIRST in the vocabulary because the fallback scan is declaration order
+  // (landingVocabulary.js), which is what makes an unsatisfiable `roster`
+  // request land here and not on some later variant.
+  const resolved = resolveLandingVariant('lineup', 'roster', { heading: 'מי על הבמה?', items: [] });
+  assert.strictEqual(resolved.variant, 'placeholder');
+  assert.strictEqual(resolved.fellBackFrom, 'roster');
+
+  // And the default, with nothing requested, needs only a heading.
+  assert.strictEqual(resolveLandingVariant('lineup', undefined, { heading: 'מי על הבמה?' }).variant, 'placeholder');
+});
+
+test('the lineup panel is translucent only when there is a ground to read through it', () => {
+  // Without OPENAI_API_KEY the caller falls back to Pexels, where only the
+  // first band gets an image. A panel that is see-through regardless would then
+  // render as nothing at all on flat near-black.
+  const withGround = lineupPanel({ heading: 'מי על הבמה?' }, { variant: 'placeholder', backgroundImage: IMG, backgroundKind: 'generated' });
+  assert.match(withGround.props.style.background, /^rgba\(/,
+    'the panel stayed opaque over a ground, so the ground it is floating on cannot be seen');
+
+  const without = lineupPanel({ heading: 'מי על הבמה?' }, { variant: 'placeholder' });
+  assert.match(without.props.style.background, /^#/,
+    'the panel stayed translucent with no ground behind it, so it renders as nothing');
+});
+
+test('the lineup roster caps the speakers it will render', () => {
+  // A conference with 40 confirmed speakers is a real thing, and 40 names in
+  // one panel is not a lineup section, it is a directory.
+  const items = Array.from({ length: 20 }, (_, i) => ({ title: `דובר ${i + 1}`, text: 'תפקיד' }));
+  const panel = lineupPanel({ heading: 'מי על הבמה?', items }, { variant: 'roster' });
+  const people = panel.children.find((c) => c.children.length > 1 && c.children[0].type === 'col');
+  assert.strictEqual(people.children.length, 8);
+});

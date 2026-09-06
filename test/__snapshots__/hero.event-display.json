@@ -1,0 +1,253 @@
+{
+  "type": "section",
+  "layer": "1",
+  "children": [
+    {
+      "type": "block",
+      "children": [
+        {
+          "type": "col",
+          "children": [
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "style": {
+                  "fontFamily": "'Assistant', sans-serif"
+                },
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.2",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "'Assistant', sans-serif",
+                                  "fontSize": "14px",
+                                  "color": "#dc5a8a"
+                                }
+                              },
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "type": "text",
+                            "text": "לפני הכל"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "style": {
+                  "fontFamily": "'Assistant', sans-serif"
+                },
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.08",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "'Assistant', sans-serif",
+                                  "fontSize": "88px",
+                                  "color": "#ffffff"
+                                }
+                              },
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "type": "text",
+                            "text": "כותרת ראשית לבדיקה"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "style": {
+                  "fontFamily": "'Assistant', sans-serif"
+                },
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.3",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "'Assistant', sans-serif",
+                                  "fontSize": "34px",
+                                  "color": "#ffffff"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "11.11.26  |  תל אביב"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "text",
+              "children": [],
+              "props": {
+                "style": {
+                  "fontFamily": "'Heebo', sans-serif"
+                },
+                "text": {
+                  "childNodes": {
+                    "type": "doc",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "lineHeight": "1.75",
+                          "direction": "rtl",
+                          "textAlign": "center"
+                        },
+                        "content": [
+                          {
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "fontFamily": "'Heebo', sans-serif",
+                                  "fontSize": "19px",
+                                  "color": "#cdddea"
+                                }
+                              }
+                            ],
+                            "type": "text",
+                            "text": "שורת משנה קצרה"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "button",
+              "children": [],
+              "props": {
+                "text": "רוצים לראות דוגמה?",
+                "style": {
+                  "height": "auto",
+                  "width": "auto",
+                  "maxWidth": "100%",
+                  "minWidth": "30px",
+                  "background": "transparent",
+                  "color": "#ffffff",
+                  "borderRadius": "0px",
+                  "fontFamily": "'Heebo', sans-serif",
+                  "fontSize": "17px",
+                  "direction": "rtl",
+                  "paddingTop": "14px",
+                  "paddingBottom": "14px",
+                  "paddingLeft": "32px",
+                  "paddingRight": "32px",
+                  "border": "1px solid rgba(255, 255, 255, 0.55)",
+                  "marginTop": "10px"
+                },
+                "interactions": [],
+                "show_on_desktop": true,
+                "show_on_tablet": true,
+                "show_on_mobile": true,
+                "onClick": {
+                  "link": {
+                    "href": "#",
+                    "target": "_blank"
+                  }
+                }
+              }
+            }
+          ],
+          "props": {
+            "style": {
+              "display": "flex",
+              "flexDirection": "column",
+              "gap": "22px",
+              "alignItems": "center",
+              "textAlign": "center",
+              "direction": "rtl",
+              "margin": "0 auto",
+              "flex": "0 1 760px"
+            },
+            "lg": 12,
+            "justify": "center"
+          }
+        }
+      ],
+      "props": {
+        "style": {
+          "width": "1240px",
+          "marginLeft": "auto",
+          "marginRight": "auto",
+          "paddingLeft": "28px",
+          "paddingRight": "28px",
+          "display": "flex",
+          "justifyContent": "center"
+        },
+        "justify": "center"
+      }
+    }
+  ],
+  "props": {
+    "opacity": 1,
+    "classList": [],
+    "style": {
+      "width": "100%",
+      "paddingTop": "130px",
+      "paddingBottom": "130px",
+      "background": "#091e2f"
+    }
+  }
+}

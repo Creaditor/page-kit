@@ -58,6 +58,7 @@ const COPY = {
   text: 'ההודעה הראשונה על חשבוננו',
   submit: 'שלחו לי דוגמה',
   image: 'https://example.test/photo.jpg',
+  facts: ['11.11.26', 'תל אביב'],
   items: [{ title: 'כותרת פריט', text: 'טקסט פריט' }],
   thread: [
     { text: 'היי, נכנס משהו חדש. רוצים הצצה?', from: 'business', time: '09:41' },
@@ -588,4 +589,56 @@ test('the lineup roster caps the speakers it will render', () => {
   const panel = lineupPanel({ heading: 'מי על הבמה?', items }, { variant: 'roster' });
   const people = panel.children.find((c) => c.children.length > 1 && c.children[0].type === 'col');
   assert.strictEqual(people.children.length, 8);
+});
+
+// ── hero: event-display ──────────────────────────────────────────────────────
+
+const heroDisplay = (copy, opts) =>
+  composeLandingSection('hero', { heading: 'הכל מבינה', facts: ['11.11.26', 'תל אביב'], ...copy }, PAL,
+    { variant: 'event-display', ...opts }).section;
+const sizeOfHeading = (section) => {
+  const m = JSON.stringify(section.children[0].children[0].children[0]).match(/fontSize[^0-9]*([0-9]+)px/);
+  return m ? Number(m[1]) : null;
+};
+
+test('the display hero sizes its heading from the heading, not from a constant', () => {
+  // 118px works on a two-word event name and is a wall on a sentence, and a
+  // sentence is what a model writes when asked for a headline. Asking it to be
+  // brief in the prompt is the kind of rule that has leaked every time it has
+  // been tried here, so the size is computed and a long heading simply does not
+  // get the display treatment.
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'הכל מבינה' })), 118);
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'כנס הבינה המלאכותית 2026' })), 88);
+  assert.strictEqual(sizeOfHeading(heroDisplay({ heading: 'כל מה שצריך לדעת על בינה מלאכותית ליוצרים' })), 50);
+});
+
+test('the display hero shows its ground when generated and buries it when photographed', () => {
+  // The light scrim is affordable for exactly the same reason the type is big.
+  // A stock photograph at 0.15 is a photograph with words on it.
+  const generated = heroDisplay({}, { backgroundImage: IMG, backgroundKind: 'generated' });
+  assert.ok(generated.props.style.backgroundImage.includes('0.15'),
+    'a generated ground was buried under the heavy scrim, so the one band that can show its image does not');
+
+  const photo = heroDisplay({}, { backgroundImage: IMG, backgroundKind: 'photo' });
+  assert.ok(photo.props.style.backgroundImage.includes('0.72'),
+    'a stock photograph was left at display strength, which is a photograph with words on it');
+});
+
+test('the display hero needs real facts, not the empty strings a flat schema produces', () => {
+  // Every field is required on the copy schema, so a non-event section arrives
+  // with facts full of empty strings. One of those is enough to pass a presence
+  // check, which is why studio trims before the plan is assembled.
+  assert.strictEqual(
+    resolveLandingVariant('hero', 'event-display', { heading: 'כותרת', facts: [] }).variant,
+    'centered',
+  );
+});
+
+test('the display hero renders no button when the copy gives it none', () => {
+  // The reference hero has no button at all: its track cards carry the ask.
+  // Once `tracks` exists and the slot brief stops asking, this is the shape.
+  const withCta = JSON.stringify(heroDisplay({ cta: 'להרשמה' }));
+  const without = JSON.stringify(heroDisplay({ cta: '' }));
+  assert.ok(withCta.includes('"type":"button"'), 'a supplied CTA was dropped');
+  assert.ok(!without.includes('"type":"button"'), 'a button appeared with no CTA in the copy');
 });

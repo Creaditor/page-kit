@@ -82,7 +82,14 @@ const mix = (a, bColor, t) => {
  * Returns the plain `{ background }` unchanged when there is no image, so
  * every call site can pass this through without branching.
  */
-const SCRIM = { photo: [0.72, 0.97], generated: [0.35, 0.75] };
+// A third setting for the display hero. 0.15 to 0.45 would be unreadable under
+// 17px body copy, which is why `generated` sits where it does; it is safe here
+// for exactly the reason the type scale below exists. White type at 118px
+// survives a ground that 17px cannot, so the band that carries the biggest type
+// is the one band that can afford to show its image nearly undimmed. Reachable
+// only when the ground was GENERATED: a stock photograph at 0.15 is a
+// photograph with words on it.
+const SCRIM = { photo: [0.72, 0.97], generated: [0.35, 0.75], display: [0.15, 0.45] };
 const photoGround = (bg, img, kind) => {
   if (!img || typeof img !== 'string') return { background: bg };
   const c = parseColor(bg) || { r: 0, g: 0, b: 0 };
@@ -206,6 +213,27 @@ const heading = (text, fontSize, color, align, family = FALLBACK_DISPLAY, bold =
   const lineHeight = px >= 44 ? '1.08' : px >= 28 ? '1.18' : '1.3';
   return makeText(text || '', { fontSize, color, align, bold, fontFamily: family, lineHeight });
 };
+/**
+ * How big the display hero sets its heading, DERIVED from the heading itself.
+ *
+ * The reference sets its wordmark at roughly 118px at a 1440 viewport, and that
+ * works because the wordmark is two words. Six to ten words at 118px is a wall,
+ * and six to ten words is what a language model writes when asked for a
+ * headline. Asking it for a wordmark in the prompt is exactly the kind of rule
+ * that has leaked every time it has been tried here, so the size is computed
+ * instead: a short heading gets the display treatment, a long one quietly does
+ * not, and the variant is renderable either way.
+ *
+ * Measured in characters rather than words because Hebrew words are short and a
+ * three-word Hebrew heading can be narrower than a two-word English one.
+ */
+function displayScale(heading) {
+  const n = String(heading || '').trim().length;
+  if (n <= 14) return '118px';
+  if (n <= 24) return '88px';
+  if (n <= 38) return '66px';
+  return '50px';
+}
 const para = (text, color, align) =>
   makeText(text || '', { fontSize: '17px', color, align, fontFamily: BODY_FONT, lineHeight: '1.6' });
 /**
@@ -826,6 +854,82 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
           ], {}, 'flex-start'),
         ], { ...photoGround(FIELD, bgPhoto, bgKind), paddingTop: '84px', paddingBottom: '76px' }) };
+      }
+
+      // ── EVENT DISPLAY ────────────────────────────────────────────────────
+      //
+      // The event opening: the name alone at display size, the date and the
+      // place under it as FACTS rather than as prose, then a paragraph. Three
+      // things separate this from `centered`, and all three were measured off a
+      // live reference rather than designed from taste.
+      //
+      // 1. The size is DERIVED (see `displayScale`). 118px works on a two-word
+      //    event name and is a wall on a sentence, and a sentence is what a
+      //    model writes when asked for a headline. Computing it means a long
+      //    heading degrades to roughly what `centered` would have done instead
+      //    of breaking the band.
+      // 2. The ground shows. Every other band buries its image because 17px
+      //    body copy cannot survive on one; type at this size can, so the scrim
+      //    drops to `display` (0.15 to 0.45) whenever the ground was GENERATED.
+      //    A stock photograph keeps the heavy ramp: undimmed, it is a
+      //    photograph with words on it.
+      // 3. `facts` is its own register. On an event page the date and the venue
+      //    are the two things the reader came for, and today they can only be
+      //    smuggled into the subheading, where they render at 17px as prose.
+      if (variant === 'event-display' && Array.isArray(copy.facts) && copy.facts.length) {
+        // Joined into ONE string rather than laid out as a row of cols. Under
+        // `direction: rtl` a row of two or three short cols needs its own
+        // spacer dance to sit centred (see bubbleRow), and a separator that is
+        // a character rather than a border cannot get that wrong in either
+        // direction.
+        const factLine = copy.facts.map((f) => String(f || '').trim()).filter(Boolean).join('  |  ');
+
+        const displayCopy = [
+          copy.eyebrow ? D(copy.eyebrow, theme.ON_DARK, 'center', '14px') : null,
+          H(copy.heading, displayScale(copy.heading), '#ffffff', 'center'),
+          factLine
+            ? makeText(factLine, { fontSize: '34px', color: '#ffffff', align: 'center', fontFamily: DISPLAY, lineHeight: '1.3' })
+            : null,
+          // Centred body copy is unreadable past two lines, which is why
+          // `centeredProse` puts every other section's prose at the reading
+          // edge. The reference runs seven centred lines here and it holds,
+          // because the measure is capped and this is the one block on the page
+          // read once at arrival rather than scanned. Capped at 58ch for that
+          // reason, and it is the only centred prose in the file.
+          copy.subheading
+            ? makeText(copy.subheading, { fontSize: '19px', color: mix(P, '#ffffff', 0.78), align: 'center', fontFamily: BODY_FONT, lineHeight: '1.75' })
+            : null,
+          // Rendered only when the copy supplies one. The reference hero has NO
+          // button: its track cards carry the ask and a sticky pill follows the
+          // scroll. Neither exists here yet, so a hero that dropped the CTA
+          // unconditionally would ship an event page with no action anywhere.
+          // When `tracks` lands and the slot brief stops asking, this renders
+          // nothing and the band matches the reference exactly.
+          copy.cta ? (() => {
+            const el = button(copy.cta, 'transparent', '#ffffff');
+            el.props.style = { ...el.props.style, border: '1px solid rgba(255, 255, 255, 0.55)', marginTop: '10px' };
+            return el;
+          })() : null,
+        ].filter(Boolean);
+
+        return { section: section([
+          block([col(displayCopy, {
+            display: 'flex', flexDirection: 'column', gap: '22px', alignItems: 'center',
+            textAlign: 'center', direction: 'rtl', margin: '0 auto',
+            // An explicit px measure, NOT `ch`. `ch` resolves against the
+            // element's own font-size, and this col inherits 16px, so a 58ch
+            // basis measured 464px rather than the ~760px the prose is set for.
+            // Measured on the real renderer: at 464px the 34px facts line wrapped
+            // "the venue" onto a second line and the prose ran to five short
+            // ones. Every other measure in this file is a `ch` on the element
+            // that carries the type; this one sits on a container, so it cannot
+            // be.
+            flex: '0 1 760px',
+          }, 'center')], { display: 'flex', justifyContent: 'center' }, 'center'),
+        ], {
+          ...photoGround(theme.FIELD, bgPhoto, bgKind === 'generated' ? 'display' : bgKind),
+          paddingTop: '130px', paddingBottom: '130px',
+        }) };
       }
 
       return { section: section([

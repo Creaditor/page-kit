@@ -69,6 +69,11 @@ const LANDING_VOCABULARY = {
         needs: ['heading', 'stats'],
         optional: ['eyebrow', 'subheading', 'cta'],
       },
+      'event-display': {
+        description: 'The event opening: the event name alone at display size, the date and place under it as facts, then a paragraph. Use for a conference, a festival, a launch or any dated event, and only then. `heading` must be the event NAME, at most three words, not a sentence: the size is computed from its length, so a headline written as a sentence quietly renders small and the variant is wasted. Needs `facts`: 2 or 3 short strings, the date and the venue, each already stated in the brief.',
+        needs: ['heading', 'facts'],
+        optional: ['eyebrow', 'subheading', 'cta'],
+      },
       'cinema-block': {
         description: 'Copy beside a tall narrow photograph. Use when the business has a real photograph of its product, place or work, for an opening with more atmosphere than `asymmetric`. The narrow crop asks far less of the image than a full-bleed band, so it tolerates an ordinary tenant photo where other photo variants would not.',
         needs: ['heading', 'image'],

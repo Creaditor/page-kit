@@ -1037,6 +1037,9 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         ? { BG: theme.LIFT, INK: theme.LIFT_INK, BODY: theme.LIFT_BODY, LINE: theme.LIFT_LINE, ACC: theme.ON_LIGHT, ON_ACC: theme.onAccentLight, PANEL: '#ffffff' }
         : { BG: theme.FIELD, INK: '#ffffff', BODY: theme.MUTED, LINE: theme.LINE, ACC: theme.ON_DARK, ON_ACC: theme.onAccentDark, PANEL: theme.PANEL };
       const ground = opts.ground === 'light' ? 'light' : 'dark';
+      // A ground photo belongs only on the dark bundle. groundOf('light')
+      // returns theme.LIFT with dark ink on it, and a scrimmed image under dark
+      // type on a pale band is unreadable no matter how light the scrim.
       const g = groundOf(ground);
 
       // A bespoke head for tiles/stack/conversation, mirroring problemHead:
@@ -1094,7 +1097,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         const cellsBlock = block([
           col(cells, { display: 'flex', flexWrap: 'wrap', gap: '2px', direction: 'rtl', alignItems: 'stretch' }, 'flex-start'),
         ], {}, 'flex-start');
-        return { section: section([headBlock, cellsBlock], { background: g.BG }) };
+        return { section: section([headBlock, cellsBlock], { ...photoGround(g.BG, ground === 'dark' ? bgPhoto : '', bgKind) }) };
       }
 
       // ── STACK ────────────────────────────────────────────────────────
@@ -1113,7 +1116,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
         // a row+wrap container too, so the 22px lands correctly between the
         // stacked rows without needing column direction at all.
         const stackBlock = block([col(rows, { gap: '22px', width: '100%' }, 'flex-start')], {}, 'flex-start');
-        return { section: section([headBlock, stackBlock], { background: g.BG }) };
+        return { section: section([headBlock, stackBlock], { ...photoGround(g.BG, ground === 'dark' ? bgPhoto : '', bgKind) }) };
       }
 
       // ── CONVERSATION ─────────────────────────────────────────────────
@@ -1203,7 +1206,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           }, 'flex-start'),
         ], { marginTop: '36px' }, 'flex-start');
 
-        return { section: section([headBlock, capsBlock, bubblesBlock], { background: g.BG }) };
+        return { section: section([headBlock, capsBlock, bubblesBlock], { ...photoGround(g.BG, ground === 'dark' ? bgPhoto : '', bgKind) }) };
       }
       return { section: section([
         hb(copy.eyebrow, copy.heading),

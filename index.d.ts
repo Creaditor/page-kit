@@ -124,7 +124,7 @@ declare namespace pageKit {
       pattern: string,
       copy?: Record<string, unknown>,
       palette?: Palette,
-      opts?: { variant?: string | null; backgroundImage?: string },
+      opts?: { variant?: string | null; backgroundImage?: string; backgroundKind?: 'photo' | 'generated' },
     ): { section: Tree };
 
     // landing vocabulary: the single declaration of what a landing page can be

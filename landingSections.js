@@ -63,23 +63,34 @@ const mix = (a, bColor, t) => {
  * over any frame. A photo that fails to load therefore degrades to the flat
  * band the page would have rendered anyway, never to white.
  *
- * The scrim runs 0.72 to 0.97, not the 0.55 to 0.95 that was measured. 0.55 was
- * read off a 525px hero, where the exposed top is a thin strip. The leadform
- * band is 862px tall, and at that height the same ramp leaves most of the
- * section showing the photo at near full strength: it stopped reading as a
- * designed ground and started reading as a photo with a form dropped on it.
- * 0.72 holds the photo to texture at both heights.
+ * HOW HARD the scrim is depends on where the image came from, and the gap
+ * between the two settings is most of the difference between a page that feels
+ * flat and one that feels lit.
+ *
+ * A stock PHOTOGRAPH has to be buried. It was composed for its own subject, at
+ * its own brightness, with detail everywhere, and type laid over it competes
+ * with all of that. 0.72 to 0.97, not the 0.55 to 0.95 first measured: 0.55 was
+ * read off a 525px hero where the exposed top is a thin strip, and at the
+ * leadform's 862px the same ramp left the photo at near full strength, reading
+ * as a photo with a form dropped on it rather than as a ground.
+ *
+ * A GENERATED ground was composed for this exact job: dark at the top and
+ * bottom edges, luminous through the middle, no subject to compete with.
+ * Burying it throws away the only thing it was made for. 0.35 to 0.75, so the
+ * light in it actually reaches the page.
  *
  * Returns the plain `{ background }` unchanged when there is no image, so
  * every call site can pass this through without branching.
  */
-const photoGround = (bg, img) => {
+const SCRIM = { photo: [0.72, 0.97], generated: [0.35, 0.75] };
+const photoGround = (bg, img, kind) => {
   if (!img || typeof img !== 'string') return { background: bg };
   const c = parseColor(bg) || { r: 0, g: 0, b: 0 };
   const scrim = (a) => `rgba(${c.r}, ${c.g}, ${c.b}, ${a})`;
+  const [top, bottom] = SCRIM[kind] || SCRIM.photo;
   return {
     background: bg,
-    backgroundImage: `linear-gradient(to bottom, ${scrim(0.72)}, ${scrim(0.97)}), url("${img}")`,
+    backgroundImage: `linear-gradient(to bottom, ${scrim(top)}, ${scrim(bottom)}), url("${img}")`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
@@ -613,6 +624,10 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
   // a foreground photo (hero:asymmetric, hero:cinema-block) must not carry a
   // second one behind it.
   const bgPhoto = typeof opts.backgroundImage === 'string' ? opts.backgroundImage : '';
+  // 'generated' or 'photo'. Defaults to 'photo', the heavier scrim, so a caller
+  // that does not say gets the safe treatment rather than an under-scrimmed
+  // photograph with unreadable type on it.
+  const bgKind = opts.backgroundKind === 'generated' ? 'generated' : 'photo';
   const P = palette.primary || '#6328A7';
   const S = palette.secondary || palette.accent || P;
   // The accent that clears a PALE ground, for the section icons on the white
@@ -697,7 +712,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
             col(cells, { display: 'flex', flexWrap: 'wrap', direction: 'rtl' }, 'flex-start'),
           ], { marginTop: '62px', borderTop: `1px solid ${theme.ON_DARK}` }, 'flex-start'));
         }
-        return { section: section(goldBlocks, { ...photoGround(theme.FIELD, bgPhoto), paddingTop: '92px', paddingBottom: '84px' }) };
+        return { section: section(goldBlocks, { ...photoGround(theme.FIELD, bgPhoto, bgKind), paddingTop: '92px', paddingBottom: '84px' }) };
       }
 
       // ── CORAL CUT ────────────────────────────────────────────────────────
@@ -785,7 +800,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
               col([cinemaImg], { display: 'flex', flex: '0 1 440px', minWidth: '260px', background: theme.FIELD }, 'center'),
             ], { display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl' }, 'flex-start'),
           ], {}, 'flex-start'),
-        ], { ...photoGround(theme.FIELD, bgPhoto), paddingTop: '84px', paddingBottom: '84px' }) };
+        ], { ...photoGround(theme.FIELD, bgPhoto, bgKind), paddingTop: '84px', paddingBottom: '84px' }) };
       }
 
       if (variant === 'asymmetric' && copy.image) {
@@ -810,12 +825,12 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
               col(threadBubbles(copy.thread, palette), { gap: '14px', flex: '1 1 340px', margin: '12px', direction: 'rtl' }, 'flex-start'),
             ], { display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'center', direction: 'rtl' }, 'flex-start'),
           ], {}, 'flex-start'),
-        ], { ...photoGround(FIELD, bgPhoto), paddingTop: '84px', paddingBottom: '76px' }) };
+        ], { ...photoGround(FIELD, bgPhoto, bgKind), paddingTop: '84px', paddingBottom: '76px' }) };
       }
 
       return { section: section([
         block([col(heroCopy('center'), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center' })], {}, 'center'),
-      ], { ...photoGround(FIELD, bgPhoto), paddingTop: '96px', paddingBottom: '96px' }) };
+      ], { ...photoGround(FIELD, bgPhoto, bgKind), paddingTop: '96px', paddingBottom: '96px' }) };
     }
 
     // ── §2 PROBLEM / identification (editorial) ────────────────────────────────
@@ -1460,7 +1475,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           display: 'flex', flexDirection: 'column', flex: '0 1 560px', direction: 'rtl',
           background: theme.PANEL, padding: '38px 34px 42px', boxSizing: 'border-box',
         }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
-      ], { ...photoGround(theme.FIELD, bgPhoto), paddingTop: '86px', paddingBottom: '86px' }) };
+      ], { ...photoGround(theme.FIELD, bgPhoto, bgKind), paddingTop: '86px', paddingBottom: '86px' }) };
     }
 
     // ── §13 ABOUT (paragraph(s) + professional photo) ──────────────────────────
@@ -1496,7 +1511,7 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           copy.subheading ? T(copy.subheading, mix(P, '#ffffff', 0.72), 'right') : null,
           copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,
         ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '0 1 46ch' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
-      ], { ...photoGround(FIELD, bgPhoto), paddingTop: '92px', paddingBottom: '92px' }) };
+      ], { ...photoGround(FIELD, bgPhoto, bgKind), paddingTop: '92px', paddingBottom: '92px' }) };
 
     default:
       throw new Error(`Unknown landing pattern "${pattern}".`);

@@ -244,10 +244,14 @@ test('an unknown variant falls back to a SUPPORTED variant and reports it', () =
   assert.ok(LANDING_VOCABULARY.hero.variants[r.variant], 'landed on a variant that does not exist');
 });
 
-test('a satisfied variant is returned untouched', () => {
-  const r = resolveLandingVariant('hero', 'centered', COPY);
-  assert.strictEqual(r.variant, 'centered');
+test('a satisfied variant is returned untouched where this file has no opinion', () => {
+  // `hero` used to be the example here. It cannot be any more: a pattern with a
+  // preference list is ranked, and on a ranked pattern code decides. Patterns
+  // without one still hand the model exactly what it asked for.
+  const r = resolveLandingVariant('faq', 'list', COPY);
+  assert.strictEqual(r.variant, 'list');
   assert.strictEqual(r.fellBackFrom, null);
+  assert.strictEqual(r.chosenBy, 'model');
 });
 
 test('a variant whose required copy is missing falls back rather than rendering empty', () => {
@@ -723,13 +727,27 @@ test('a silent model gets the best variant the copy can support, not the plaines
   assert.strictEqual(r.chosenBy, 'code');
 });
 
-test('an explicit satisfiable request from the model is still honoured', () => {
-  // Some of these calls are semantic and no rule over the copy can make them.
-  // The observed failure is an EMPTY variant, not a wrong explicit one, so
-  // keeping the escape hatch costs nothing.
+test('on a ranked pattern the model cannot talk the page down to a weaker variant', () => {
+  // The first version of this change let any satisfiable request through. A
+  // real 14-section generation showed why that fails: the model named a variant
+  // for hero, problem and solution, which are exactly the three ranked
+  // patterns, so code chose nothing that mattered. It also asked for
+  // `gold-night` where the ranking says `coral-cut`.
   const r = resolveLandingVariant('hero', 'centered', RICH_HERO);
-  assert.strictEqual(r.variant, 'centered');
-  assert.strictEqual(r.chosenBy, 'model');
+  assert.strictEqual(r.variant, 'display');
+  assert.strictEqual(r.chosenBy, 'code');
+  assert.strictEqual(r.fellBackFrom, 'centered', 'an overridden request must still be reported');
+});
+
+test('the model still steers a ranked pattern, by what it WRITES', () => {
+  // The semantic judgement is not lost, it is expressed through material.
+  // `conversation` is first in solution's preference and needs a `thread` that
+  // nothing else needs, so writing one is what chooses it.
+  const withThread = { heading: 'h', bullets: ['a'], items: [{ title: 'a' }, { title: 'b' }], thread: [1, 2] };
+  assert.strictEqual(resolveLandingVariant('solution', '', withThread).variant, 'conversation');
+
+  const withoutThread = { heading: 'h', bullets: ['a'], items: [{ title: 'a' }, { title: 'b' }] };
+  assert.strictEqual(resolveLandingVariant('solution', '', withoutThread).variant, 'tiles');
 });
 
 test('an unsatisfiable request lands on quality order, not declaration order', () => {

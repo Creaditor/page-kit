@@ -114,16 +114,27 @@ const LANDING_VOCABULARY = {
         // step on a loud ground is not this variant, it is `centered` wearing
         // its background.
         //
-        // And it must not be throwing away numbers. Sitting at the top of the
-        // preference list, this variant would otherwise win on a business with
-        // a price, a trial length and a tool count and then show none of them,
-        // while `coral-cut` two places down exists to put exactly those three
-        // on the page. Measured on a real render: a SaaS tenant with three
-        // stats got a beautiful hero that said nothing. So it yields whenever
-        // there are three stats and no facts of its own to lead with.
-        guard: (copy) => String(copy.heading || '').trim().length <= DISPLAY_MAX_HEADING
-          && ((Array.isArray(copy.facts) && copy.facts.length >= 2)
-            || !(Array.isArray(copy.stats) && copy.stats.length >= 3)),
+        // And it must not be throwing away richer material. This variant shows
+        // a heading and nothing else, so at the top of the preference list it
+        // wins on a business with three stats, or a real message thread, or a
+        // photograph, and then shows none of them. Measured twice: a SaaS
+        // tenant with a price, a trial length and a tool count got a beautiful
+        // hero that said nothing, and the studio suite caught the same greed
+        // swallowing a thread and an image.
+        //
+        // So it leads only when it HAS its own material to lead with, which is
+        // `facts` (a name and a date), or when there is nothing richer to
+        // spend. This is the ordering rule of the whole list stated as a
+        // condition: prefer the variant that uses the most of what the tenant
+        // actually has.
+        guard: (copy) => {
+          if (String(copy.heading || '').trim().length > DISPLAY_MAX_HEADING) return false;
+          if (Array.isArray(copy.facts) && copy.facts.length >= 2) return true;
+          const richer = (Array.isArray(copy.stats) && copy.stats.length >= 3)
+            || (Array.isArray(copy.thread) && copy.thread.length > 0)
+            || (typeof copy.image === 'string' && copy.image.trim().length > 0);
+          return !richer;
+        },
       },
       'cinema-block': {
         description: 'Copy beside a tall narrow photograph. Use when the business has a real photograph of its product, place or work, for an opening with more atmosphere than `asymmetric`. The narrow crop asks far less of the image than a full-bleed band, so it tolerates an ordinary tenant photo where other photo variants would not.',
@@ -497,11 +508,26 @@ function resolveLandingVariant(pattern, variant, copy = {}) {
   const requested = typeof variant === 'string' && variant ? variant : null;
   const known = requested && spec.variants[requested] ? requested : null;
 
-  // 1. An explicit, satisfiable request from the model wins. Some of these
-  //    calls are genuinely semantic and no rule over the copy can make them:
-  //    `conversation` is right when a message exchange tells the story better,
-  //    and only the model has read the business.
-  if (known && satisfied(known)) {
+  const ranked = !!(Array.isArray(spec.preference) && spec.preference.length);
+
+  // 1. The model's explicit pick wins only where this file has NO opinion.
+  //
+  //    It used to win everywhere, on the reasoning that some of these calls are
+  //    semantic. A real 14-section generation measured that reasoning and it
+  //    did not survive: the model named a variant for hero, problem and
+  //    solution, which are exactly and only the three patterns WITH a
+  //    preference list. So code chose nothing but single-variant patterns and
+  //    the whole mechanism was a no-op on the first page it ever saw. It also
+  //    asked for `gold-night` where the ranking says `coral-cut`, which is the
+  //    same weaker-choice behaviour that made this change necessary.
+  //
+  //    The semantic judgement is not thrown away, it moves to where it belongs:
+  //    the model expresses it by what it WRITES, not by what it names. Writing
+  //    a `thread` is what gets `conversation`, because `conversation` is first
+  //    in solution's preference and needs a thread that nothing else needs.
+  //    Material decides, which is the rule the rest of this file already
+  //    follows.
+  if (known && satisfied(known) && !ranked) {
     return { pattern, variant: known, fellBackFrom: null, chosenBy: 'model' };
   }
 
@@ -511,18 +537,28 @@ function resolveLandingVariant(pattern, variant, copy = {}) {
   //    `spec.default` there, which meant every strong variant in this file was
   //    unreachable in a real generation, and on an unsatisfiable request it
   //    scanned declaration order, which is not a quality order.
-  const order = Array.isArray(spec.preference) && spec.preference.length
-    ? spec.preference
-    : Object.keys(spec.variants);
+  const order = ranked ? spec.preference : Object.keys(spec.variants);
   const best = order.find(satisfied);
+  // Not named `variant`: that is this function's own parameter, the name the
+  // MODEL asked for, and shadowing it here would be the two meanings of the
+  // word colliding in the one place that has to keep them apart.
+  const chosen = best || spec.default;
 
   return {
     pattern,
-    variant: best || spec.default,
-    // `requested`, not `known`: a model asking for a variant that does not
-    // exist at all is worth reporting too, and it is the loudest signal that
-    // the prompt and this file have drifted apart.
-    fellBackFrom: requested,
+    variant: chosen,
+    // Reported unless the request was actually HONOURED, which means all three
+    // of: it existed, the copy could support it, and it is what code landed on.
+    //
+    // `requested !== chosen` alone was not enough, and the test suite caught
+    // why: a model asking for `solution:bullets-image` with no bullets is
+    // unsatisfiable, code falls through to the pattern default, and the default
+    // IS bullets-image. Same name, still a miss, and still the section that
+    // renders a photo beside a blank half. Comparing names would have reported
+    // nothing in the one case worth reporting most.
+    fellBackFrom: requested && !(known && satisfied(known) && known === chosen)
+      ? requested
+      : null,
     chosenBy: 'code',
   };
 }

@@ -418,6 +418,7 @@
             "style": {
               "display": "flex",
               "flexWrap": "wrap",
+              "alignItems": "stretch",
               "direction": "rtl",
               "width": "100%"
             },

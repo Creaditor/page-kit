@@ -858,7 +858,12 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
                 background: theme.ON_DARK, boxSizing: 'border-box', paddingTop: '56px', paddingBottom: '56px', paddingLeft: '44px', paddingRight: '44px',
               }, 'center'),
             ], {
-              display: 'flex', flexWrap: 'wrap', direction: 'rtl', width: '100%',
+              // `alignItems: stretch` explicitly, the same fix tiles and panels
+              // needed: the driver's Column defaults its cross-axis to `start`,
+              // so the shorter of the two columns stopped short of the band and
+              // left a strip of page showing under the accent field. Measured
+              // at 19px on a live render.
+              display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', direction: 'rtl', width: '100%',
             }, 'flex-start'),
           ], { width: '100%', marginLeft: '0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px' }, 'flex-start'),
         ], { paddingTop: '0px', paddingBottom: '0px' }) };

@@ -144,6 +144,16 @@ declare namespace pageKit {
     ): ResolvedLandingVariant | null;
     /** The vocabulary rendered as the menu text a generation prompt shows the model. */
     describeLandingVocabulary(): string;
+    /**
+     * The longest heading the hero's `display` variant can set at display size.
+     *
+     * Declared because a consumer prompt has to state the limit as a NUMBER in
+     * the copy rules it sends the model, and a hardcoded copy of that number in
+     * the consumer is the drift this whole file exists to prevent: the size
+     * table lives in landingSections.js and only it knows where the budget
+     * actually falls.
+     */
+    DISPLAY_MAX_HEADING: number;
 
     // data
     CATALOG_BODIES: Record<string, CatalogEntry>;

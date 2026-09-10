@@ -150,10 +150,13 @@ declare namespace pageKit {
         language?: 'he' | 'en';
       },
     ): { section: Tree | null };
-    /** The urgency band: countdown to a brief-stated date. Client-only numbers; label+date SSR. */
+    /** The urgency band: countdown to a brief-stated date. Client-only numbers; label+date SSR. Optional cta renders a centered anchor-jump button under the date. */
     composeLandingCountdown(
       palette?: Palette,
-      opts?: { date?: string; label?: string; language?: 'he' | 'en' },
+      opts?: {
+        date?: string; label?: string; language?: 'he' | 'en';
+        cta?: { text: string; anchor: string } | null;
+      },
     ): { section: Tree | null };
     /** A small arrow ask closing a content section; returns a block to append to a section's children. */
     composeLandingSectionAsk(

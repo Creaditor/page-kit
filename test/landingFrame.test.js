@@ -129,3 +129,51 @@ test('frame: neither composer emits an em-dash or en-dash anywhere', () => {
     assert.ok(!/[–—]/.test(JSON.stringify(tree)));
   }
 });
+
+// ── floaters ─────────────────────────────────────────────────────────────────
+
+test('floaters: whatsapp circle SSRs as a plain link with fixed positioning', () => {
+  const { composeLandingFloaters } = require('../landingSections.js');
+  const { section } = composeLandingFloaters(PALETTE, {
+    whatsappUrl: 'https://wa.me/972501234567',
+    pill: null,
+  });
+  const [img] = collect(section, 'image');
+  assert.ok(img, 'renders the circle image');
+  assert.strictEqual(img.props.onClick.link.href, 'https://wa.me/972501234567');
+  assert.strictEqual(img.props.style.position, 'fixed');
+  assert.ok(img.props.src.includes('whatsapp'));
+});
+
+test('floaters: the pill jumps in-page with the anchor protocol', () => {
+  const { composeLandingFloaters } = require('../landingSections.js');
+  const { section } = composeLandingFloaters(PALETTE, {
+    whatsappUrl: '',
+    pill: { text: 'התחילו ניסיון', anchor: 'sec-leadform' },
+  });
+  const [btn] = collect(section, 'button');
+  assert.strictEqual(btn.props.onClick.link.href, '#sec-leadform');
+  assert.strictEqual(btn.props.onClick.link.protocol, 'anchor:');
+  assert.strictEqual(btn.props.style.position, 'fixed');
+});
+
+test('floaters: nothing to float, no section at all', () => {
+  const { composeLandingFloaters } = require('../landingSections.js');
+  assert.strictEqual(composeLandingFloaters(PALETTE, {}).section, null);
+  assert.strictEqual(composeLandingFloaters(PALETTE, { whatsappUrl: '', pill: null }).section, null);
+});
+
+test('floaters: the host band is zero-height, both children out of flow', () => {
+  const { composeLandingFloaters } = require('../landingSections.js');
+  const { section } = composeLandingFloaters(PALETTE, {
+    whatsappUrl: 'https://wa.me/972501234567',
+    pill: { text: 'x', anchor: 'sec-leadform' },
+  });
+  assert.strictEqual(section.props.style.paddingTop, '0px');
+  assert.strictEqual(section.props.style.paddingBottom, '0px');
+  walk(section, (n) => {
+    if (n.type === 'image' || n.type === 'button') {
+      assert.strictEqual(n.props.style.position, 'fixed');
+    }
+  });
+});

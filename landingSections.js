@@ -1951,7 +1951,7 @@ function composeLandingNav(palette = {}, opts = {}) {
     pill.props.onClick = { link: { href: `#${opts.cta.anchor}`, protocol: 'anchor:' } };
     pill.props.style = {
       ...pill.props.style,
-      fontSize: '15px', fontWeight: '600',
+      fontSize: '15px', fontWeight: '600', border: 'none',
       paddingTop: '10px', paddingBottom: '10px', paddingLeft: '22px', paddingRight: '22px',
     };
     kids.push(col([pill], { display: 'flex', flex: '0 0 auto' }, 'flex-start'));
@@ -2044,4 +2044,71 @@ function composeLandingFooter(palette = {}, opts = {}) {
   }) };
 }
 
-module.exports = { composeLandingSection, composeLandingNav, composeLandingFooter };
+/**
+ * The floating asks: a WhatsApp circle and a sticky bottom pill. The most
+ * Israeli devices on the reference page, and the two that keep the ask on
+ * screen for the whole scroll. Both are position:fixed, which the driver
+ * passes through as plain CSS, so they work with no client JS at all (the
+ * WhatsApp link SSRs as a real anchor tag; the pill's in-page jump uses the
+ * same Clicker path as the nav).
+ *
+ * Returned as one zero-height section (both children are out of flow), so
+ * they need no host band and a page without a footer can still carry them.
+ *
+ * opts:
+ *   whatsappUrl  full https://wa.me/... URL, '' → no circle. The caller owns
+ *                phone normalization; this file does not guess country codes.
+ *   pill         { text, anchor } or null → no pill
+ *   language     'he' | 'en'
+ */
+function composeLandingFloaters(palette = {}, opts = {}) {
+  const P = palette.primary || '#6328A7';
+  const theme = deriveTheme(P, palette.secondary);
+  const kids = [];
+
+  if (opts.whatsappUrl) {
+    const glyph = makeImage(
+      `${ICON_BASE}/Logos/whatsapp-fill.png?width=64&height=64&color=ffffff`,
+      { alt: 'WhatsApp', width: 30, height: 30 },
+    );
+    glyph.props.onClick = { link: { href: String(opts.whatsappUrl), target: '_blank' } };
+    glyph.props.style = {
+      ...glyph.props.style,
+      position: 'fixed', bottom: '22px', left: '22px', zIndex: '50',
+      width: '56px', height: '56px', maxWidth: '56px',
+      background: '#25D366', borderRadius: '50%', padding: '13px',
+      boxShadow: '0 4px 14px rgba(0,0,0,0.28)', objectFit: 'contain',
+    };
+    kids.push(glyph);
+  }
+
+  if (opts.pill && opts.pill.text && opts.pill.anchor) {
+    const pill = makeButton(opts.pill.text, {
+      href: `#${opts.pill.anchor}`,
+      background: theme.ON_DARK,
+      color: theme.onAccentDark,
+      direction: opts.language === 'en' ? 'ltr' : 'rtl',
+    });
+    pill.props.onClick = { link: { href: `#${opts.pill.anchor}`, protocol: 'anchor:' } };
+    pill.props.style = {
+      ...pill.props.style,
+      position: 'fixed', bottom: '18px', left: '0px', right: '0px', zIndex: '49',
+      marginLeft: 'auto', marginRight: 'auto',
+      width: 'max-content', maxWidth: '70%',
+      fontSize: '16px', fontWeight: '700', fontFamily: UI_FONT, border: 'none',
+      paddingTop: '13px', paddingBottom: '13px', paddingLeft: '34px', paddingRight: '34px',
+      borderRadius: '28px',
+      boxShadow: '0 6px 20px rgba(0,0,0,0.30)',
+    };
+    kids.push(pill);
+  }
+
+  if (!kids.length) return { section: null };
+  // Zero-height on purpose: every child is out of flow, and a band with real
+  // padding here would render as an empty strip above the footer.
+  return { section: section([
+    block([col(kids, {}, 'flex-start')], {}, 'flex-start'),
+  ], { paddingTop: '0px', paddingBottom: '0px' }) };
+}
+
+module.exports = { composeLandingSection, composeLandingNav, composeLandingFooter, composeLandingFloaters };

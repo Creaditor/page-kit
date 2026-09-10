@@ -150,6 +150,15 @@ declare namespace pageKit {
         language?: 'he' | 'en';
       },
     ): { section: Tree | null };
+    /** Floating asks: WhatsApp circle + sticky bottom pill, position:fixed, zero-height host section. */
+    composeLandingFloaters(
+      palette?: Palette,
+      opts?: {
+        whatsappUrl?: string;
+        pill?: { text: string; anchor: string } | null;
+        language?: 'he' | 'en';
+      },
+    ): { section: Tree | null };
 
     // landing vocabulary: the single declaration of what a landing page can be
     // built from. Consumers derive their enums and prompts from this rather

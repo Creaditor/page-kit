@@ -129,6 +129,27 @@ declare namespace pageKit {
       palette?: Palette,
       opts?: { variant?: string | null; backgroundImage?: string; backgroundKind?: 'photo' | 'generated' },
     ): { section: Tree };
+    /** The nav band: logo/wordmark, anchor links, and the ask. Deterministic, no model copy. */
+    composeLandingNav(
+      palette?: Palette,
+      opts?: {
+        logo?: string; logoWidth?: number; logoHeight?: number;
+        businessName?: string;
+        items?: Array<{ label: string; anchor: string }>;
+        cta?: { text: string; anchor: string } | null;
+        language?: 'he' | 'en';
+      },
+    ): { section: Tree };
+    /** The footer band: identity, contacts, socials, small print. Returns { section: null } when the context supplies nothing. */
+    composeLandingFooter(
+      palette?: Palette,
+      opts?: {
+        businessName?: string; phone?: string; email?: string;
+        socials?: Record<string, string | null | undefined>;
+        year?: number;
+        language?: 'he' | 'en';
+      },
+    ): { section: Tree | null };
 
     // landing vocabulary: the single declaration of what a landing page can be
     // built from. Consumers derive their enums and prompts from this rather

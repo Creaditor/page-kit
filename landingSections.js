@@ -1857,4 +1857,191 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
   }
 }
 
-module.exports = { composeLandingSection };
+// ── The page frame: nav + footer ─────────────────────────────────────────────
+//
+// Neither is a template slot and neither carries model copy. A generated page
+// used to start at the hero and stop dead after the last band, which is the
+// single loudest "this was generated" tell a visitor gets. Both composers are
+// deterministic: everything they render comes from the business context, and a
+// field that is missing simply does not render. The anchor names in `items` /
+// `cta` are the caller's contract: the caller puts `props.anchor = { name }`
+// on the sections those ids point at, and the render driver's Clicker does the
+// smooth-scroll (placement 'form' even lands focus in the lead form's first
+// field).
+//
+// Shape note: the nav row follows the one nav found in a REAL production
+// template (templates/6982eca1, section > block > col > menu-widget), not the
+// sticky `menu` wrapper, which no production document uses. menu-widget also
+// collapses to a drawer on phones by itself, which a hand-rolled row of links
+// would not.
+
+/** One nav link the driver's menu-widget understands. */
+function navItem(label, anchor, color) {
+  return {
+    id: cid(),
+    text: String(label),
+    selected: false,
+    onClick: { link: { href: `#${anchor}`, protocol: 'anchor:' } },
+    style: {
+      fontSize: '15px',
+      fontWeight: '600',
+      color,
+      backgroundColor: 'transparent',
+      fontFamily: BODY_FONT,
+    },
+  };
+}
+
+/**
+ * The nav band. Slim, on the page's own dark field so it reads as one surface
+ * with the hero under it. Logo at the reading edge, links beside it, the ask
+ * docked to the far edge -- the reference grammar (logo | links | pill).
+ *
+ * opts:
+ *   logo         image URL ('' → the businessName renders as a wordmark)
+ *   logoWidth/logoHeight  display size for the logo (caller computes)
+ *   businessName wordmark fallback and alt text
+ *   items        [{ label, anchor }] in reading order
+ *   cta          { text, anchor } or null
+ *   language     'he' | 'en'
+ */
+function composeLandingNav(palette = {}, opts = {}) {
+  const { FIELD, FIELD_LINE } = neutrals(palette);
+  const rtl = opts.language !== 'en';
+  const dir = rtl ? 'rtl' : 'ltr';
+  const DISPLAY = resolveDisplayFont(palette.displayFont);
+  const items = Array.isArray(opts.items) ? opts.items.filter((i) => i && i.label && i.anchor) : [];
+
+  const kids = [];
+
+  // The identity: logo when there is one, the name set as a wordmark when not.
+  if (opts.logo) {
+    const img = makeImage(opts.logo, {
+      alt: opts.businessName || 'Logo',
+      width: opts.logoWidth || 120,
+      height: opts.logoHeight || 36,
+    });
+    img.props.style = { ...img.props.style, maxWidth: `${opts.logoWidth || 120}px`, height: 'auto' };
+    kids.push(col([img], { display: 'flex', flex: '0 0 auto' }, 'flex-start'));
+  } else if (opts.businessName) {
+    kids.push(col([heading(opts.businessName, '20px', '#ffffff', rtl ? 'right' : 'left', DISPLAY)],
+      { display: 'flex', flex: '0 0 auto' }, 'flex-start'));
+  }
+
+  if (items.length) {
+    kids.push(col([{
+      id: cid(),
+      type: 'menu-widget',
+      children: [],
+      props: {
+        justify: 'flex-start',
+        style: { marginBottom: '0', width: '100%', fontFamily: BODY_FONT },
+        items: items.map((i) => navItem(i.label, i.anchor, 'rgba(255,255,255,0.92)')),
+      },
+    }], { display: 'flex', flex: '0 1 auto' }, 'flex-start'));
+  }
+
+  // Everything before this col docks to the reading edge, the ask after it to
+  // the far edge. A spacer col, because alignSelf/justifyContent never reach a
+  // col (see the sizing note above col()).
+  kids.push(col([], { display: 'flex', flex: '1 1 auto' }, 'flex-start'));
+
+  if (opts.cta && opts.cta.text) {
+    const pill = button(opts.cta.text, '#ffffff', FIELD, `#${opts.cta.anchor}`);
+    pill.props.onClick = { link: { href: `#${opts.cta.anchor}`, protocol: 'anchor:' } };
+    pill.props.style = {
+      ...pill.props.style,
+      fontSize: '15px', fontWeight: '600',
+      paddingTop: '10px', paddingBottom: '10px', paddingLeft: '22px', paddingRight: '22px',
+    };
+    kids.push(col([pill], { display: 'flex', flex: '0 0 auto' }, 'flex-start'));
+  }
+
+  return { section: section([
+    block([col(kids, {
+      display: 'flex', alignItems: 'center', gap: '26px', direction: dir, width: '100%',
+    }, 'flex-start')], {}, 'flex-start'),
+  ], {
+    background: FIELD,
+    borderBottom: `1px solid ${FIELD_LINE}`,
+    paddingTop: '14px', paddingBottom: '14px',
+  }) };
+}
+
+// White glyphs for the dark footer band, same icon service the section icons
+// use. Only these five exist in the business context schema.
+const FOOTER_SOCIAL_ICON = {
+  facebook: 'Logos/facebook-fill',
+  linkedin: 'Logos/linkedin-fill',
+  instagram: 'Logos/instagram-fill',
+  twitter: 'Logos/twitter-fill',
+  youtube: 'Logos/youtube-fill',
+};
+
+/**
+ * The footer band. Deep quiet close under the finalcta: identity on the
+ * reading edge, the ways to reach the business beside it, social glyphs on the
+ * far edge, and a hairline over the small print.
+ *
+ * opts:
+ *   businessName  string
+ *   phone/email   strings, either may be ''
+ *   socials       { facebook?: url, ... } -- only known platforms render
+ *   year          number for the small print (caller supplies; keeps this pure)
+ *   language      'he' | 'en'
+ */
+function composeLandingFooter(palette = {}, opts = {}) {
+  const { FIELD, FIELD_LINE } = neutrals(palette);
+  const rtl = opts.language !== 'en';
+  const dir = rtl ? 'rtl' : 'ltr';
+  const align = rtl ? 'right' : 'left';
+  const DISPLAY = resolveDisplayFont(palette.displayFont);
+  const GROUND = mix(FIELD, '#02101c', 0.45);
+  const MUTED_ON_GROUND = mix(GROUND, '#ffffff', 0.62);
+
+  const socialItems = Object.entries(opts.socials || {})
+    .filter(([platform, url]) => url && FOOTER_SOCIAL_ICON[platform])
+    .map(([platform, url]) => ({
+      id: cid(),
+      fgColor: '', bgColor: '',
+      style: { width: '26px', height: '26px' },
+      url: String(url),
+      src: `${ICON_BASE}/${FOOTER_SOCIAL_ICON[platform]}.png?width=52&height=52&color=ffffff`,
+    }));
+
+  const identity = kept([
+    opts.businessName ? heading(opts.businessName, '20px', '#ffffff', align, DISPLAY) : null,
+    opts.phone ? data(opts.phone, MUTED_ON_GROUND, align, '14px', DISPLAY) : null,
+    opts.email ? data(opts.email, MUTED_ON_GROUND, align, '14px', DISPLAY) : null,
+  ]);
+  if (!identity.length && !socialItems.length) return { section: null };
+
+  const row = [];
+  if (identity.length) {
+    row.push(col(identity, { display: 'flex', flexDirection: 'column', gap: '8px', flex: '0 1 auto', textAlign: align, direction: dir }, 'flex-start'));
+  }
+  row.push(col([], { display: 'flex', flex: '1 1 auto' }, 'flex-start'));
+  if (socialItems.length) {
+    row.push(col([{
+      id: cid(), type: 'social', children: [],
+      props: { style: { gap: '12px' }, items: socialItems },
+    }], { display: 'flex', flex: '0 0 auto', alignItems: 'center' }, 'flex-start'));
+  }
+
+  const smallPrint = opts.businessName
+    ? (rtl ? `\u00a9 ${opts.year || ''} ${opts.businessName}. \u05db\u05dc \u05d4\u05d6\u05db\u05d5\u05d9\u05d5\u05ea \u05e9\u05de\u05d5\u05e8\u05d5\u05ea.`
+           : `\u00a9 ${opts.year || ''} ${opts.businessName}. All rights reserved.`)
+    : '';
+
+  return { section: section([
+    block([col(row, { display: 'flex', alignItems: 'center', gap: '26px', direction: dir, width: '100%' }, 'flex-start')], {}, 'flex-start'),
+    smallPrint ? block([col([
+      data(smallPrint, mix(GROUND, '#ffffff', 0.45), align, '12px', DISPLAY),
+    ], { display: 'flex', borderTop: `1px solid ${FIELD_LINE}`, paddingTop: '18px', textAlign: align, direction: dir, width: '100%' }, 'flex-start')], { marginTop: '30px' }, 'flex-start') : null,
+  ], {
+    background: GROUND,
+    paddingTop: '44px', paddingBottom: '36px',
+  }) };
+}
+
+module.exports = { composeLandingSection, composeLandingNav, composeLandingFooter };

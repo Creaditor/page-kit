@@ -12,7 +12,7 @@
 // single-sourced too (see editor-api/src/app.js `edit:patch` subscriber).
 
 const builder = require('./builder');
-const { composeLandingSection } = require('./landingSections');
+const { composeLandingSection, composeLandingNav, composeLandingFooter } = require('./landingSections');
 const landingVocabulary = require('./landingVocabulary');
 const SECTION_TEMPLATES = require('./sections.json');
 
@@ -40,6 +40,8 @@ const editPatch = (siteId, userId, transactions, transactionId) => ({
 module.exports = {
   ...builder,
   composeLandingSection,
+  composeLandingNav,
+  composeLandingFooter,
   ...landingVocabulary,
   SECTION_TEMPLATES,
   ELEMENT_TYPES,

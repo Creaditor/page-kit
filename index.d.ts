@@ -150,6 +150,16 @@ declare namespace pageKit {
         language?: 'he' | 'en';
       },
     ): { section: Tree | null };
+    /** The urgency band: countdown to a brief-stated date. Client-only numbers; label+date SSR. */
+    composeLandingCountdown(
+      palette?: Palette,
+      opts?: { date?: string; label?: string; language?: 'he' | 'en' },
+    ): { section: Tree | null };
+    /** A small arrow ask closing a content section; returns a block to append to a section's children. */
+    composeLandingSectionAsk(
+      palette?: Palette,
+      opts?: { text?: string; anchor?: string; onDark?: boolean; language?: 'he' | 'en' },
+    ): { block: Tree | null };
     /** Floating asks: WhatsApp circle + sticky bottom pill, position:fixed, zero-height host section. */
     composeLandingFloaters(
       palette?: Palette,

@@ -177,3 +177,45 @@ test('floaters: the host band is zero-height, both children out of flow', () => 
     }
   });
 });
+
+// ── section ask ──────────────────────────────────────────────────────────────
+
+test('sectionAsk: a link-styled button jumping in-page, arrow by language', () => {
+  const { composeLandingSectionAsk } = require('../landingSections.js');
+  const he = composeLandingSectionAsk(PALETTE, { text: 'התחילו', anchor: 'sec-leadform', onDark: false, language: 'he' });
+  const [btn] = collect(he.block, 'button');
+  assert.ok(btn.props.text.endsWith('←'), 'RTL arrow');
+  assert.strictEqual(btn.props.onClick.link.href, '#sec-leadform');
+  assert.strictEqual(btn.props.onClick.link.protocol, 'anchor:');
+  assert.strictEqual(btn.props.style.background, 'transparent');
+  assert.strictEqual(btn.props.style.border, 'none');
+  const en = composeLandingSectionAsk(PALETTE, { text: 'Start', anchor: 'a', language: 'en' });
+  assert.ok(collect(en.block, 'button')[0].props.text.endsWith('→'), 'LTR arrow');
+});
+
+test('sectionAsk: nothing to say or nowhere to go, no block', () => {
+  const { composeLandingSectionAsk } = require('../landingSections.js');
+  assert.strictEqual(composeLandingSectionAsk(PALETTE, { text: '', anchor: 'a' }).block, null);
+  assert.strictEqual(composeLandingSectionAsk(PALETTE, { text: 'x', anchor: '' }).block, null);
+});
+
+// ── countdown ────────────────────────────────────────────────────────────────
+
+test('countdown: renders the driver countdown element with the ISO datetime', () => {
+  const { composeLandingCountdown } = require('../landingSections.js');
+  const { section } = composeLandingCountdown(PALETTE, { date: '2026-11-11', label: 'הזמן אוזל', language: 'he' });
+  const [cd] = collect(section, 'countdown');
+  assert.ok(cd, 'countdown element present');
+  assert.strictEqual(cd.props.date, '2026-11-11T00:00:00');
+  assert.strictEqual(cd.props.numberColor, '#ffffff');
+  const flat = JSON.stringify(section);
+  assert.ok(flat.includes('11.11.2026'), 'the date is printed as text too');
+  assert.ok(flat.includes('הזמן אוזל'));
+});
+
+test('countdown: anything but a complete ISO date renders nothing', () => {
+  const { composeLandingCountdown } = require('../landingSections.js');
+  for (const bad of ['', '11.11.26', '2026-11', 'בקרוב', undefined]) {
+    assert.strictEqual(composeLandingCountdown(PALETTE, { date: bad }).section, null);
+  }
+});

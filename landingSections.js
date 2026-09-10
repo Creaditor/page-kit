@@ -2111,4 +2111,86 @@ function composeLandingFloaters(palette = {}, opts = {}) {
   ], { paddingTop: '0px', paddingBottom: '0px' }) };
 }
 
-module.exports = { composeLandingSection, composeLandingNav, composeLandingFooter, composeLandingFloaters };
+/**
+ * A small arrow ask closing a content section: the reference's grammar is
+ * that nearly every band ends with one, so the ask is never more than a
+ * screen away. Rendered as a link-styled button (text nodes carry no click)
+ * jumping in-page like every other frame ask. Returns a BLOCK, appended by
+ * the caller to a composed section's children; blocks are the one child type
+ * a section takes, so the append is structurally safe.
+ *
+ * opts: { text, anchor, onDark, language }
+ */
+function composeLandingSectionAsk(palette = {}, opts = {}) {
+  if (!opts.text || !opts.anchor) return { block: null };
+  const P = palette.primary || '#6328A7';
+  const theme = deriveTheme(P, palette.secondary);
+  const rtl = opts.language !== 'en';
+  const color = opts.onDark ? theme.ON_DARK : theme.ON_LIGHT;
+  const arrow = rtl ? '\u2190' : '\u2192';
+  const ask = makeButton(`${opts.text} ${arrow}`, {
+    href: `#${opts.anchor}`,
+    background: 'transparent',
+    color,
+    direction: rtl ? 'rtl' : 'ltr',
+  });
+  ask.props.onClick = { link: { href: `#${opts.anchor}`, protocol: 'anchor:' } };
+  ask.props.style = {
+    ...ask.props.style,
+    background: 'transparent', color,
+    border: 'none',
+    fontSize: '16px', fontWeight: '700', fontFamily: UI_FONT,
+    paddingTop: '6px', paddingBottom: '6px', paddingLeft: '0px', paddingRight: '0px',
+  };
+  return { block: block([
+    col([ask], { display: 'flex', direction: rtl ? 'rtl' : 'ltr', width: '100%' }, 'flex-start'),
+  ], { marginTop: '10px' }, 'flex-start') };
+}
+
+/**
+ * The urgency band: a live countdown to a date the BRIEF stated. The caller
+ * owns the never-invent contract (studio validates the model's transcription
+ * and drops past or partial dates); this composer only renders what it is
+ * handed. The driver's countdown element is client-only (ssr: false), so the
+ * band shows its label and date immediately and the numbers appear on
+ * hydration.
+ *
+ * opts: { date: 'YYYY-MM-DD', label, language }
+ */
+function composeLandingCountdown(palette = {}, opts = {}) {
+  if (!opts.date || !/^\d{4}-\d{2}-\d{2}$/.test(opts.date)) return { section: null };
+  const { FIELD } = neutrals(palette);
+  const P = palette.primary || '#6328A7';
+  const theme = deriveTheme(P, palette.secondary);
+  const rtl = opts.language !== 'en';
+  const DISPLAY = resolveDisplayFont(palette.displayFont);
+  const [y, m, d] = opts.date.split('-');
+  const shownDate = `${d}.${m}.${y}`;
+
+  const counter = buildElement({ type: 'countdown', props: {
+    hasColons: false,
+    hasLabels: true,
+    date: `${opts.date}T00:00:00`,
+    language: rtl ? 'he' : 'en',
+    style: { marginTop: '18px' },
+    containerWidth: '460px',
+    containerBg: 'transparent',
+    colBg: 'transparent',
+    numberSize: '46px',
+    numberColor: '#ffffff',
+    numberFontFamily: DISPLAY,
+    labelSize: '13px',
+    labelColor: mix(FIELD, '#ffffff', 0.62),
+    labelfontFamily: BODY_FONT,
+  } }, palette);
+
+  return { section: section([
+    block([col([
+      opts.label ? data(opts.label, mix(theme.ON_DARK, '#ffffff', 0.25), 'center', '15px', DISPLAY) : null,
+      counter,
+      data(shownDate, mix(FIELD, '#ffffff', 0.55), 'center', '14px', DISPLAY),
+    ], { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', width: '100%' }, 'center')], {}, 'center'),
+  ], { background: FIELD, paddingTop: '54px', paddingBottom: '54px' }) };
+}
+
+module.exports = { composeLandingSection, composeLandingNav, composeLandingFooter, composeLandingFloaters, composeLandingSectionAsk, composeLandingCountdown };

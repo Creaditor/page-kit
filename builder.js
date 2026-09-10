@@ -196,8 +196,29 @@ const resolveTreeTokens = (node, palette = {}) => {
 // unique `id` (app.js sets _id = id and assigns static_id/siteId itself).
 const cid = () => `cdtr-${uuidv4()}`;
 
+/**
+ * A text element.
+ *
+ * `fontFamily` MUST be one of the `cssRule` strings in the editor's font
+ * catalogue (editor-api `src/seedFonts.js`), quotes and spacing included, e.g.
+ * `"'Heebo', sans-serif"`. The editor loads a webfont by exact-matching this
+ * string against that catalogue (frontend
+ * `web-editors/textEditor/.../fontFamily/index.js`, `generateFont`). A
+ * near-miss does not warn, it silently renders in the next family the browser
+ * can find, which for a Hebrew page is Arial. `'Rubik, Assistant, Arial,
+ * sans-serif'` was the value here for months and matched nothing, so every
+ * generated page shipped in Arial while the code said Rubik.
+ *
+ * `fontFamily` is written to props.style as well as into the textStyle mark:
+ * the mark is what renders, and props.style is what the editor's render driver
+ * reads when it decides which font links to inject.
+ *
+ * `lineHeight` was hardcoded at 1.4. That is right for body copy and much too
+ * loose for a display line, which is why large headings here have always looked
+ * slack. Callers setting a display size should set it down with them.
+ */
 const makeText = (text, opts = {}) => {
-  const { fontSize = '16px', color = 'rgb(56, 56, 56)', fontFamily = 'Arial', align = 'right', direction = 'rtl', bold = false } = opts;
+  const { fontSize = '16px', color = 'rgb(56, 56, 56)', fontFamily = 'Arial', align = 'right', direction = 'rtl', bold = false, lineHeight = '1.4' } = opts;
   const marks = [{ type: 'textStyle', attrs: { fontFamily, fontSize, color } }];
   if (bold) marks.push({ type: 'bold' });
   return {
@@ -205,11 +226,12 @@ const makeText = (text, opts = {}) => {
     type: 'text',
     children: [],
     props: {
+      style: { fontFamily },
       text: {
         childNodes: {
           type: 'doc',
           content: [
-            { type: 'paragraph', attrs: { lineHeight: '1.4', direction, textAlign: align }, content: [{ marks, type: 'text', text: String(text || '') }] },
+            { type: 'paragraph', attrs: { lineHeight: String(lineHeight), direction, textAlign: align }, content: [{ marks, type: 'text', text: String(text || '') }] },
           ],
         },
       },

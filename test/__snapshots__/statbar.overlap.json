@@ -9,189 +9,219 @@
           "type": "col",
           "children": [
             {
-              "type": "text",
-              "children": [],
-              "props": {
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.4",
-                          "direction": "rtl",
-                          "textAlign": "center"
-                        },
+              "type": "col",
+              "children": [
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
                         "content": [
                           {
-                            "marks": [
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.2",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
                               {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "44px",
-                                  "color": "#ffffff"
-                                }
-                              },
-                              {
-                                "type": "bold"
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                      "fontSize": "48px",
+                                      "color": "#ffffff"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "6"
                               }
-                            ],
-                            "type": "text",
-                            "text": "6"
+                            ]
                           }
                         ]
                       }
-                    ]
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "'Heebo', sans-serif"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.6",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "'Heebo', sans-serif",
+                                      "fontSize": "17px",
+                                      "color": "#9fbed7"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "כלים במקום אחד"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
                   }
                 }
+              ],
+              "props": {
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "gap": "8px",
+                  "alignItems": "flex-start",
+                  "textAlign": "right",
+                  "direction": "rtl",
+                  "flex": "1 1 180px",
+                  "boxSizing": "border-box",
+                  "paddingTop": "28px",
+                  "paddingBottom": "40px",
+                  "paddingRight": "28px",
+                  "paddingLeft": "28px"
+                },
+                "lg": 12,
+                "justify": "flex-start"
               }
             },
             {
-              "type": "text",
-              "children": [],
-              "props": {
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.4",
-                          "direction": "rtl",
-                          "textAlign": "center"
-                        },
+              "type": "col",
+              "children": [
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
                         "content": [
                           {
-                            "marks": [
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.2",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
                               {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#a8c4db"
-                                }
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "ui-monospace, SFMono-Regular, Menlo, monospace",
+                                      "fontSize": "48px",
+                                      "color": "#ffffff"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "99"
                               }
-                            ],
-                            "type": "text",
-                            "text": "כלים במקום אחד"
+                            ]
                           }
                         ]
                       }
-                    ]
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "children": [],
+                  "props": {
+                    "style": {
+                      "fontFamily": "'Heebo', sans-serif"
+                    },
+                    "text": {
+                      "childNodes": {
+                        "type": "doc",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "attrs": {
+                              "lineHeight": "1.6",
+                              "direction": "rtl",
+                              "textAlign": "right"
+                            },
+                            "content": [
+                              {
+                                "marks": [
+                                  {
+                                    "type": "textStyle",
+                                    "attrs": {
+                                      "fontFamily": "'Heebo', sans-serif",
+                                      "fontSize": "17px",
+                                      "color": "#9fbed7"
+                                    }
+                                  }
+                                ],
+                                "type": "text",
+                                "text": "לחודש"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
                   }
                 }
+              ],
+              "props": {
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "gap": "8px",
+                  "alignItems": "flex-start",
+                  "textAlign": "right",
+                  "direction": "rtl",
+                  "flex": "1 1 180px",
+                  "boxSizing": "border-box",
+                  "paddingTop": "28px",
+                  "paddingBottom": "40px",
+                  "paddingRight": "28px",
+                  "paddingLeft": "28px",
+                  "borderRight": "1px solid #245278"
+                },
+                "lg": 12,
+                "justify": "flex-start"
               }
             }
           ],
           "props": {
             "style": {
               "display": "flex",
-              "flexDirection": "column",
-              "gap": "6px",
-              "alignItems": "center",
-              "textAlign": "center",
-              "flex": "1 1 180px",
-              "margin": "10px",
-              "boxSizing": "border-box"
-            },
-            "lg": 12,
-            "justify": "center"
-          }
-        },
-        {
-          "type": "col",
-          "children": [
-            {
-              "type": "text",
-              "children": [],
-              "props": {
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.4",
-                          "direction": "rtl",
-                          "textAlign": "center"
-                        },
-                        "content": [
-                          {
-                            "marks": [
-                              {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "44px",
-                                  "color": "#ffffff"
-                                }
-                              },
-                              {
-                                "type": "bold"
-                              }
-                            ],
-                            "type": "text",
-                            "text": "99"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              }
-            },
-            {
-              "type": "text",
-              "children": [],
-              "props": {
-                "text": {
-                  "childNodes": {
-                    "type": "doc",
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "attrs": {
-                          "lineHeight": "1.4",
-                          "direction": "rtl",
-                          "textAlign": "center"
-                        },
-                        "content": [
-                          {
-                            "marks": [
-                              {
-                                "type": "textStyle",
-                                "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                                  "fontSize": "17px",
-                                  "color": "#a8c4db"
-                                }
-                              }
-                            ],
-                            "type": "text",
-                            "text": "לחודש"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "props": {
-            "style": {
-              "display": "flex",
-              "flexDirection": "column",
-              "gap": "6px",
-              "alignItems": "center",
-              "textAlign": "center",
-              "flex": "1 1 180px",
-              "margin": "10px",
-              "boxSizing": "border-box"
+              "flexWrap": "wrap",
+              "alignItems": "stretch",
+              "direction": "rtl"
             },
             "lg": 12,
             "justify": "center"
@@ -205,17 +235,9 @@
           "marginRight": "auto",
           "paddingLeft": "28px",
           "paddingRight": "28px",
-          "display": "flex",
-          "flexWrap": "wrap",
-          "justifyContent": "center",
-          "alignItems": "stretch",
-          "direction": "rtl",
-          "background": "#0f1c30",
-          "borderRadius": "20px",
-          "padding": "30px 18px",
-          "boxShadow": "0 34px 70px -40px rgba(0,0,0,0.7)",
-          "marginTop": "-72px"
-        }
+          "borderTop": "1px solid #245278"
+        },
+        "justify": "center"
       }
     }
   ],
@@ -225,8 +247,9 @@
     "style": {
       "width": "100%",
       "paddingTop": "0px",
-      "paddingBottom": "48px",
-      "background": "transparent"
+      "paddingBottom": "8px",
+      "background": "#09263e",
+      "marginTop": "-1px"
     }
   }
 }

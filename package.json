@@ -1,6 +1,6 @@
 {
   "name": "@creaditor/page-kit",
-  "version": "0.3.0",
+  "version": "0.7.3",
   "description": "Single source of truth for programmatic creaditor landing-page construction (catalog + tree builder + brand tokens). Consumed by editor-api MCP and cdtr-studio.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -9,6 +9,7 @@
     "builder.js",
     "landingSections.js",
     "landingVocabulary.js",
+    "landingTheme.js",
     "catalog.json",
     "sections.json",
     "index.d.ts"

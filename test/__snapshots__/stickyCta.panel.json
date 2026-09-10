@@ -12,6 +12,9 @@
               "type": "text",
               "children": [],
               "props": {
+                "style": {
+                  "fontFamily": "'Assistant', sans-serif"
+                },
                 "text": {
                   "childNodes": {
                     "type": "doc",
@@ -19,7 +22,7 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.4",
+                          "lineHeight": "1.3",
                           "direction": "rtl",
                           "textAlign": "center"
                         },
@@ -29,7 +32,7 @@
                               {
                                 "type": "textStyle",
                                 "attrs": {
-                                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
+                                  "fontFamily": "'Assistant', sans-serif",
                                   "fontSize": "26px",
                                   "color": "#ffffff"
                                 }
@@ -60,9 +63,9 @@
                   "minWidth": "30px",
                   "background": "#ffffff",
                   "color": "#1b65a0",
-                  "borderRadius": "999px",
-                  "fontFamily": "Rubik, Assistant, Arial, sans-serif",
-                  "fontSize": "18px",
+                  "borderRadius": "0px",
+                  "fontFamily": "'Heebo', sans-serif",
+                  "fontSize": "17px",
                   "direction": "rtl",
                   "paddingTop": "14px",
                   "paddingBottom": "14px",
@@ -102,7 +105,8 @@
           "marginRight": "auto",
           "paddingLeft": "28px",
           "paddingRight": "28px"
-        }
+        },
+        "justify": "center"
       }
     }
   ],
@@ -111,9 +115,9 @@
     "classList": [],
     "style": {
       "width": "100%",
-      "paddingTop": "40px",
-      "paddingBottom": "40px",
-      "background": "linear-gradient(135deg, #964462 0%, #1b65a0 100%)"
+      "paddingTop": "44px",
+      "paddingBottom": "44px",
+      "background": "#09263e"
     }
   }
 }

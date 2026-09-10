@@ -9,6 +9,24 @@
           "type": "col",
           "children": [
             {
+              "type": "image",
+              "children": [],
+              "props": {
+                "src": "https://img.creaditor.ai/icons/serve/Others/lightbulb-flash-fill.png?width=68&height=68&color=964462",
+                "alt": "",
+                "width": 34,
+                "height": 34,
+                "style": {
+                  "width": "34px",
+                  "height": "34px",
+                  "maxWidth": "34px",
+                  "borderRadius": "0px",
+                  "objectFit": "contain",
+                  "marginBottom": "4px"
+                }
+              }
+            },
+            {
               "type": "text",
               "children": [],
               "props": {
@@ -24,7 +42,7 @@
                         "attrs": {
                           "lineHeight": "1.2",
                           "direction": "rtl",
-                          "textAlign": "center"
+                          "textAlign": "right"
                         },
                         "content": [
                           {
@@ -34,7 +52,7 @@
                                 "attrs": {
                                   "fontFamily": "'Assistant', sans-serif",
                                   "fontSize": "13px",
-                                  "color": "#a8c4db"
+                                  "color": "#964462"
                                 }
                               },
                               {
@@ -65,9 +83,9 @@
                       {
                         "type": "paragraph",
                         "attrs": {
-                          "lineHeight": "1.08",
+                          "lineHeight": "1.18",
                           "direction": "rtl",
-                          "textAlign": "center"
+                          "textAlign": "right"
                         },
                         "content": [
                           {
@@ -76,8 +94,8 @@
                                 "type": "textStyle",
                                 "attrs": {
                                   "fontFamily": "'Assistant', sans-serif",
-                                  "fontSize": "58px",
-                                  "color": "#ffffff"
+                                  "fontSize": "28px",
+                                  "color": "#0f1c30"
                                 }
                               },
                               {
@@ -110,7 +128,7 @@
                         "attrs": {
                           "lineHeight": "1.6",
                           "direction": "rtl",
-                          "textAlign": "center"
+                          "textAlign": "right"
                         },
                         "content": [
                           {
@@ -120,49 +138,16 @@
                                 "attrs": {
                                   "fontFamily": "'Heebo', sans-serif",
                                   "fontSize": "17px",
-                                  "color": "#bfd4e4"
+                                  "color": "#243d5c"
                                 }
                               }
                             ],
                             "type": "text",
-                            "text": "שורת משנה קצרה"
+                            "text": "פסקה קצרה שמסבירה את ההקשר בלי למכור."
                           }
                         ]
                       }
                     ]
-                  }
-                }
-              }
-            },
-            {
-              "type": "button",
-              "children": [],
-              "props": {
-                "text": "רוצים לראות דוגמה?",
-                "style": {
-                  "height": "auto",
-                  "width": "auto",
-                  "maxWidth": "100%",
-                  "minWidth": "30px",
-                  "background": "#ffffff",
-                  "color": "#09263e",
-                  "borderRadius": "0px",
-                  "fontFamily": "'Heebo', sans-serif",
-                  "fontSize": "17px",
-                  "direction": "rtl",
-                  "paddingTop": "14px",
-                  "paddingBottom": "14px",
-                  "paddingLeft": "32px",
-                  "paddingRight": "32px"
-                },
-                "interactions": [],
-                "show_on_desktop": true,
-                "show_on_tablet": true,
-                "show_on_mobile": true,
-                "onClick": {
-                  "link": {
-                    "href": "#",
-                    "target": "_blank"
                   }
                 }
               }
@@ -172,12 +157,21 @@
             "style": {
               "display": "flex",
               "flexDirection": "column",
-              "gap": "20px",
-              "alignItems": "center",
-              "textAlign": "center"
+              "gap": "12px",
+              "alignItems": "flex-start",
+              "background": "#ffffff",
+              "borderRight": "4px solid #964462",
+              "border": "1px solid #c8dae8",
+              "borderRightWidth": "4px",
+              "borderRightColor": "#964462",
+              "padding": "32px 34px 36px",
+              "boxSizing": "border-box",
+              "textAlign": "right",
+              "direction": "rtl",
+              "flex": "0 1 74ch"
             },
             "lg": 12,
-            "justify": "center"
+            "justify": "flex-start"
           }
         }
       ],
@@ -187,9 +181,11 @@
           "marginLeft": "auto",
           "marginRight": "auto",
           "paddingLeft": "28px",
-          "paddingRight": "28px"
+          "paddingRight": "28px",
+          "display": "flex",
+          "direction": "rtl"
         },
-        "justify": "center"
+        "justify": "flex-start"
       }
     }
   ],
@@ -198,9 +194,9 @@
     "classList": [],
     "style": {
       "width": "100%",
-      "paddingTop": "96px",
-      "paddingBottom": "96px",
-      "background": "#09263e"
+      "paddingTop": "64px",
+      "paddingBottom": "64px",
+      "background": "#eff4f8"
     }
   }
 }

@@ -24,6 +24,8 @@ declare namespace pageKit {
     text?: string;
     background?: string;
     all?: string[];
+    /** An editor-api `cssRule` string, verbatim, or omitted to fall back to Assistant. */
+    displayFont?: string;
   }
 
   /** What makeSection/composeSection return: the section tree plus its ids. */
@@ -82,6 +84,9 @@ declare namespace pageKit {
     variant: string;
     /** The requested variant, when it could not be used. Null when honoured. */
     fellBackFrom: string | null;
+    /** Who decided. 'model' means it named a variant the copy could support;
+     *  'code' means the preference order picked the best supported one. */
+    chosenBy: 'model' | 'code';
   }
 
   export interface PageKit {
@@ -122,8 +127,51 @@ declare namespace pageKit {
       pattern: string,
       copy?: Record<string, unknown>,
       palette?: Palette,
-      opts?: { variant?: string | null },
+      opts?: { variant?: string | null; backgroundImage?: string; backgroundKind?: 'photo' | 'generated' },
     ): { section: Tree };
+    /** The nav band: logo/wordmark, anchor links, and the ask. Deterministic, no model copy. */
+    composeLandingNav(
+      palette?: Palette,
+      opts?: {
+        logo?: string; logoWidth?: number; logoHeight?: number;
+        businessName?: string;
+        items?: Array<{ label: string; anchor: string }>;
+        cta?: { text: string; anchor: string } | null;
+        language?: 'he' | 'en';
+      },
+    ): { section: Tree };
+    /** The footer band: identity, contacts, socials, small print. Returns { section: null } when the context supplies nothing. */
+    composeLandingFooter(
+      palette?: Palette,
+      opts?: {
+        businessName?: string; phone?: string; email?: string;
+        socials?: Record<string, string | null | undefined>;
+        year?: number;
+        language?: 'he' | 'en';
+      },
+    ): { section: Tree | null };
+    /** The urgency band: countdown to a brief-stated date. Client-only numbers; label+date SSR. Optional cta renders a centered anchor-jump button under the date. */
+    composeLandingCountdown(
+      palette?: Palette,
+      opts?: {
+        date?: string; label?: string; language?: 'he' | 'en';
+        cta?: { text: string; anchor: string } | null;
+      },
+    ): { section: Tree | null };
+    /** A small arrow ask closing a content section; returns a block to append to a section's children. */
+    composeLandingSectionAsk(
+      palette?: Palette,
+      opts?: { text?: string; anchor?: string; onDark?: boolean; language?: 'he' | 'en' },
+    ): { block: Tree | null };
+    /** Floating asks: WhatsApp circle + sticky bottom pill, position:fixed, zero-height host section. */
+    composeLandingFloaters(
+      palette?: Palette,
+      opts?: {
+        whatsappUrl?: string;
+        pill?: { text: string; anchor: string } | null;
+        language?: 'he' | 'en';
+      },
+    ): { section: Tree | null };
 
     // landing vocabulary: the single declaration of what a landing page can be
     // built from. Consumers derive their enums and prompts from this rather
@@ -139,6 +187,16 @@ declare namespace pageKit {
     ): ResolvedLandingVariant | null;
     /** The vocabulary rendered as the menu text a generation prompt shows the model. */
     describeLandingVocabulary(): string;
+    /**
+     * The longest heading the hero's `display` variant can set at display size.
+     *
+     * Declared because a consumer prompt has to state the limit as a NUMBER in
+     * the copy rules it sends the model, and a hardcoded copy of that number in
+     * the consumer is the drift this whole file exists to prevent: the size
+     * table lives in landingSections.js and only it knows where the budget
+     * actually falls.
+     */
+    DISPLAY_MAX_HEADING: number;
 
     // data
     CATALOG_BODIES: Record<string, CatalogEntry>;

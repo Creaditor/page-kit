@@ -2164,7 +2164,10 @@ function composeLandingSectionAsk(palette = {}, opts = {}) {
  * band shows its label and date immediately and the numbers appear on
  * hydration.
  *
- * opts: { date: 'YYYY-MM-DD', label, language }
+ * opts: { date: 'YYYY-MM-DD', label, language, cta }
+ *   cta  optional { text, anchor } -- renders a centered anchor-jump button
+ *        under the label and date (the pill's button device, in flow, no
+ *        fixed positioning). Omitted, the returned tree is unchanged.
  */
 function composeLandingCountdown(palette = {}, opts = {}) {
   if (!opts.date || !/^\d{4}-\d{2}-\d{2}$/.test(opts.date)) return { section: null };
@@ -2193,11 +2196,29 @@ function composeLandingCountdown(palette = {}, opts = {}) {
     labelfontFamily: BODY_FONT,
   } }, palette);
 
+  let ctaBtn = null;
+  if (opts.cta && opts.cta.text && opts.cta.anchor) {
+    ctaBtn = makeButton(opts.cta.text, {
+      href: `#${opts.cta.anchor}`,
+      background: theme.ON_DARK,
+      color: theme.onAccentDark,
+      direction: rtl ? 'rtl' : 'ltr',
+    });
+    ctaBtn.props.onClick = { link: { href: `#${opts.cta.anchor}`, protocol: 'anchor:' } };
+    ctaBtn.props.style = {
+      ...ctaBtn.props.style,
+      fontSize: '16px', fontWeight: '700', fontFamily: UI_FONT, border: 'none',
+      paddingTop: '13px', paddingBottom: '13px', paddingLeft: '34px', paddingRight: '34px',
+      borderRadius: '28px', marginTop: '14px',
+    };
+  }
+
   return { section: section([
     block([col([
       opts.label ? data(opts.label, mix(theme.ON_DARK, '#ffffff', 0.25), 'center', '15px', DISPLAY) : null,
       counter,
       data(shownDate, mix(FIELD, '#ffffff', 0.55), 'center', '14px', DISPLAY),
+      ctaBtn,
     ], { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', width: '100%' }, 'center')], {}, 'center'),
   ], { background: FIELD, paddingTop: '54px', paddingBottom: '54px' }) };
 }

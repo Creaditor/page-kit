@@ -220,6 +220,26 @@ test('countdown: anything but a complete ISO date renders nothing', () => {
   }
 });
 
+test('countdown: a cta renders a centered anchor-jump button under the date', () => {
+  const { composeLandingCountdown } = require('../landingSections.js');
+  const { section } = composeLandingCountdown(PALETTE, {
+    date: '2026-11-11', label: 'הזמן אוזל', language: 'he',
+    cta: { text: 'הרשמו עכשיו', anchor: 'sec-leadform' },
+  });
+  const [btn] = collect(section, 'button');
+  assert.ok(btn, 'cta button present');
+  assert.strictEqual(btn.props.text, 'הרשמו עכשיו');
+  assert.deepStrictEqual(btn.props.onClick.link, { href: '#sec-leadform', protocol: 'anchor:' });
+  assert.strictEqual(btn.props.style.borderRadius, '28px');
+  assert.notStrictEqual(btn.props.style.position, 'fixed', 'in flow, not fixed');
+});
+
+test('countdown: no cta, no button anywhere in the band', () => {
+  const { composeLandingCountdown } = require('../landingSections.js');
+  const { section } = composeLandingCountdown(PALETTE, { date: '2026-11-11', label: 'הזמן אוזל', language: 'he' });
+  assert.strictEqual(collect(section, 'button').length, 0);
+});
+
 // ── hero ranking: photo beats stat field ─────────────────────────────────────
 
 test('hero: with a photo AND stats, code now picks the photo (cinema-block)', () => {

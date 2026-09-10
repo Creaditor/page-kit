@@ -1825,8 +1825,8 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
           col([
             copy.image ? col([photo(copy.image, 560, 340)], { display: 'flex', flex: '1 1 300px', margin: '12px' }, 'center') : null,
             col((copy.paragraphs || [copy.paragraph]).filter(Boolean).map((p, i) => T(p, i === 0 ? BODY : MUTED, 'right')),
-              { display: 'flex', flexDirection: 'column', gap: '14px', justifyContent: 'center', flex: '1 1 340px', margin: '12px' }, 'flex-start'),
-          ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '28px', alignItems: 'center' }, 'flex-start'),
+              { display: 'flex', flexDirection: 'column', gap: '14px', justifyContent: 'flex-start', flex: '1 1 340px', margin: '12px' }, 'flex-start'),
+          ].filter(Boolean), { display: 'flex', flexWrap: 'wrap', gap: '28px', alignItems: 'flex-start' }, 'flex-start'),
         ], {}, 'flex-start'),
       ], { background: LIGHT }) };
 
@@ -1844,12 +1844,21 @@ function composeLandingSection(pattern, copy = {}, palette = {}, opts = {}) {
 
     // ── final CTA (dark band) ──────────────────────────────────────────────────
     case 'finalcta':
+      // Spacer-sibling centering inside ONE outer row col: flex on a block()
+      // with more than one child is dead (the driver interposes an MUI Grid,
+      // and this file's block-layout guard test enforces exactly that), so
+      // the row lives on a col() whose empty flex '1 1 0' siblings push the
+      // content col to the horizontal middle of the 1240px band.
       return { section: section([
         block([col([
-          H(copy.heading, '44px', '#ffffff', 'right'),
-          copy.subheading ? T(copy.subheading, mix(P, '#ffffff', 0.72), 'right') : null,
-          copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,
-        ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start', textAlign: 'right', direction: 'rtl', flex: '0 1 46ch' }, 'flex-start')], { display: 'flex', direction: 'rtl' }, 'flex-start'),
+          col([], { flex: '1 1 0' }),
+          col([
+            H(copy.heading, '44px', '#ffffff', 'center'),
+            copy.subheading ? T(copy.subheading, mix(P, '#ffffff', 0.72), 'center') : null,
+            copy.cta ? button(copy.cta, '#ffffff', FIELD) : null,
+          ].filter(Boolean), { display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center', direction: 'rtl', flex: '0 1 46ch' }, 'center'),
+          col([], { flex: '1 1 0' }),
+        ], { display: 'flex', direction: 'rtl', width: '100%' }, 'center')], { display: 'flex', direction: 'rtl' }, 'center'),
       ], { ...photoGround(FIELD, bgPhoto, bgKind), paddingTop: '92px', paddingBottom: '92px' }) };
 
     default:

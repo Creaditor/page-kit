@@ -320,7 +320,7 @@
                   "display": "flex",
                   "flexDirection": "column",
                   "gap": "14px",
-                  "justifyContent": "center",
+                  "justifyContent": "flex-start",
                   "flex": "1 1 340px",
                   "margin": "12px"
                 },
@@ -334,7 +334,7 @@
               "display": "flex",
               "flexWrap": "wrap",
               "gap": "28px",
-              "alignItems": "center"
+              "alignItems": "flex-start"
             },
             "lg": 12,
             "justify": "flex-start"

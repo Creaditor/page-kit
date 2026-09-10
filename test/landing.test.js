@@ -781,3 +781,54 @@ test('a pattern with no preference list behaves exactly as it did before', () =>
       `${pattern} has no preference list and its default is not its first variant, so selection order changed for it silently`);
   }
 });
+
+// ── 12. closing-band layout shape guards ─────────────────────────────────────
+//
+// These hold the finalcta centering and the about top-alignment even if the
+// shape snapshots are regenerated reflexively later. The finalcta row lives
+// on ONE outer col (layout on a block() with several children is dead, see
+// guard 7 above); the empty flex '1 1 0' spacer cols on both sides are the
+// device that actually centers the content col in the 1240px band.
+
+test('finalcta: content col is centered between two empty spacer cols', () => {
+  const { section } = composeLandingSection('finalcta', copyFor('finalcta'), PALETTE, { variant: 'panel' });
+  const blockNode = section.children[0];
+  assert.strictEqual(blockNode.type, 'block');
+  assert.strictEqual(blockNode.children.length, 1, 'finalcta block wraps exactly one row col');
+
+  const row = blockNode.children[0];
+  assert.strictEqual(row.type, 'col');
+  assert.strictEqual(row.props.style.display, 'flex');
+  assert.strictEqual(row.children.length, 3, 'row col holds spacer / content / spacer');
+
+  const [left, content, right] = row.children;
+  for (const spacer of [left, right]) {
+    assert.strictEqual(spacer.type, 'col');
+    assert.strictEqual(spacer.props.style.flex, '1 1 0');
+    assert.strictEqual(spacer.children.length, 0, 'spacer cols are empty');
+  }
+
+  assert.strictEqual(content.type, 'col');
+  assert.strictEqual(content.props.style.flex, '0 1 46ch');
+  assert.strictEqual(content.props.style.alignItems, 'center');
+  assert.strictEqual(content.props.style.textAlign, 'center');
+});
+
+test('about: paragraph col top-aligns instead of floating vertically centered', () => {
+  const { section } = composeLandingSection('about', copyFor('about'), PALETTE, { variant: 'text-image' });
+  let row = null;
+  (function walk(n) {
+    if (Array.isArray(n)) return n.forEach(walk);
+    if (!n || typeof n !== 'object') return;
+    const style = (n.props && n.props.style) || {};
+    if (n.type === 'col' && style.flexWrap === 'wrap') row = n;
+    Object.values(n).forEach((v) => { if (v && typeof v === 'object') walk(v); });
+  })(section);
+  assert.ok(row, 'about wrap row found');
+  assert.strictEqual(row.props.style.alignItems, 'flex-start',
+    'the wrap row must not cross-axis-center its cols, or the paragraph col floats beside the photo');
+
+  const paraCol = row.children.find((c) => c.props.style.flex === '1 1 340px');
+  assert.ok(paraCol, 'paragraph col found');
+  assert.strictEqual(paraCol.props.style.justifyContent, 'flex-start');
+});

@@ -66,7 +66,14 @@ const LANDING_VOCABULARY = {
     // Best first. `centered` is last on purpose: its own description calls it
     // the safe default and the only one that works with nothing but a headline,
     // which makes it the floor rather than a choice.
-    preference: ['display', 'coral-cut', 'gold-night', 'cinema-block', 'asymmetric', 'conversation', 'centered'],
+    //
+    // The photo variants outrank the stat fields since 2026-09-09, on Adi's
+    // direct call after seeing coral-cut's accent field on a real page ("I
+    // prefer image"). cinema-block before asymmetric because its narrow crop
+    // asks less of an ordinary tenant photo and its accent CTA reads stronger.
+    // The stats still render: coral-cut and gold-night stay reachable for a
+    // tenant with numbers and no usable photograph.
+    preference: ['display', 'cinema-block', 'asymmetric', 'coral-cut', 'gold-night', 'conversation', 'centered'],
     variants: {
       centered: {
         description: 'Headline, subheading and CTA stacked and centered on a brand gradient. The safe default, and the only one that works with nothing but a headline.',

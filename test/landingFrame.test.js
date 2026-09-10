@@ -219,3 +219,25 @@ test('countdown: anything but a complete ISO date renders nothing', () => {
     assert.strictEqual(composeLandingCountdown(PALETTE, { date: bad }).section, null);
   }
 });
+
+// ── hero ranking: photo beats stat field ─────────────────────────────────────
+
+test('hero: with a photo AND stats, code now picks the photo (cinema-block)', () => {
+  const { resolveLandingVariant } = require('../landingVocabulary.js');
+  const copy = {
+    heading: 'כל הקמפיינים שלכם במקום אחד, בלי לנהל שני כלים',
+    image: 'https://images.pexels.com/x.jpeg',
+    stats: [{ value: '14', label: 'יום' }, { value: '3,000+', label: 'לקוחות' }, { value: '149', label: 'שקל' }],
+  };
+  assert.strictEqual(resolveLandingVariant('hero', undefined, copy).variant, 'cinema-block');
+});
+
+test('hero: stats with NO photo still get coral-cut, the numbers are not orphaned', () => {
+  const { resolveLandingVariant } = require('../landingVocabulary.js');
+  const copy = {
+    heading: 'כל הקמפיינים שלכם במקום אחד, בלי לנהל שני כלים',
+    image: '',
+    stats: [{ value: '14', label: 'יום' }, { value: '3,000+', label: 'לקוחות' }, { value: '149', label: 'שקל' }],
+  };
+  assert.strictEqual(resolveLandingVariant('hero', undefined, copy).variant, 'coral-cut');
+});

@@ -445,6 +445,13 @@ const buildElement = (spec = {}, palette = {}) => {
   }
 };
 
+// A col stacks its children only when its own style says so. The render
+// service lays a col's children out in MUI's default row + wrap unless the col
+// sets flexDirection, while the editor always stacks them, so a col with an
+// empty style looks right in the editor and publishes its heading, text and
+// button side by side on one wrapping row.
+const COL_STACK = { display: 'flex', flexDirection: 'column' };
+
 // A fresh section → block → col(s) subtree, with layout + styling baked into
 // props.style. `columns` is an array of 12-grid widths (e.g. [8,4] for a
 // content+media split, [4,4,4] for a 3-up grid); defaults to a single full col.
@@ -469,7 +476,11 @@ const makeSection = (opts = {}) => {
     id: cid(),
     type: 'col',
     children: Array.isArray(colChildren[i]) ? colChildren[i] : [],
-    props: { style: (Array.isArray(colStyles) && colStyles[i]) ? { ...colStyles[i] } : {}, lg: w, justify: align },
+    props: {
+      style: { ...COL_STACK, ...((Array.isArray(colStyles) && colStyles[i]) || {}) },
+      lg: w,
+      justify: align,
+    },
   }));
   const block = {
     id: cid(),

@@ -206,7 +206,10 @@
                 }
               ],
               "props": {
-                "style": {},
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column"
+                },
                 "lg": 6,
                 "justify": "flex-start"
               }
@@ -233,7 +236,10 @@
                 }
               ],
               "props": {
-                "style": {},
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column"
+                },
                 "lg": 6,
                 "justify": "flex-start"
               }
@@ -387,7 +393,10 @@
                 }
               ],
               "props": {
-                "style": {},
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column"
+                },
                 "lg": 12,
                 "justify": "center"
               }
@@ -506,7 +515,10 @@
                 }
               ],
               "props": {
-                "style": {},
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column"
+                },
                 "lg": 4,
                 "justify": "center"
               }
@@ -625,7 +637,10 @@
                 }
               ],
               "props": {
-                "style": {},
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column"
+                },
                 "lg": 4,
                 "justify": "center"
               }
@@ -744,7 +759,10 @@
                 }
               ],
               "props": {
-                "style": {},
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column"
+                },
                 "lg": 4,
                 "justify": "center"
               }
@@ -892,7 +910,10 @@
                 }
               ],
               "props": {
-                "style": {},
+                "style": {
+                  "display": "flex",
+                  "flexDirection": "column"
+                },
                 "lg": 12,
                 "justify": "center"
               }
